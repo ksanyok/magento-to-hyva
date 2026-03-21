@@ -91,6 +91,25 @@ def analyze_installed_modules(project_path: str) -> dict:
                             "notes": compat.get("notes", ""),
                         })
 
+    # Also scan composer.lock for actually installed packages
+    lock_file = os.path.join(project_path, "composer.lock")
+    if os.path.isfile(lock_file):
+        with open(lock_file) as f:
+            lock_data = json.load(f)
+        for pkg_info in lock_data.get("packages", []):
+            pkg_name = pkg_info.get("name", "")
+            if pkg_name in COMPOSER_PACKAGE_COMPAT:
+                compat = COMPOSER_PACKAGE_COMPAT[pkg_name]
+                if compat["status"] in ("official", "community") and compat.get("package"):
+                    if not any(e.get("package") == compat["package"] for e in result["compatible"]):
+                        result["compatible"].append({
+                            "module": pkg_name,
+                            "package": compat["package"],
+                            "has_frontend": True,
+                            "notes": compat.get("notes", ""),
+                            "source": "composer.lock",
+                        })
+
     return result
 
 

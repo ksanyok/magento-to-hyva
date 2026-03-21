@@ -119,6 +119,279 @@ def copy_i18n(source_theme: str, output_theme: str) -> list:
     return copied
 
 
+def extract_template_strings(theme_path: str) -> set:
+    """Extract all __('...') translatable strings from .phtml templates."""
+    import re
+    strings = set()
+    for phtml in Path(theme_path).rglob("*.phtml"):
+        content = phtml.read_text(errors="replace")
+        matches = re.findall(r"__\(['\"](.+?)['\"]\)", content)
+        strings.update(matches)
+    return strings
+
+
+def enrich_i18n(output_theme: str, template_strings: set) -> int:
+    """
+    Add missing translatable strings from templates into all i18n CSV files.
+    For English locales: identity translations (key = value).
+    For German locales: provide German translations for common UI strings.
+    For other locales: identity translations as placeholders.
+    Returns the number of strings added.
+    """
+    import csv
+    import io
+
+    # German translations for common Hyvä frontend strings
+    de_translations = {
+        "Account Information": "Kontoinformationen",
+        "Add to Cart": "In den Warenkorb",
+        "Add to Wish List": "Zur Wunschliste hinzufügen",
+        "Adding...": "Wird hinzugefügt...",
+        "Address": "Adresse",
+        "Already have an account? Sign in": "Bereits ein Konto? Anmelden",
+        "Back": "Zurück",
+        "Back to Address Book": "Zurück zum Adressbuch",
+        "Cashmere Care": "Kaschmir Pflege",
+        "Change Email": "E-Mail ändern",
+        "Change Email and Password": "E-Mail und Passwort ändern",
+        "Change Password": "Passwort ändern",
+        "City": "Stadt",
+        "Close": "Schliessen",
+        "Close Window": "Fenster schliessen",
+        "Close fullscreen": "Vollbild schliessen",
+        "Close minicart": "Miniwarenkorb schliessen",
+        "Company": "Firma",
+        "Confirm New Password": "Neues Passwort bestätigen",
+        "Confirm Password": "Passwort bestätigen",
+        "Contact Information": "Kontaktinformationen",
+        "Cotton Care": "Baumwoll Pflege",
+        "Country": "Land",
+        "Create New Customer Account": "Neues Kundenkonto erstellen",
+        "Create an Account": "Konto erstellen",
+        "Creating...": "Wird erstellt...",
+        "Current Password": "Aktuelles Passwort",
+        "Decrease quantity": "Menge verringern",
+        "Edit Account Information": "Kontoinformationen bearbeiten",
+        "Edit Address": "Adresse bearbeiten",
+        "Email": "E-Mail",
+        "Email address": "E-Mail-Adresse",
+        "Fair": "Fair",
+        "First Name": "Vorname",
+        "Forgot Your Password?": "Passwort vergessen?",
+        "Go back": "Zurück",
+        "Good": "Gut",
+        "Hide password": "Passwort verbergen",
+        "Increase quantity": "Menge erhöhen",
+        "Last Name": "Nachname",
+        "Linen Care": "Leinen Pflege",
+        "Login": "Anmelden",
+        "Lyocell Care": "Lyocell Pflege",
+        "Men Size Chart": "Herren Grössentabelle",
+        "More Choices:": "Mehr Auswahl:",
+        "New Password": "Neues Passwort",
+        "New Products": "Neue Produkte",
+        "New": "Neu",
+        "Next": "Weiter",
+        "Next image": "Nächstes Bild",
+        "No Password": "Kein Passwort",
+        "Notify Me": "Benachrichtigen",
+        "Open fullscreen gallery": "Galerie im Vollbild öffnen",
+        "Password": "Passwort",
+        "Password Strength": "Passwortstärke",
+        "Personal Information": "Persönliche Informationen",
+        "Phone Number": "Telefonnummer",
+        "Please select a region, state or province.": "Bitte wählen Sie eine Region oder ein Bundesland.",
+        "Previous": "Zurück",
+        "Previous image": "Vorheriges Bild",
+        "Qty": "Menge",
+        "Required Fields": "Pflichtfelder",
+        "Save": "Speichern",
+        "Save Address": "Adresse speichern",
+        "Saving...": "Wird gespeichert...",
+        "Search": "Suche",
+        "Show password": "Passwort anzeigen",
+        "Sign In": "Anmelden",
+        "Sign Up for Newsletter": "Newsletter abonnieren",
+        "Sign up to get notified when this product is back in stock.": "Melden Sie sich an, um benachrichtigt zu werden, wenn dieses Produkt wieder verfügbar ist.",
+        "Sign-in Information": "Anmeldeinformationen",
+        "Signing in...": "Anmeldung...",
+        "Sizes Chart": "Grössentabelle",
+        "State/Province": "Bundesland/Region",
+        "Street Address": "Strassenadresse",
+        "Strong": "Stark",
+        "Subscribe": "Abonnieren",
+        "Subscribing...": "Wird abonniert...",
+        "Toggle minicart": "Miniwarenkorb umschalten",
+        "Upcycled": "Upcycling",
+        "Use as my default billing address": "Als Standard-Rechnungsadresse verwenden",
+        "Use as my default shipping address": "Als Standard-Lieferadresse verwenden",
+        "Very Strong": "Sehr stark",
+        "View Cart": "Warenkorb anzeigen",
+        "View image": "Bild ansehen",
+        "We found other products you might like!": "Wir haben andere Produkte gefunden, die Ihnen gefallen könnten!",
+        "Weak": "Schwach",
+        "Wishlist": "Wunschliste",
+        "Women Size Chart": "Damen Grössentabelle",
+        "You May Also Like": "Das könnte Ihnen auch gefallen",
+        "You have no items in your shopping cart.": "Ihr Warenkorb ist leer.",
+        "Zip/Postal Code": "PLZ",
+    }
+
+    # Dutch translations
+    nl_translations = {
+        "Add to Cart": "In winkelwagen",
+        "Add to Wish List": "Aan verlanglijst toevoegen",
+        "Back": "Terug",
+        "City": "Stad",
+        "Close": "Sluiten",
+        "Company": "Bedrijf",
+        "Country": "Land",
+        "Create an Account": "Account aanmaken",
+        "Email": "E-mail",
+        "First Name": "Voornaam",
+        "Last Name": "Achternaam",
+        "Login": "Inloggen",
+        "Password": "Wachtwoord",
+        "Qty": "Aantal",
+        "Save": "Opslaan",
+        "Search": "Zoeken",
+        "Sign In": "Inloggen",
+        "View Cart": "Winkelwagen bekijken",
+    }
+
+    # Danish translations
+    da_translations = {
+        "Add to Cart": "Læg i kurv",
+        "Back": "Tilbage",
+        "Close": "Luk",
+        "Email": "E-mail",
+        "First Name": "Fornavn",
+        "Last Name": "Efternavn",
+        "Login": "Log ind",
+        "Password": "Adgangskode",
+        "Qty": "Antal",
+        "Save": "Gem",
+        "Search": "Søg",
+        "Sign In": "Log ind",
+        "View Cart": "Se kurv",
+    }
+
+    # Swedish translations
+    sv_translations = {
+        "Add to Cart": "Lägg i varukorg",
+        "Back": "Tillbaka",
+        "Close": "Stäng",
+        "Email": "E-post",
+        "First Name": "Förnamn",
+        "Last Name": "Efternamn",
+        "Login": "Logga in",
+        "Password": "Lösenord",
+        "Qty": "Antal",
+        "Save": "Spara",
+        "Search": "Sök",
+        "Sign In": "Logga in",
+        "View Cart": "Visa varukorg",
+    }
+
+    # Polish translations
+    pl_translations = {
+        "Add to Cart": "Dodaj do koszyka",
+        "Back": "Wstecz",
+        "Close": "Zamknij",
+        "Email": "E-mail",
+        "First Name": "Imię",
+        "Last Name": "Nazwisko",
+        "Login": "Zaloguj się",
+        "Password": "Hasło",
+        "Qty": "Ilość",
+        "Save": "Zapisz",
+        "Search": "Szukaj",
+        "Sign In": "Zaloguj się",
+        "View Cart": "Zobacz koszyk",
+    }
+
+    locale_translations = {
+        "de_DE": de_translations,
+        "de_AT": de_translations,
+        "de_CH": de_translations,
+        "nl_NL": nl_translations,
+        "da_DK": da_translations,
+        "sv_SE": sv_translations,
+        "pl_PL": pl_translations,
+    }
+
+    i18n_dir = os.path.join(output_theme, "i18n")
+    if not os.path.isdir(i18n_dir):
+        os.makedirs(i18n_dir, exist_ok=True)
+
+    total_added = 0
+    csv_files = [f for f in os.listdir(i18n_dir) if f.endswith(".csv")]
+
+    # If no CSV files, create at least en_US and de_DE
+    if not csv_files:
+        csv_files = ["en_US.csv", "de_DE.csv"]
+        for f in csv_files:
+            Path(os.path.join(i18n_dir, f)).touch()
+
+    for csv_name in csv_files:
+        csv_path = os.path.join(i18n_dir, csv_name)
+        locale = csv_name.replace(".csv", "")
+
+        # Read existing translations
+        existing_keys = set()
+        existing_lines = []
+        if os.path.isfile(csv_path):
+            with open(csv_path, "r", errors="replace") as f:
+                existing_lines = f.readlines()
+            for line in existing_lines:
+                line = line.strip()
+                if not line or line.startswith("#"):
+                    continue
+                # Parse CSV key (first field)
+                try:
+                    reader = csv.reader(io.StringIO(line))
+                    row = next(reader)
+                    if row:
+                        existing_keys.add(row[0])
+                except (csv.Error, StopIteration):
+                    pass
+
+        # Find missing strings
+        missing = template_strings - existing_keys
+        if not missing:
+            continue
+
+        # Get locale-specific translations
+        trans_map = locale_translations.get(locale, {})
+
+        # Append missing strings
+        new_lines = []
+        for s in sorted(missing):
+            if locale.startswith("en_"):
+                # English: identity translation
+                translation = s
+            elif s in trans_map:
+                translation = trans_map[s]
+            else:
+                # Use English as placeholder for untranslated strings
+                translation = s
+            # Proper CSV quoting
+            out = io.StringIO()
+            writer = csv.writer(out)
+            writer.writerow([s, translation])
+            new_lines.append(out.getvalue())
+
+        if new_lines:
+            with open(csv_path, "a") as f:
+                # Add separator comment
+                f.write(f"# --- Hyvä frontend translations (auto-generated) ---\n")
+                for line in new_lines:
+                    f.write(line)
+            total_added += len(new_lines)
+
+    return total_added
+
+
 def generate_layout_xmls(source_theme: str, output_theme: str) -> list:
     """
     Process layout XMLs: convert where needed, generate Hyvä-specific ones.
@@ -164,6 +437,8 @@ def main():
     parser.add_argument("--theme", default="FTCShopHyva", help="Hyvä theme name")
     parser.add_argument("--title", default="FTC Cashmere Hyvä", help="Theme title")
     parser.add_argument("--output", required=True, help="Output directory (e.g. output/ftcshop)")
+    parser.add_argument("--with-stubs", action="store_true",
+                        help="Generate Hyvä parent theme + module stubs for testing without a license")
     args = parser.parse_args()
 
     project_path = os.path.abspath(args.project)
@@ -236,8 +511,15 @@ def main():
     print("\n[6/7] Copying assets and translations...")
     assets = copy_luma_assets(luma_theme, theme_base)
     translations = copy_i18n(luma_theme, theme_base)
-    print(f"  Assets:      {len(assets)} files")
-    print(f"  Translations: {len(translations)} files")
+
+    # Extract translatable strings from templates and enrich CSV files
+    template_strings = extract_template_strings(theme_base)
+    enriched = enrich_i18n(theme_base, template_strings)
+
+    print(f"  Assets:       {len(assets)} files")
+    print(f"  Translations: {len(translations)} CSV files")
+    print(f"  Enriched:     {enriched} strings added to {len(translations)} locales")
+    print(f"  Template strings: {len(template_strings)} unique translatable strings")
 
     # 7. Phase 3: Compatibility modules
     print("\n[7/7] Phase 3: Analyzing module compatibility...")
@@ -270,6 +552,18 @@ def main():
     with open(report_path, "w") as f:
         json.dump(report, f, indent=2)
 
+    # Optional: Generate Hyvä stubs for testing without a license
+    stubs_generated = False
+    if args.with_stubs:
+        print("\n[Stubs] Generating Hyvä parent theme + module stubs...")
+        from tests.hyva_stub_generator import generate_hyva_stub, generate_hyva_module_stub
+        stubs_dir = os.path.join(output_path, "stubs")
+        stub_theme = generate_hyva_stub(stubs_dir)
+        stub_module = generate_hyva_module_stub(stubs_dir)
+        stubs_generated = True
+        print(f"  Stub theme:  {stub_theme}")
+        print(f"  Stub module: {stub_module}")
+
     print(f"\n{'='*60}")
     print(f"  Generation complete!")
     print(f"{'='*60}")
@@ -280,6 +574,9 @@ def main():
     print(f"  Compat:    {len(compat_modules)} stub modules")
     print(f"  Report:    {report_path}")
     print(f"\n  Next steps:")
+    if stubs_generated:
+        print(f"  0. Copy stubs/{os.path.basename(stub_theme)} → app/design/frontend/Hyva/default/")
+        print(f"     Copy stubs/{os.path.basename(stub_module)} → app/code/Hyva/Theme/")
     print(f"  1. cd {theme_base}/web/tailwind && npm install && npm run build")
     print(f"  2. Install Hyvä compat packages (see compatibility/COMPATIBILITY_REPORT.md)")
     print(f"  3. Copy stub modules from compatibility/stubs/ to app/code/")

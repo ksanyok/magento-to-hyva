@@ -47,7 +47,7 @@ def generate_composer_json(vendor: str, theme_name: str) -> str:
     }, indent=4) + "\n"
 
 
-def generate_tailwind_config(tokens: DesignTokens) -> str:
+def generate_tailwind_config(tokens: DesignTokens, vendor: str = "MediaDivision", theme: str = "FTCShopHyva") -> str:
     """Generate tailwind.config.js from design tokens."""
     colors_js = "{\n"
     # Map FTC color names to Tailwind-friendly names
@@ -160,11 +160,13 @@ module.exports = hyvaModules.mergeTailwindConfig({{
   // Scan phtml and layout xml files for Tailwind classes
   content: [
     // this theme
-    '../../../../../../app/design/frontend/MediaDivision/FTCShopHyva/**/*.phtml',
-    '../../../../../../app/design/frontend/MediaDivision/FTCShopHyva/web/tailwind/*.css',
+    '../../../../../../app/design/frontend/{vendor}/{theme}/**/*.phtml',
+    '../../../../../../app/design/frontend/{vendor}/{theme}/web/tailwind/*.css',
     // parent theme
     '../../../../../../vendor/hyva-themes/magento2-default-theme/**/*.phtml',
     '../../../../../../vendor/hyva-themes/magento2-default-theme/**/*.xml',
+    // compatibility modules (custom Hyvä stubs)
+    '../../../../../../app/code/**/*Hyva*/**/*.phtml',
     // hyva modules
     ...hyvaModules.getModuleJitContent(),
   ],
@@ -388,7 +390,7 @@ def scaffold_hyva_theme(
         "theme.xml": generate_theme_xml(title),
         "composer.json": generate_composer_json(vendor, theme_name),
         "package.json": generate_package_json(theme_name),
-        "web/tailwind/tailwind.config.js": generate_tailwind_config(tokens),
+        "web/tailwind/tailwind.config.js": generate_tailwind_config(tokens, vendor, theme_name),
         "web/tailwind/tailwind-source.css": generate_tailwind_source_css(),
         "web/css/fonts.css": generate_fonts_css(source_fonts_dir),
         "Magento_Theme/layout/default.xml": generate_default_xml(),
