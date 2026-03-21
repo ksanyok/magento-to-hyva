@@ -1,0 +1,164 @@
+<?php
+/**
+ * FTC Cashmere — Hyvä Add to Cart
+ * Replaces jQuery fade/modal with Alpine.js transitions
+ * Replaces ObjectManager with proper block injection
+ */
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Magento\Catalog\Block\Product\View;
+use Magento\Framework\Escaper;
+
+/** @var View $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+$_product = $block->getProduct();
+$buttonTitle = __('Add to Cart');
+
+// Get category info for size chart (replaces ObjectManager usage)
+$categoryIds = $_product->getCategoryIds();
+$showWomenChart = false;
+$showMenChart = false;
+foreach ($categoryIds as $catId) {
+    // Women's categories (parent ID 4 or ID 4)
+    if (in_array($catId, [4]) || $catId == 4) {
+        $showWomenChart = true;
+    }
+    // Men's categories (parent ID 5 or ID 5)
+    if (in_array($catId, [5]) || $catId == 5) {
+        $showMenChart = true;
+    }
+}
+$showSizeChart = $showWomenChart || $showMenChart;
+?>
+
+<?php if ($_product->isSaleable()) : ?>
+<div class="box-tocart"
+     x-data="{
+        qty: <?= (int)$block->getProductDefaultQty() ?>,
+        sizeChartOpen: false,
+        loading: false,
+
+        decrementQty() {
+            if (this.qty > 1) this.qty--;
+        },
+        incrementQty() {
+            this.qty++;
+        }
+     }">
+
+    <?php if ($showSizeChart) : ?>
+    <!-- Size Chart Link -->
+    <button type="button"
+            class="text-sm uppercase tracking-wider text-dark-lighter
+                   underline hover:text-primary transition-colors duration-DEFAULT
+                   cursor-pointer mb-4"
+            @click="sizeChartOpen = true">
+        <?= $escaper->escapeHtml(__('Sizes Chart')) ?>
+    </button>
+
+    <!-- Size Chart Modal -->
+    <div x-show="sizeChartOpen"
+         x-cloak
+         x-transition:enter="transition ease-out duration-DEFAULT"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-fast"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-modal flex items-center justify-center p-4"
+         @click.self="sizeChartOpen = false"
+         @keydown.escape.window="sizeChartOpen = false">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-dark/35"></div>
+        <!-- Modal Content -->
+        <div class="relative bg-white p-6 max-w-2xl max-h-[90vh] overflow-auto"
+             @click.stop>
+            <button type="button"
+                    class="absolute top-4 right-4 text-dark hover:text-primary
+                           transition-colors cursor-pointer"
+                    @click="sizeChartOpen = false"
+                    aria-label="<?= $escaper->escapeHtmlAttr(__('Close')) ?>">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+            <?php if ($showWomenChart) : ?>
+                <img src="<?= $escaper->escapeUrl($block->getViewFileUrl('images/Size_Guide_MMT_Damen_2021.png')) ?>"
+                     alt="<?= $escaper->escapeHtmlAttr(__('Women Size Chart')) ?>"
+                     class="w-full"
+                     loading="lazy"/>
+            <?php endif; ?>
+            <?php if ($showMenChart) : ?>
+                <img src="<?= $escaper->escapeUrl($block->getViewFileUrl('images/Size_Guide_MMT_Herren_2021.png')) ?>"
+                     alt="<?= $escaper->escapeHtmlAttr(__('Men Size Chart')) ?>"
+                     class="w-full"
+                     loading="lazy"/>
+            <?php endif; ?>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <!-- Quantity + Add to Cart -->
+    <div class="fieldset flex items-center gap-4 mt-4">
+        <?php if ($block->shouldRenderQuantity()) : ?>
+        <div class="field qty flex items-center border border-dark">
+            <button type="button"
+                    class="w-10 h-10 flex items-center justify-center text-lg
+                           text-dark hover:text-primary transition-colors cursor-pointer
+                           select-none"
+                    @click="decrementQty()"
+                    aria-label="<?= $escaper->escapeHtmlAttr(__('Decrease quantity')) ?>">
+                &minus;
+            </button>
+            <input type="number"
+                   name="qty"
+                   id="qty"
+                   min="1"
+                   :value="qty"
+                   @change="qty = Math.max(1, parseInt($event.target.value) || 1)"
+                   title="<?= $escaper->escapeHtmlAttr(__('Qty')) ?>"
+                   class="w-12 h-10 text-center border-x border-dark text-base
+                          focus:outline-none [appearance:textfield]
+                          [&::-webkit-outer-spin-button]:appearance-none
+                          [&::-webkit-inner-spin-button]:appearance-none"
+                   data-validate="<?= $escaper->escapeHtmlAttr(json_encode($block->getQuantityValidators())) ?>"
+            />
+            <button type="button"
+                    class="w-10 h-10 flex items-center justify-center text-lg
+                           text-dark hover:text-primary transition-colors cursor-pointer
+                           select-none"
+                    @click="incrementQty()"
+                    aria-label="<?= $escaper->escapeHtmlAttr(__('Increase quantity')) ?>">
+                &plus;
+            </button>
+        </div>
+        <?php endif; ?>
+
+        <div class="actions flex-1">
+            <button type="submit"
+                    title="<?= $escaper->escapeHtmlAttr($buttonTitle) ?>"
+                    class="btn-primary w-full py-4"
+                    id="product-addtocart-button"
+                    :disabled="loading"
+                    @click="loading = true">
+                <span x-show="!loading"><?= $escaper->escapeHtml($buttonTitle) ?></span>
+                <span x-show="loading" x-cloak class="inline-flex items-center justify-center gap-2">
+                    <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                        <circle class="opacity-25" cx="12" cy="12" r="10"
+                                stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor"
+                              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                    </svg>
+                    <?= $escaper->escapeHtml(__('Adding...')) ?>
+                </span>
+            </button>
+            <?= $block->getChildHtml('', true) ?>
+        </div>
+    </div>
+</div>
+<?php endif; ?>

@@ -1,0 +1,214 @@
+<?php
+/**
+ * FTC Cashmere — Hyvä Customer Registration Form
+ * Replaces mage/validation with Alpine.js + HTML5 validation
+ * Replaces jQuery password strength with Alpine.js
+ */
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\ReCaptcha;
+use Magento\Customer\Block\Form\Register;
+use Magento\Framework\Escaper;
+
+/** @var Register $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+$directoryHelper = $this->helper(\Magento\Directory\Helper\Data::class);
+$formData = $block->getFormData();
+?>
+
+<div class="max-w-2xl mx-auto py-8 px-4"
+     x-data="{
+        loading: false,
+        showPassword: false,
+        showConfirmPassword: false,
+        showAddressFields: <?= $block->getShowAddressFields() ? 'true' : 'false' ?>,
+        password: '',
+
+        get passwordStrength() {
+            const p = this.password;
+            if (!p) return { label: '', width: '0%', color: 'bg-container' };
+            let score = 0;
+            if (p.length >= 8) score++;
+            if (p.length >= 12) score++;
+            if (/[a-z]/.test(p) && /[A-Z]/.test(p)) score++;
+            if (/\d/.test(p)) score++;
+            if (/[^a-zA-Z0-9]/.test(p)) score++;
+            const levels = [
+                { label: '<?= $escaper->escapeJs(__('Weak')) ?>', width: '20%', color: 'bg-secondary' },
+                { label: '<?= $escaper->escapeJs(__('Fair')) ?>', width: '40%', color: 'bg-secondary' },
+                { label: '<?= $escaper->escapeJs(__('Good')) ?>', width: '60%', color: 'bg-primary' },
+                { label: '<?= $escaper->escapeJs(__('Strong')) ?>', width: '80%', color: 'bg-accent' },
+                { label: '<?= $escaper->escapeJs(__('Very Strong')) ?>', width: '100%', color: 'bg-accent' },
+            ];
+            return levels[Math.min(score, 4)];
+        }
+     }">
+
+    <h1 class="text-2xl font-semibold uppercase tracking-wider mb-8 text-center">
+        <?= $escaper->escapeHtml(__('Create New Customer Account')) ?>
+    </h1>
+
+    <form action="<?= $escaper->escapeUrl($block->getPostActionUrl()) ?>"
+          method="post"
+          id="form-validate"
+          @submit="loading = true"
+          autocomplete="off">
+        <?= $block->getBlockHtml('formkey') ?>
+
+        <!-- Personal Information -->
+        <fieldset class="mb-8">
+            <h2 class="text-sm font-semibold uppercase tracking-wider mb-4 pb-2 border-b border-container">
+                <?= $escaper->escapeHtml(__('Personal Information')) ?>
+            </h2>
+            <div class="space-y-4">
+                <?php if ($block->getLayout()->getBlock('customer.form.register.fields.before')) : ?>
+                    <?= $block->getLayout()->getBlock('customer.form.register.fields.before')->toHtml() ?>
+                <?php endif; ?>
+
+                <!-- First Name -->
+                <div>
+                    <label for="firstname" class="block text-xs uppercase tracking-wider text-dark-lighter mb-1">
+                        <?= $escaper->escapeHtml(__('First Name')) ?> <span class="text-secondary">*</span>
+                    </label>
+                    <input type="text" name="firstname" id="firstname"
+                           value="<?= $escaper->escapeHtmlAttr($formData->getFirstname()) ?>"
+                           required
+                           autocomplete="given-name"
+                           class="form-input w-full">
+                </div>
+
+                <!-- Last Name -->
+                <div>
+                    <label for="lastname" class="block text-xs uppercase tracking-wider text-dark-lighter mb-1">
+                        <?= $escaper->escapeHtml(__('Last Name')) ?> <span class="text-secondary">*</span>
+                    </label>
+                    <input type="text" name="lastname" id="lastname"
+                           value="<?= $escaper->escapeHtmlAttr($formData->getLastname()) ?>"
+                           required
+                           autocomplete="family-name"
+                           class="form-input w-full">
+                </div>
+
+                <?php if ($block->isNewsletterEnabled()) : ?>
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" name="is_subscribed" id="is_subscribed"
+                           value="1" class="form-checkbox"
+                           <?php if ($formData->getIsSubscribed()) : ?>checked<?php endif; ?>>
+                    <label for="is_subscribed" class="text-sm text-dark">
+                        <?= $escaper->escapeHtml(__('Sign Up for Newsletter')) ?>
+                    </label>
+                </div>
+                <?php endif; ?>
+            </div>
+        </fieldset>
+
+        <!-- Sign-in Information -->
+        <fieldset class="mb-8">
+            <h2 class="text-sm font-semibold uppercase tracking-wider mb-4 pb-2 border-b border-container">
+                <?= $escaper->escapeHtml(__('Sign-in Information')) ?>
+            </h2>
+            <div class="space-y-4">
+                <!-- Email -->
+                <div>
+                    <label for="email_address" class="block text-xs uppercase tracking-wider text-dark-lighter mb-1">
+                        <?= $escaper->escapeHtml(__('Email')) ?> <span class="text-secondary">*</span>
+                    </label>
+                    <input type="email" name="email" id="email_address"
+                           value="<?= $escaper->escapeHtmlAttr($formData->getEmail()) ?>"
+                           required
+                           autocomplete="email"
+                           class="form-input w-full">
+                </div>
+
+                <!-- Password -->
+                <div>
+                    <label for="password" class="block text-xs uppercase tracking-wider text-dark-lighter mb-1">
+                        <?= $escaper->escapeHtml(__('Password')) ?> <span class="text-secondary">*</span>
+                    </label>
+                    <div class="relative">
+                        <input :type="showPassword ? 'text' : 'password'"
+                               name="password" id="password"
+                               required
+                               minlength="8"
+                               autocomplete="new-password"
+                               x-model="password"
+                               class="form-input w-full pr-10">
+                        <button type="button"
+                                @click="showPassword = !showPassword"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-dark-lighter
+                                       hover:text-dark cursor-pointer"
+                                :aria-label="showPassword ? '<?= $escaper->escapeJs(__('Hide password')) ?>' : '<?= $escaper->escapeJs(__('Show password')) ?>'">
+                            <svg x-show="!showPassword" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                            <svg x-show="showPassword" x-cloak class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12c1.292 4.338 5.31 7.5 10.066 7.5.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <!-- Password Strength Meter -->
+                    <div class="mt-2" x-show="password.length > 0" x-cloak>
+                        <div class="h-1 bg-container rounded overflow-hidden">
+                            <div class="h-full transition-all duration-DEFAULT"
+                                 :class="passwordStrength.color"
+                                 :style="'width: ' + passwordStrength.width"></div>
+                        </div>
+                        <p class="text-xs text-dark-lighter mt-1" x-text="passwordStrength.label"></p>
+                    </div>
+                </div>
+
+                <!-- Confirm Password -->
+                <div>
+                    <label for="password-confirmation" class="block text-xs uppercase tracking-wider text-dark-lighter mb-1">
+                        <?= $escaper->escapeHtml(__('Confirm Password')) ?> <span class="text-secondary">*</span>
+                    </label>
+                    <div class="relative">
+                        <input :type="showConfirmPassword ? 'text' : 'password'"
+                               name="password_confirmation" id="password-confirmation"
+                               required
+                               minlength="8"
+                               autocomplete="new-password"
+                               class="form-input w-full pr-10">
+                        <button type="button"
+                                @click="showConfirmPassword = !showConfirmPassword"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-dark-lighter
+                                       hover:text-dark cursor-pointer"
+                                :aria-label="showConfirmPassword ? '<?= $escaper->escapeJs(__('Hide password')) ?>' : '<?= $escaper->escapeJs(__('Show password')) ?>'">
+                            <svg x-show="!showConfirmPassword" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                            <svg x-show="showConfirmPassword" x-cloak class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12c1.292 4.338 5.31 7.5 10.066 7.5.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- Submit -->
+        <div class="flex flex-col items-center gap-4">
+            <button type="submit"
+                    class="btn-primary w-full py-4"
+                    :disabled="loading">
+                <span x-show="!loading"><?= $escaper->escapeHtml(__('Create an Account')) ?></span>
+                <span x-show="loading" x-cloak class="inline-flex items-center gap-2">
+                    <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                    </svg>
+                    <?= $escaper->escapeHtml(__('Creating...')) ?>
+                </span>
+            </button>
+            <a href="<?= $escaper->escapeUrl($block->getLoginUrl()) ?>"
+               class="text-sm text-dark-lighter hover:text-primary transition-colors">
+                <?= $escaper->escapeHtml(__('Already have an account? Sign in')) ?>
+            </a>
+        </div>
+    </form>
+</div>

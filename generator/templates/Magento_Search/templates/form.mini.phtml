@@ -1,0 +1,162 @@
+<?php
+/**
+ * FTC Cashmere — Hyvä Mini Search Form
+ * Replaces Luma quickSearch widget with Alpine.js autocomplete
+ */
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+use Magento\Search\Helper\Data as SearchHelper;
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+/** @var SearchHelper $helper */
+
+$helper = $this->helper(SearchHelper::class);
+/** @var HeroiconsOutline $heroicons */
+$heroicons = $viewModels->require(HeroiconsOutline::class);
+?>
+
+<div class="block block-search"
+     x-data="initMiniSearch()"
+     x-on:keydown.escape="close()"
+     @click.outside="close()">
+    <form class="form minisearch"
+          id="search_mini_form"
+          action="<?= $escaper->escapeUrl($helper->getResultUrl()) ?>"
+          method="get">
+        <label class="sr-only" for="search">
+            <?= $escaper->escapeHtml(__('Search')) ?>
+        </label>
+        <div class="relative">
+            <input id="search"
+                   type="search"
+                   name="<?= $escaper->escapeHtmlAttr($helper->getQueryParamName()) ?>"
+                   value="<?= /** @noEscape */ $helper->getEscapedQueryText() ?>"
+                   placeholder="<?= $escaper->escapeHtmlAttr(__('Search')) ?>"
+                   maxlength="<?= $escaper->escapeHtmlAttr($helper->getMaxQueryLength()) ?>"
+                   class="w-full py-3 pl-4 pr-10 border border-dark text-base
+                          placeholder-dark-lightest focus:outline-none focus:border-primary
+                          transition-colors duration-DEFAULT"
+                   autocomplete="off"
+                   role="combobox"
+                   aria-haspopup="listbox"
+                   aria-autocomplete="both"
+                   :aria-expanded="showSuggestions ? 'true' : 'false'"
+                   x-ref="searchInput"
+                   @input.debounce.300ms="search($event.target.value)"
+                   @focus="open()"
+                   @keydown.arrow-down.prevent="highlightNext()"
+                   @keydown.arrow-up.prevent="highlightPrev()"
+                   @keydown.enter="submitOrSelect($event)"
+            />
+            <!-- Search Icon / Submit -->
+            <button type="submit"
+                    title="<?= $escaper->escapeHtmlAttr(__('Search')) ?>"
+                    class="absolute right-0 top-0 h-full px-3 flex items-center
+                           text-dark hover:text-primary transition-colors duration-DEFAULT"
+                    aria-label="<?= $escaper->escapeHtmlAttr(__('Search')) ?>">
+                <?= $heroicons->searchHtml('w-5 h-5', 20, 20, ['aria-hidden' => 'true']); ?>
+            </button>
+        </div>
+
+        <!-- Autocomplete Suggestions -->
+        <div x-show="showSuggestions && suggestions.length > 0"
+             x-cloak
+             x-transition:enter="transition ease-out duration-DEFAULT"
+             x-transition:enter-start="opacity-0 -translate-y-1"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-fast"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="absolute z-popup mt-0 w-full bg-white border border-gray-light shadow-sm"
+             role="listbox"
+             id="search_autocomplete">
+            <template x-for="(item, index) in suggestions" :key="index">
+                <a :href="item.url || '#'"
+                   class="block px-4 py-2 text-sm text-dark hover:bg-gray-lightest
+                          transition-colors duration-fast cursor-pointer"
+                   :class="{ 'bg-gray-lightest': highlightedIndex === index }"
+                   role="option"
+                   :aria-selected="highlightedIndex === index"
+                   @mouseenter="highlightedIndex = index"
+                   @click.prevent="selectSuggestion(item)"
+                   x-text="item.title">
+                </a>
+            </template>
+        </div>
+    </form>
+</div>
+
+<script>
+    function initMiniSearch() {
+        return {
+            showSuggestions: false,
+            suggestions: [],
+            highlightedIndex: -1,
+            minLength: <?= (int)$helper->getMinQueryLength() ?>,
+
+            open() {
+                if (this.suggestions.length > 0) {
+                    this.showSuggestions = true;
+                }
+            },
+
+            close() {
+                this.showSuggestions = false;
+                this.highlightedIndex = -1;
+            },
+
+            async search(query) {
+                if (query.length < this.minLength) {
+                    this.suggestions = [];
+                    this.showSuggestions = false;
+                    return;
+                }
+
+                try {
+                    const response = await fetch(
+                        '<?= $escaper->escapeUrl($helper->getSuggestUrl()) ?>' +
+                        '?q=' + encodeURIComponent(query),
+                        { headers: { 'X-Requested-With': 'XMLHttpRequest' } }
+                    );
+                    const data = await response.json();
+                    this.suggestions = data || [];
+                    this.showSuggestions = this.suggestions.length > 0;
+                    this.highlightedIndex = -1;
+                } catch (e) {
+                    this.suggestions = [];
+                }
+            },
+
+            highlightNext() {
+                if (this.highlightedIndex < this.suggestions.length - 1) {
+                    this.highlightedIndex++;
+                }
+            },
+
+            highlightPrev() {
+                if (this.highlightedIndex > 0) {
+                    this.highlightedIndex--;
+                }
+            },
+
+            selectSuggestion(item) {
+                this.$refs.searchInput.value = item.title;
+                this.close();
+                this.$refs.searchInput.form.submit();
+            },
+
+            submitOrSelect(event) {
+                if (this.highlightedIndex >= 0 && this.suggestions[this.highlightedIndex]) {
+                    event.preventDefault();
+                    this.selectSuggestion(this.suggestions[this.highlightedIndex]);
+                }
+            }
+        };
+    }
+</script>

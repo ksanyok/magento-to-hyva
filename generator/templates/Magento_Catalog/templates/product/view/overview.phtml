@@ -1,0 +1,234 @@
+<?php
+/**
+ * FTC Cashmere — Hyvä Product Overview (Details/Materials/Care)
+ * Replaces ObjectManager + jQuery popups with Alpine.js modals
+ * Preserves: material detection, care symbols, description parsing, CMS block popups
+ */
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Magento\Catalog\Block\Product\View;
+use Magento\Framework\Escaper;
+
+/** @var View $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+$_product = $block->getProduct();
+
+// Material detection
+$materialAttr = $_product->getAttributeText('materials');
+$material = is_array($materialAttr) ? implode(',', $materialAttr) : (string)$materialAttr;
+
+$isLyocell  = stripos($material, 'Lyocell') !== false || stripos($material, 'Seacell') !== false;
+$isCashmere = stripos($material, 'Cashmere') !== false || stripos($material, 'Kaschmir') !== false;
+$isCotton   = stripos($material, 'Cotton') !== false || stripos($material, 'Baumwolle') !== false;
+$isLinen    = stripos($material, 'Linen') !== false || stripos($material, 'Leinen') !== false;
+
+// Parse description into parts
+$description = (string)$_product->getDescription();
+
+// For configurable products, try to get description from first child
+if ($_product->getTypeId() === 'configurable' && empty(trim(strip_tags($description)))) {
+    $children = $_product->getTypeInstance()->getUsedProducts($_product);
+    foreach ($children as $child) {
+        if ($child->getDescription()) {
+            $description = (string)$child->getDescription();
+            break;
+        }
+    }
+}
+
+// Split description: text before <ul becomes "description", <ul...> part becomes "details"
+$detailsHtml = '';
+$descriptionText = $description;
+if (strpos($description, '<ul') !== false) {
+    $parts = explode('<ul', $description, 2);
+    $descriptionText = $parts[0];
+    $detailsHtml = '<ul' . $parts[1];
+}
+$descriptionText = str_replace(['<div>', '</div>'], '', $descriptionText);
+$detailsHtml = str_replace(['<div>', '</div>'], '', $detailsHtml);
+
+// Care symbols
+$pflegesymbole = '';
+try {
+    $pflegesymbole = $_product->getResource()->getAttribute('pflegesymbol')
+        ->getFrontend()->getValue($_product);
+} catch (\Exception $e) {
+    // Attribute may not exist
+}
+
+// Material text
+$materialText = '';
+try {
+    $materialText = $_product->getResource()->getAttribute('material')
+        ->getFrontend()->getValue($_product);
+} catch (\Exception $e) {
+    // Attribute may not exist
+}
+
+// Material care images (using theme view file URLs)
+$careImageMap = [
+    'cashmere' => 'images/material-and-care-cashmere.jpg',
+    'lyocell'  => 'images/material-and-care-lyocell.jpg',
+    'cotton'   => 'images/material-and-care-cotton.jpg',
+    'linen'    => 'images/material-and-care-linen.jpg',
+];
+?>
+
+<section class="mt-8" x-data="{ carePopup: '' }">
+    <!-- Details -->
+    <?php if (!empty(trim(strip_tags($detailsHtml)))) : ?>
+    <div class="mb-6">
+        <h3 class="text-sm font-semibold uppercase tracking-wider mb-3">
+            <?= $escaper->escapeHtml(__('Details')) ?>
+        </h3>
+        <div class="text-sm text-dark-light leading-relaxed prose prose-sm max-w-none
+                    [&_ul]:list-disc [&_ul]:pl-5 [&_li]:mb-1">
+            <?= /* @noEscape */ $detailsHtml ?>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <!-- Size & Fit -->
+    <?php $shortDesc = $_product->getShortDescription(); ?>
+    <?php if (!empty(trim(strip_tags((string)$shortDesc)))) : ?>
+    <div class="mb-6">
+        <h3 class="text-sm font-semibold uppercase tracking-wider mb-3">
+            <?= $escaper->escapeHtml(__('Size and Fit')) ?>
+        </h3>
+        <div class="text-sm text-dark-light leading-relaxed">
+            <?= /* @noEscape */ $shortDesc ?>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <!-- Material & Care -->
+    <div class="mb-6">
+        <h3 class="text-sm font-semibold uppercase tracking-wider mb-3">
+            <?= $escaper->escapeHtml(__('Material & Care')) ?>
+        </h3>
+
+        <!-- Material care image -->
+        <?php if ($isCashmere) : ?>
+            <img src="<?= $escaper->escapeUrl($block->getViewFileUrl($careImageMap['cashmere'])) ?>"
+                 alt="<?= $escaper->escapeHtmlAttr(__('Cashmere Care')) ?>"
+                 class="w-full mb-4 cursor-pointer"
+                 @click="carePopup = 'cashmere'" loading="lazy"/>
+        <?php elseif ($isLyocell) : ?>
+            <img src="<?= $escaper->escapeUrl($block->getViewFileUrl($careImageMap['lyocell'])) ?>"
+                 alt="<?= $escaper->escapeHtmlAttr(__('Lyocell Care')) ?>"
+                 class="w-full mb-4 cursor-pointer"
+                 @click="carePopup = 'lyocell'" loading="lazy"/>
+        <?php elseif ($isCotton) : ?>
+            <img src="<?= $escaper->escapeUrl($block->getViewFileUrl($careImageMap['cotton'])) ?>"
+                 alt="<?= $escaper->escapeHtmlAttr(__('Cotton Care')) ?>"
+                 class="w-full mb-4" loading="lazy"/>
+        <?php elseif ($isLinen) : ?>
+            <img src="<?= $escaper->escapeUrl($block->getViewFileUrl($careImageMap['linen'])) ?>"
+                 alt="<?= $escaper->escapeHtmlAttr(__('Linen Care')) ?>"
+                 class="w-full mb-4" loading="lazy"/>
+        <?php endif; ?>
+
+        <!-- Care symbols -->
+        <?php if (!empty($pflegesymbole)) : ?>
+            <div class="flex flex-wrap gap-2 mb-4 text-2xl">
+                <?= /* @noEscape */ implode('', explode(';', $pflegesymbole)) ?>
+            </div>
+        <?php endif; ?>
+
+        <!-- Material text -->
+        <?php if (!empty($materialText) && $materialText !== 'No') : ?>
+            <p class="text-sm text-dark-light mb-3">
+                <?= $escaper->escapeHtml($materialText) ?>
+            </p>
+        <?php endif; ?>
+
+        <!-- Care links -->
+        <?php if ($isCashmere) : ?>
+            <button type="button"
+                    class="text-sm underline text-dark hover:text-primary
+                           transition-colors cursor-pointer"
+                    @click="carePopup = 'cashmere'">
+                <?= $escaper->escapeHtml(__('Cashmere Care')) ?>
+            </button>
+        <?php endif; ?>
+        <?php if ($isLyocell) : ?>
+            <button type="button"
+                    class="text-sm underline text-dark hover:text-primary
+                           transition-colors cursor-pointer"
+                    @click="carePopup = 'lyocell'">
+                <?= $escaper->escapeHtml(__('Lyocell Care')) ?>
+            </button>
+        <?php endif; ?>
+    </div>
+
+    <!-- Care Popup Modal (Cashmere) -->
+    <?php if ($isCashmere) : ?>
+    <div x-show="carePopup === 'cashmere'"
+         x-cloak
+         x-transition:enter="transition ease-out duration-DEFAULT"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-fast"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-modal flex items-center justify-center p-4"
+         @click.self="carePopup = ''"
+         @keydown.escape.window="carePopup = ''">
+        <div class="absolute inset-0 bg-dark/35"></div>
+        <div class="relative bg-white p-6 max-w-2xl max-h-[90vh] overflow-auto w-full" @click.stop>
+            <button type="button"
+                    class="absolute top-4 right-4 text-dark hover:text-primary
+                           transition-colors cursor-pointer"
+                    @click="carePopup = ''"
+                    aria-label="<?= $escaper->escapeHtmlAttr(__('Close')) ?>">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+            <?= $block->getChildHtml('cashmere_care_popup') ?>
+            <button type="button"
+                    class="mt-4 btn-primary w-full py-3"
+                    @click="carePopup = ''">
+                <?= $escaper->escapeHtml(__('Close Window')) ?>
+            </button>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <!-- Care Popup Modal (Lyocell) -->
+    <?php if ($isLyocell) : ?>
+    <div x-show="carePopup === 'lyocell'"
+         x-cloak
+         x-transition:enter="transition ease-out duration-DEFAULT"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-fast"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-modal flex items-center justify-center p-4"
+         @click.self="carePopup = ''"
+         @keydown.escape.window="carePopup = ''">
+        <div class="absolute inset-0 bg-dark/35"></div>
+        <div class="relative bg-white p-6 max-w-2xl max-h-[90vh] overflow-auto w-full" @click.stop>
+            <button type="button"
+                    class="absolute top-4 right-4 text-dark hover:text-primary
+                           transition-colors cursor-pointer"
+                    @click="carePopup = ''"
+                    aria-label="<?= $escaper->escapeHtmlAttr(__('Close')) ?>">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+            <?= $block->getChildHtml('lyocell_care_popup') ?>
+            <button type="button"
+                    class="mt-4 btn-primary w-full py-3"
+                    @click="carePopup = ''">
+                <?= $escaper->escapeHtml(__('Close Window')) ?>
+            </button>
+        </div>
+    </div>
+    <?php endif; ?>
+</section>

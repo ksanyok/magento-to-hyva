@@ -1,0 +1,124 @@
+"""
+Template Converter — converts Luma phtml templates to Hyvä equivalents.
+Uses Hyvä patterns: Alpine.js, Tailwind CSS, no KnockoutJS/RequireJS.
+"""
+import os
+import re
+from pathlib import Path
+
+
+# Maps Luma modules to their Hyvä template handling strategy
+TEMPLATE_STRATEGY = {
+    # Templates that Hyvä provides natively — use Hyvä defaults, only customize styling
+    "Magento_Catalog/layout": "customize",
+    "Magento_Checkout/layout": "customize",
+    "Magento_Customer/layout": "customize",
+    "Magento_Sales/layout": "customize",
+
+    # Templates we need to create Hyvä versions of
+    "Magento_Catalog/templates/product/list.phtml": "rewrite",
+    "Magento_Catalog/templates/product/list/items.phtml": "rewrite",
+    "Magento_Catalog/templates/product/list/toolbar.phtml": "skip",  # Hyvä has its own
+    "Magento_Catalog/templates/product/list/toolbar/amount.phtml": "skip",
+    "Magento_Catalog/templates/product/list/toolbar/sorter.phtml": "skip",
+    "Magento_Catalog/templates/product/view/addtocart.phtml": "rewrite",
+    "Magento_Catalog/templates/product/view/gallery.phtml": "rewrite",
+    "Magento_Catalog/templates/product/view/images.phtml": "rewrite",
+    "Magento_Catalog/templates/product/view/details.phtml": "skip",  # Hyvä default OK
+    "Magento_Catalog/templates/product/view/overview.phtml": "rewrite",
+    "Magento_Catalog/templates/product/view/underview.phtml": "rewrite",
+    "Magento_Catalog/templates/category/cms.phtml": "skip",
+
+    "Magento_CatalogWidget/templates/product/widget/content/grid.phtml": "rewrite",
+
+    "Magento_Checkout/templates/cart/minicart.phtml": "rewrite",
+    "Magento_Checkout/templates/cart.phtml": "skip",  # Hyvä provides
+    "Magento_Checkout/templates/cart/form.phtml": "skip",
+    "Magento_Checkout/templates/cart/item/default.phtml": "skip",
+    "Magento_Checkout/templates/cart/item/configure/updatecart.phtml": "skip",
+    "Magento_Checkout/templates/cart/item/renderer/actions/edit.phtml": "skip",
+    "Magento_Checkout/templates/cart/item/renderer/actions/remove.phtml": "skip",
+
+    # KnockoutJS templates — not needed in Hyvä
+    "Magento_Checkout/web/template/minicart/content.html": "remove",
+    "Magento_Checkout/web/template/minicart/item/default.html": "remove",
+    "Magento_CheckoutAgreements/web/template/checkout/checkout-agreements.html": "remove",
+    "Magento_OfflinePayments/web/template/payment/banktransfer.html": "remove",
+    "Magento_OfflinePayments/web/template/payment/checkmo.html": "remove",
+
+    "Magento_Cms/templates/newsletter.phtml": "rewrite",
+    "Magento_Cms/templates/currentyear.phtml": "copy",
+
+    "Magento_ConfigurableProduct/templates/product/price/final_price.phtml": "skip",
+
+    "Magento_Customer/templates/form/login.phtml": "rewrite",
+    "Magento_Customer/templates/form/register.phtml": "rewrite",
+    "Magento_Customer/templates/form/edit.phtml": "rewrite",
+    "Magento_Customer/templates/form/newsletter.phtml": "skip",
+    "Magento_Customer/templates/account/dashboard/address.phtml": "skip",
+    "Magento_Customer/templates/account/dashboard/info.phtml": "skip",
+    "Magento_Customer/templates/account/link/authorization.phtml": "skip",
+    "Magento_Customer/templates/address/edit.phtml": "rewrite",
+    "Magento_Customer/templates/address/grid.phtml": "skip",
+
+    "Magento_LayeredNavigation/templates/layer/view.phtml": "skip",  # Hyvä provides
+
+    "Magento_Search/templates/form.mini.phtml": "rewrite",
+    "Magento_Store/templates/switch/languages.phtml": "rewrite",
+
+    "Magento_Sales/templates/email": "copy",  # Email templates unaffected by Hyvä
+    "Magento_Sales/templates/order/history.phtml": "skip",
+    "Magento_Sales/templates/order/recent.phtml": "skip",
+    "Magento_Sales/templates/order/view.phtml": "skip",
+    "Magento_Sales/templates/order/items.phtml": "skip",
+    "Magento_Sales/templates/order/totals.phtml": "skip",
+    "Magento_Sales/templates/order/order_status.phtml": "skip",
+    "Magento_Sales/templates/order/items/renderer/default.phtml": "skip",
+
+    "Magento_ProductAlert/templates/email": "copy",  # Email only
+    "Magento_Tax/templates/order/tax.phtml": "skip",
+    "Magento_Weee/templates/item/price/unit.phtml": "skip",
+
+    "Magestall_GuestWishlist/templates/link.phtml": "rewrite",
+
+    "Amasty_Xnotif/templates/product/view_email.phtml": "rewrite",
+}
+
+
+def get_strategy(rel_path: str) -> str:
+    """Determine conversion strategy for a template file."""
+    # Check exact match first
+    if rel_path in TEMPLATE_STRATEGY:
+        return TEMPLATE_STRATEGY[rel_path]
+
+    # Check prefix matches (for directories like email/)
+    for pattern, strategy in TEMPLATE_STRATEGY.items():
+        if rel_path.startswith(pattern):
+            return strategy
+
+    return "analyze"  # Unknown — needs manual analysis
+
+
+def plan_conversion(theme_path: str) -> dict:
+    """Plan the conversion strategy for all theme templates."""
+    plan = {
+        "rewrite": [],
+        "skip": [],
+        "copy": [],
+        "remove": [],
+        "analyze": [],
+    }
+
+    for root, dirs, files in os.walk(theme_path):
+        for fname in files:
+            fpath = os.path.join(root, fname)
+            ext = Path(fname).suffix
+
+            if ext not in (".phtml", ".xml", ".html"):
+                continue
+
+            rel = os.path.relpath(fpath, theme_path)
+            strategy = get_strategy(rel)
+            plan[strategy].append(rel)
+
+    return plan

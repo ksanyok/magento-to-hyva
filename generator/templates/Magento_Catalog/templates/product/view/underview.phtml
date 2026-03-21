@@ -1,0 +1,47 @@
+<?php
+/**
+ * FTC Cashmere — Hyvä Product Underview (Material CMS blocks + Related Products)
+ * Replaces ObjectManager with proper block/layout methods
+ * Renders material-specific CMS blocks and related products
+ */
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Magento\Catalog\Block\Product\View;
+use Magento\Framework\Escaper;
+
+/** @var View $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+$_product = $block->getProduct();
+
+// Material detection
+$materialAttr = $_product->getAttributeText('materials');
+$material = is_array($materialAttr) ? implode(',', $materialAttr) : (string)$materialAttr;
+
+$isLyocell  = stripos($material, 'Lyocell') !== false || stripos($material, 'Seacell') !== false;
+$isCashmere = stripos($material, 'Cashmere') !== false || stripos($material, 'Kaschmir') !== false;
+$isCotton   = stripos($material, 'Cotton') !== false || stripos($material, 'Baumwolle') !== false;
+$isLinen    = stripos($material, 'Linen') !== false || stripos($material, 'Leinen') !== false;
+?>
+
+<!-- Material-specific CMS content -->
+<?php if ($isCashmere) : ?>
+    <?= $block->getChildHtml('cashmere_details') ?>
+<?php endif; ?>
+
+<?php if ($isLyocell) : ?>
+    <?= $block->getChildHtml('lyocell_details') ?>
+<?php endif; ?>
+
+<?php if ($isCotton) : ?>
+    <?= $block->getChildHtml('cotton_details') ?>
+<?php endif; ?>
+
+<?php if ($isLinen) : ?>
+    <?= $block->getChildHtml('linen_details') ?>
+<?php endif; ?>
+
+<!-- Related Products -->
+<?= $block->getChildHtml('related_products') ?>

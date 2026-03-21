@@ -1,0 +1,246 @@
+<?php
+/**
+ * FTC Cashmere — Hyvä Product Gallery
+ * Replaces mage/gallery widget + magnifier with Alpine.js gallery
+ * Replaces ObjectManager with proper Hyvä ViewModels
+ */
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\ProductPage;
+use Magento\Catalog\Block\Product\View\Gallery;
+use Magento\Framework\Escaper;
+
+/** @var Gallery $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+/** @var ProductPage $productPage */
+$productPage = $viewModels->require(ProductPage::class);
+
+$_product = $block->getProduct();
+$images = $block->getGalleryImages()->getItems();
+$mainImage = current(array_filter($images, function ($img) use ($block) {
+    return $block->isMainImage($img);
+}));
+
+if (!empty($images) && empty($mainImage)) {
+    $mainImage = $block->getGalleryImages()->getFirstItem();
+}
+
+$galleryImages = [];
+foreach ($images as $image) {
+    $galleryImages[] = [
+        'thumb' => $image->getData('small_image_url'),
+        'img'   => $image->getData('medium_image_url'),
+        'full'  => $image->getData('large_image_url'),
+        'alt'   => $image->getData('label') ?: $_product->getName(),
+        'type'  => $image->getData('media_type') === 'external-video' ? 'video' : 'image',
+        'videoUrl' => $image->getData('video_url') ?? '',
+    ];
+}
+?>
+
+<div class="relative"
+     x-data="{
+        images: <?= $escaper->escapeHtmlAttr(json_encode($galleryImages)) ?>,
+        activeIndex: 0,
+        fullscreen: false,
+        touchStartX: 0,
+        touchEndX: 0,
+
+        get activeImage() {
+            return this.images[this.activeIndex] || this.images[0];
+        },
+
+        next() {
+            this.activeIndex = (this.activeIndex + 1) % this.images.length;
+        },
+
+        prev() {
+            this.activeIndex = (this.activeIndex - 1 + this.images.length) % this.images.length;
+        },
+
+        goTo(index) {
+            this.activeIndex = index;
+        },
+
+        handleTouchStart(e) {
+            this.touchStartX = e.changedTouches[0].screenX;
+        },
+
+        handleTouchEnd(e) {
+            this.touchEndX = e.changedTouches[0].screenX;
+            const diff = this.touchStartX - this.touchEndX;
+            if (Math.abs(diff) > 50) {
+                diff > 0 ? this.next() : this.prev();
+            }
+        }
+     }"
+     @keydown.arrow-right.window="if(fullscreen) next()"
+     @keydown.arrow-left.window="if(fullscreen) prev()"
+     @keydown.escape.window="fullscreen = false">
+
+    <!-- Main Image Area -->
+    <div class="relative overflow-hidden bg-container-lighter">
+        <!-- Product Badges -->
+        <div class="absolute top-4 left-4 z-10 flex flex-col gap-2">
+            <?php if ($_product->getNew()) : ?>
+                <span class="bg-dark text-white text-xs uppercase tracking-widest px-3 py-1">
+                    <?= $escaper->escapeHtml(__('New')) ?>
+                </span>
+            <?php elseif ($_product->getSale()) : ?>
+                <span class="bg-secondary text-white text-xs uppercase tracking-widest px-3 py-1">
+                    <?= $escaper->escapeHtml(__('Sale')) ?>
+                </span>
+            <?php endif; ?>
+            <?php if ($_product->getUpcycled()) : ?>
+                <span class="bg-accent text-white text-xs uppercase tracking-widest px-3 py-1">
+                    <?= $escaper->escapeHtml(__('Upcycled')) ?>
+                </span>
+            <?php endif; ?>
+        </div>
+
+        <!-- Back Link -->
+        <a href="#" onclick="history.back(); return false;"
+           class="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center
+                  text-dark-lighter hover:text-dark transition-colors duration-DEFAULT"
+           aria-label="<?= $escaper->escapeHtmlAttr(__('Go back')) ?>">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 20 20" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12.5 5l-5 5 5 5"/>
+            </svg>
+        </a>
+
+        <!-- Main Image -->
+        <template x-for="(image, index) in images" :key="index">
+            <img x-show="activeIndex === index"
+                 x-transition:enter="transition ease-out duration-DEFAULT"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 :src="image.img"
+                 :alt="image.alt"
+                 class="w-full object-contain cursor-zoom-in"
+                 @click="fullscreen = true"
+                 @touchstart="handleTouchStart($event)"
+                 @touchend="handleTouchEnd($event)"
+                 loading="lazy"
+            />
+        </template>
+
+        <!-- Arrow Navigation (desktop) -->
+        <template x-if="images.length > 1">
+            <div>
+                <button @click="prev()"
+                        class="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10
+                               flex items-center justify-center bg-white/80
+                               text-dark hover:bg-white transition-colors
+                               opacity-0 group-hover:opacity-100 cursor-pointer"
+                        aria-label="<?= $escaper->escapeHtmlAttr(__('Previous image')) ?>">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                </button>
+                <button @click="next()"
+                        class="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10
+                               flex items-center justify-center bg-white/80
+                               text-dark hover:bg-white transition-colors
+                               opacity-0 group-hover:opacity-100 cursor-pointer"
+                        aria-label="<?= $escaper->escapeHtmlAttr(__('Next image')) ?>">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </button>
+            </div>
+        </template>
+
+        <!-- Fullscreen Zoom Icon -->
+        <button @click="fullscreen = true"
+                class="absolute bottom-4 right-4 z-10 w-10 h-10
+                       flex items-center justify-center bg-white/80
+                       text-dark hover:bg-white transition-colors cursor-pointer"
+                aria-label="<?= $escaper->escapeHtmlAttr(__('Open fullscreen gallery')) ?>">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Thumbnail Strip -->
+    <template x-if="images.length > 1">
+        <div class="flex gap-2 mt-2 overflow-x-auto pb-2 scrollbar-hide">
+            <template x-for="(image, index) in images" :key="'thumb-' + index">
+                <button @click="goTo(index)"
+                        class="flex-shrink-0 w-16 h-16 border transition-colors cursor-pointer"
+                        :class="activeIndex === index ? 'border-dark' : 'border-transparent hover:border-dark-lighter'"
+                        :aria-label="'<?= $escaper->escapeJs(__('View image')) ?> ' + (index + 1)"
+                        :aria-current="activeIndex === index ? 'true' : 'false'">
+                    <img :src="image.thumb" :alt="image.alt"
+                         class="w-full h-full object-cover" loading="lazy"/>
+                </button>
+            </template>
+        </div>
+    </template>
+
+    <!-- Fullscreen Overlay -->
+    <div x-show="fullscreen"
+         x-cloak
+         x-transition:enter="transition ease-out duration-DEFAULT"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-fast"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-modal bg-white flex flex-col">
+        <!-- Fullscreen Header -->
+        <div class="flex justify-between items-center p-4">
+            <span class="text-sm text-dark-lighter" x-text="(activeIndex + 1) + ' / ' + images.length"></span>
+            <button @click="fullscreen = false"
+                    class="w-10 h-10 flex items-center justify-center text-dark
+                           hover:text-primary transition-colors cursor-pointer"
+                    aria-label="<?= $escaper->escapeHtmlAttr(__('Close fullscreen')) ?>">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+        <!-- Fullscreen Image -->
+        <div class="flex-1 flex items-center justify-center overflow-auto p-4">
+            <img :src="activeImage.full" :alt="activeImage.alt"
+                 class="max-w-full max-h-full object-contain"
+                 @touchstart="handleTouchStart($event)"
+                 @touchend="handleTouchEnd($event)"/>
+        </div>
+        <!-- Fullscreen Navigation -->
+        <div class="flex justify-center items-center gap-4 p-4">
+            <button @click="prev()"
+                    class="w-10 h-10 flex items-center justify-center border border-dark
+                           text-dark hover:bg-dark hover:text-white transition-colors cursor-pointer"
+                    aria-label="<?= $escaper->escapeHtmlAttr(__('Previous')) ?>">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+                </svg>
+            </button>
+            <button @click="next()"
+                    class="w-10 h-10 flex items-center justify-center border border-dark
+                           text-dark hover:bg-dark hover:text-white transition-colors cursor-pointer"
+                    aria-label="<?= $escaper->escapeHtmlAttr(__('Next')) ?>">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                </svg>
+            </button>
+        </div>
+        <!-- Fullscreen Thumbnails -->
+        <div class="flex justify-center gap-2 p-4 overflow-x-auto">
+            <template x-for="(image, index) in images" :key="'fs-thumb-' + index">
+                <button @click="goTo(index)"
+                        class="flex-shrink-0 w-12 h-12 border transition-colors cursor-pointer"
+                        :class="activeIndex === index ? 'border-dark' : 'border-transparent'"
+                        :aria-label="'<?= $escaper->escapeJs(__('View image')) ?> ' + (index + 1)">
+                    <img :src="image.thumb" :alt="image.alt"
+                         class="w-full h-full object-cover" loading="lazy"/>
+                </button>
+            </template>
+        </div>
+    </div>
+</div>

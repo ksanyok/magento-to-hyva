@@ -1,0 +1,246 @@
+<?php
+/**
+ * FTC Cashmere — Hyvä Customer Address Edit Form
+ * Replaces mage/validation + region updater with Alpine.js
+ */
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Magento\Customer\Block\Address\Edit;
+use Magento\Framework\Escaper;
+
+/** @var Edit $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+$directoryHelper = $this->helper(\Magento\Directory\Helper\Data::class);
+$address = $block->getAddress();
+$isDefaultBilling = $address ? $address->isDefaultBilling() : false;
+$isDefaultShipping = $address ? $address->isDefaultShipping() : false;
+?>
+
+<div class="max-w-2xl mx-auto py-8 px-4"
+     x-data="{
+        loading: false,
+        countryId: '<?= $escaper->escapeJs($address ? $address->getCountryId() : $directoryHelper->getDefaultCountry()) ?>',
+        regionId: '<?= $escaper->escapeJs($address ? $address->getRegionId() : '') ?>',
+        regionName: '<?= $escaper->escapeJs($address ? $address->getRegion() : '') ?>',
+        regions: {},
+        hasRegions: false,
+
+        init() {
+            const regionData = <?= /* @noEscape */ $directoryHelper->getRegionJson() ?>;
+            this.regions = regionData;
+            this.updateRegions();
+        },
+
+        updateRegions() {
+            const countryRegions = this.regions[this.countryId];
+            this.hasRegions = countryRegions && Object.keys(countryRegions).length > 0;
+        }
+     }">
+
+    <h1 class="text-2xl font-semibold uppercase tracking-wider mb-8 text-center">
+        <?php if ($block->getTitle()) : ?>
+            <?= $escaper->escapeHtml($block->getTitle()) ?>
+        <?php else : ?>
+            <?= $escaper->escapeHtml(__('Edit Address')) ?>
+        <?php endif; ?>
+    </h1>
+
+    <form action="<?= $escaper->escapeUrl($block->getSaveUrl()) ?>"
+          method="post"
+          id="form-validate"
+          @submit="loading = true">
+        <?= $block->getBlockHtml('formkey') ?>
+        <input type="hidden" name="success_url" value="<?= $escaper->escapeUrl($block->getSuccessUrl()) ?>">
+        <input type="hidden" name="error_url" value="<?= $escaper->escapeUrl($block->getErrorUrl()) ?>">
+
+        <!-- Contact Information -->
+        <fieldset class="mb-8">
+            <h2 class="text-sm font-semibold uppercase tracking-wider mb-4 pb-2 border-b border-container">
+                <?= $escaper->escapeHtml(__('Contact Information')) ?>
+            </h2>
+            <div class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="firstname" class="block text-xs uppercase tracking-wider text-dark-lighter mb-1">
+                            <?= $escaper->escapeHtml(__('First Name')) ?> <span class="text-secondary">*</span>
+                        </label>
+                        <input type="text" name="firstname" id="firstname"
+                               value="<?= $escaper->escapeHtmlAttr($address ? $address->getFirstname() : '') ?>"
+                               required autocomplete="given-name"
+                               class="form-input w-full">
+                    </div>
+                    <div>
+                        <label for="lastname" class="block text-xs uppercase tracking-wider text-dark-lighter mb-1">
+                            <?= $escaper->escapeHtml(__('Last Name')) ?> <span class="text-secondary">*</span>
+                        </label>
+                        <input type="text" name="lastname" id="lastname"
+                               value="<?= $escaper->escapeHtmlAttr($address ? $address->getLastname() : '') ?>"
+                               required autocomplete="family-name"
+                               class="form-input w-full">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="company" class="block text-xs uppercase tracking-wider text-dark-lighter mb-1">
+                        <?= $escaper->escapeHtml(__('Company')) ?>
+                    </label>
+                    <input type="text" name="company" id="company"
+                           value="<?= $escaper->escapeHtmlAttr($address ? $address->getCompany() : '') ?>"
+                           autocomplete="organization"
+                           class="form-input w-full">
+                </div>
+
+                <div>
+                    <label for="telephone" class="block text-xs uppercase tracking-wider text-dark-lighter mb-1">
+                        <?= $escaper->escapeHtml(__('Phone Number')) ?> <span class="text-secondary">*</span>
+                    </label>
+                    <input type="tel" name="telephone" id="telephone"
+                           value="<?= $escaper->escapeHtmlAttr($address ? $address->getTelephone() : '') ?>"
+                           required autocomplete="tel"
+                           class="form-input w-full">
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- Address -->
+        <fieldset class="mb-8">
+            <h2 class="text-sm font-semibold uppercase tracking-wider mb-4 pb-2 border-b border-container">
+                <?= $escaper->escapeHtml(__('Address')) ?>
+            </h2>
+            <div class="space-y-4">
+                <!-- Street Address -->
+                <div>
+                    <label for="street_1" class="block text-xs uppercase tracking-wider text-dark-lighter mb-1">
+                        <?= $escaper->escapeHtml(__('Street Address')) ?> <span class="text-secondary">*</span>
+                    </label>
+                    <input type="text" name="street[]" id="street_1"
+                           value="<?= $escaper->escapeHtmlAttr($address ? $address->getStreetLine(1) : '') ?>"
+                           required autocomplete="address-line1"
+                           class="form-input w-full">
+                    <?php for ($i = 2; $i <= $directoryHelper->getStreetLines(); $i++) : ?>
+                        <input type="text" name="street[]" id="street_<?= (int)$i ?>"
+                               value="<?= $escaper->escapeHtmlAttr($address ? $address->getStreetLine($i) : '') ?>"
+                               autocomplete="address-line<?= (int)$i ?>"
+                               class="form-input w-full mt-2">
+                    <?php endfor; ?>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- City -->
+                    <div>
+                        <label for="city" class="block text-xs uppercase tracking-wider text-dark-lighter mb-1">
+                            <?= $escaper->escapeHtml(__('City')) ?> <span class="text-secondary">*</span>
+                        </label>
+                        <input type="text" name="city" id="city"
+                               value="<?= $escaper->escapeHtmlAttr($address ? $address->getCity() : '') ?>"
+                               required autocomplete="address-level2"
+                               class="form-input w-full">
+                    </div>
+
+                    <!-- Postcode -->
+                    <div>
+                        <label for="zip" class="block text-xs uppercase tracking-wider text-dark-lighter mb-1">
+                            <?= $escaper->escapeHtml(__('Zip/Postal Code')) ?> <span class="text-secondary">*</span>
+                        </label>
+                        <input type="text" name="postcode" id="zip"
+                               value="<?= $escaper->escapeHtmlAttr($address ? $address->getPostcode() : '') ?>"
+                               required autocomplete="postal-code"
+                               class="form-input w-full">
+                    </div>
+                </div>
+
+                <!-- Country -->
+                <div>
+                    <label for="country_id" class="block text-xs uppercase tracking-wider text-dark-lighter mb-1">
+                        <?= $escaper->escapeHtml(__('Country')) ?> <span class="text-secondary">*</span>
+                    </label>
+                    <select name="country_id" id="country_id"
+                            x-model="countryId"
+                            @change="updateRegions()"
+                            required autocomplete="country"
+                            class="form-select w-full">
+                        <?php foreach ($block->getCountryCollection() as $country) : ?>
+                            <option value="<?= $escaper->escapeHtmlAttr($country->getCountryId()) ?>"
+                                    <?php if ($address && $address->getCountryId() === $country->getCountryId()) : ?>selected<?php endif; ?>>
+                                <?= $escaper->escapeHtml($country->getName()) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <!-- Region -->
+                <div>
+                    <label for="region_id" class="block text-xs uppercase tracking-wider text-dark-lighter mb-1">
+                        <?= $escaper->escapeHtml(__('State/Province')) ?>
+                    </label>
+                    <template x-if="hasRegions">
+                        <select name="region_id" id="region_id"
+                                x-model="regionId"
+                                autocomplete="address-level1"
+                                class="form-select w-full">
+                            <option value=""><?= $escaper->escapeHtml(__('Please select a region, state or province.')) ?></option>
+                            <template x-for="(region, id) in regions[countryId]" :key="id">
+                                <option :value="id" x-text="region.name"
+                                        :selected="regionId == id"></option>
+                            </template>
+                        </select>
+                    </template>
+                    <template x-if="!hasRegions">
+                        <input type="text" name="region" id="region"
+                               x-model="regionName"
+                               autocomplete="address-level1"
+                               class="form-input w-full">
+                    </template>
+                </div>
+
+                <!-- Default billing/shipping checkboxes -->
+                <?php if (!$isDefaultBilling) : ?>
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" name="default_billing" id="primary_billing"
+                           value="1" class="form-checkbox">
+                    <label for="primary_billing" class="text-sm text-dark">
+                        <?= $escaper->escapeHtml(__('Use as my default billing address')) ?>
+                    </label>
+                </div>
+                <?php else : ?>
+                    <input type="hidden" name="default_billing" value="1">
+                <?php endif; ?>
+
+                <?php if (!$isDefaultShipping) : ?>
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" name="default_shipping" id="primary_shipping"
+                           value="1" class="form-checkbox">
+                    <label for="primary_shipping" class="text-sm text-dark">
+                        <?= $escaper->escapeHtml(__('Use as my default shipping address')) ?>
+                    </label>
+                </div>
+                <?php else : ?>
+                    <input type="hidden" name="default_shipping" value="1">
+                <?php endif; ?>
+            </div>
+        </fieldset>
+
+        <!-- Submit -->
+        <div class="flex flex-col sm:flex-row items-center gap-4">
+            <button type="submit"
+                    class="btn-primary w-full sm:w-auto px-8 py-4"
+                    :disabled="loading">
+                <span x-show="!loading"><?= $escaper->escapeHtml(__('Save Address')) ?></span>
+                <span x-show="loading" x-cloak class="inline-flex items-center gap-2">
+                    <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                    </svg>
+                    <?= $escaper->escapeHtml(__('Saving...')) ?>
+                </span>
+            </button>
+            <a href="<?= $escaper->escapeUrl($block->getUrl('customer/address')) ?>"
+               class="text-sm text-dark-lighter hover:text-primary transition-colors">
+                <?= $escaper->escapeHtml(__('Back to Address Book')) ?>
+            </a>
+        </div>
+    </form>
+</div>

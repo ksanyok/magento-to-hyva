@@ -1,0 +1,169 @@
+<?php
+/**
+ * FTC Cashmere — Hyvä Product List Items (Related/Upsell/Crosssell)
+ * Replaces Luma product item rendering with Hyvä patterns
+ * Uses Tailwind grid, Alpine.js interactions
+ */
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Magento\Catalog\Block\Product\AbstractProduct;
+use Magento\Framework\Escaper;
+
+/** @var AbstractProduct $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+$type = $block->getType();
+$exist = false;
+$items = [];
+$title = '';
+$class = '';
+$image = '';
+$limit = 0;
+$shuffle = 0;
+$showCart = false;
+$showAddTo = false;
+
+switch ($type) {
+    case 'related-rule':
+    case 'related':
+        if ($type === 'related-rule') {
+            $exist = $block->hasItems();
+            $items = $exist ? $block->getAllItems() : [];
+            $limit = $block->getPositionLimit();
+            $shuffle = (int)$block->isShuffled();
+        } else {
+            $exist = $block->getItems()->getSize();
+            $items = $block->getItems();
+            $limit = 0;
+            $shuffle = 0;
+        }
+        $type = 'related';
+        $class = 'related';
+        $image = 'related_products_list';
+        $title = __('You May Also Like');
+        $showAddTo = true;
+        break;
+
+    case 'upsell-rule':
+    case 'upsell':
+        if ($type === 'upsell-rule') {
+            $exist = $block->hasItems();
+            $items = $exist ? $block->getAllItems() : [];
+            $limit = $block->getPositionLimit();
+            $shuffle = (int)$block->isShuffled();
+        } else {
+            $exist = count($block->getItemCollection()->getItems());
+            $items = $block->getItemCollection()->getItems();
+            $limit = $block->getItemLimit('upsell');
+            $shuffle = 0;
+        }
+        $type = 'upsell';
+        $class = 'upsell';
+        $image = 'upsell_products_list';
+        $title = __('We found other products you might like!');
+        break;
+
+    case 'crosssell-rule':
+    case 'crosssell':
+        if ($type === 'crosssell-rule') {
+            $exist = $block->hasItems();
+            $items = $exist ? $block->getItemCollection() : [];
+        } else {
+            $exist = count($block->getItems());
+            $items = $block->getItems();
+        }
+        $type = 'crosssell';
+        $class = 'crosssell';
+        $image = 'cart_cross_sell_products';
+        $title = __('More Choices:');
+        $showCart = true;
+        $showAddTo = true;
+        break;
+
+    case 'new':
+        $items = $block->getProductCollection();
+        $exist = $items ? true : false;
+        $class = 'widget new grid';
+        $image = 'new_products_content_widget_grid';
+        $title = __('New Products');
+        $showCart = true;
+        $showAddTo = true;
+        break;
+}
+?>
+
+<?php if ($exist) : ?>
+<section class="my-12">
+    <h2 class="text-lg font-semibold uppercase tracking-wider mb-6 text-center">
+        <?= $escaper->escapeHtml($title) ?>
+    </h2>
+
+    <div class="relative" x-data="initProductSlider()" x-init="init()">
+        <div class="overflow-x-auto scrollbar-hide snap-x snap-mandatory scroll-smooth"
+             x-ref="slider">
+            <div class="flex gap-4 md:gap-6">
+                <?php foreach ($items as $_item) : ?>
+                    <div class="flex-shrink-0 w-[45%] sm:w-[30%] md:w-[23%] snap-start">
+                        <a href="<?= $escaper->escapeUrl($block->getProductUrl($_item)) ?>"
+                           class="block relative overflow-hidden aspect-[3/4] bg-container-lighter mb-3">
+                            <?= $block->getImage($_item, $image)->toHtml() ?>
+                        </a>
+                        <div class="space-y-1">
+                            <h3 class="text-sm">
+                                <a href="<?= $escaper->escapeUrl($block->getProductUrl($_item)) ?>"
+                                   class="text-dark hover:text-primary transition-colors"
+                                   title="<?= $escaper->escapeHtmlAttr($_item->getName()) ?>">
+                                    <?= $escaper->escapeHtml($_item->getName()) ?>
+                                </a>
+                            </h3>
+                            <?= /* @noEscape */ $block->getProductPrice($_item) ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+
+        <!-- Slider Navigation -->
+        <button @click="scrollLeft()"
+                class="absolute left-0 top-1/3 -translate-y-1/2 -translate-x-3
+                       w-10 h-10 flex items-center justify-center
+                       bg-white border border-container text-dark
+                       hover:bg-dark hover:text-white transition-colors
+                       cursor-pointer hidden md:flex"
+                aria-label="<?= $escaper->escapeHtmlAttr(__('Previous')) ?>">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+            </svg>
+        </button>
+        <button @click="scrollRight()"
+                class="absolute right-0 top-1/3 -translate-y-1/2 translate-x-3
+                       w-10 h-10 flex items-center justify-center
+                       bg-white border border-container text-dark
+                       hover:bg-dark hover:text-white transition-colors
+                       cursor-pointer hidden md:flex"
+                aria-label="<?= $escaper->escapeHtmlAttr(__('Next')) ?>">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+            </svg>
+        </button>
+    </div>
+</section>
+
+<script>
+    function initProductSlider() {
+        return {
+            init() {},
+            scrollLeft() {
+                const slider = this.$refs.slider;
+                slider.scrollBy({ left: -slider.offsetWidth * 0.75, behavior: 'smooth' });
+            },
+            scrollRight() {
+                const slider = this.$refs.slider;
+                slider.scrollBy({ left: slider.offsetWidth * 0.75, behavior: 'smooth' });
+            }
+        };
+    }
+</script>
+<?php endif; ?>

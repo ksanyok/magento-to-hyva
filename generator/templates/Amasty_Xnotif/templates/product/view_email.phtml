@@ -1,0 +1,71 @@
+<?php
+/**
+ * FTC Cashmere — Hyvä Stock Notification Email Form (Amasty Xnotif)
+ * Replaces mage/validation with Alpine.js form handling
+ */
+declare(strict_types=1);
+
+use Magento\Framework\Escaper;
+use Magento\ProductAlert\Block\Product\View;
+
+/** @var View $block */
+/** @var Escaper $escaper */
+
+$_helper = $this->helper(\Amasty\Xnotif\Helper\Data::class);
+$_product = $block->getProduct();
+?>
+
+<?php if ($_product && !$_product->isSalable()) : ?>
+<div class="mt-4"
+     x-data="{
+        loading: false,
+        email: '<?= $escaper->escapeJs($block->getCustomerEmail() ?? '') ?>',
+        success: false
+     }">
+    <form action="<?= $escaper->escapeUrl($block->getSignupUrl()) ?>"
+          method="post"
+          @submit="loading = true"
+          class="space-y-3">
+        <?= $block->getBlockHtml('formkey') ?>
+        <input type="hidden" name="product_id" value="<?= (int)$_product->getId() ?>">
+        <?php if ($_product->getTypeId() === 'simple' && $_product->getData('parent_product_id')) : ?>
+            <input type="hidden" name="parent_id" value="<?= (int)$_product->getData('parent_product_id') ?>">
+        <?php endif; ?>
+
+        <p class="text-sm text-dark-lighter mb-2">
+            <?= $escaper->escapeHtml(__('Sign up to get notified when this product is back in stock.')) ?>
+        </p>
+
+        <div class="flex gap-2">
+            <input type="email"
+                   name="email"
+                   x-model="email"
+                   required
+                   placeholder="<?= $escaper->escapeHtmlAttr(__('Email address')) ?>"
+                   class="form-input flex-1 text-sm"
+                   autocomplete="email">
+            <button type="submit"
+                    class="btn-primary px-4 py-2 text-sm whitespace-nowrap"
+                    :disabled="loading">
+                <span x-show="!loading"><?= $escaper->escapeHtml(__('Notify Me')) ?></span>
+                <span x-show="loading" x-cloak>
+                    <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                    </svg>
+                </span>
+            </button>
+        </div>
+
+        <?php if ($_helper->isGDPREnabled()) : ?>
+        <div class="flex items-start gap-2">
+            <input type="checkbox" name="gdpr" id="gdpr_consent"
+                   required class="form-checkbox mt-0.5">
+            <label for="gdpr_consent" class="text-xs text-dark-lighter leading-tight">
+                <?= /* @noEscape */ $_helper->getGDPRText() ?>
+            </label>
+        </div>
+        <?php endif; ?>
+    </form>
+</div>
+<?php endif; ?>

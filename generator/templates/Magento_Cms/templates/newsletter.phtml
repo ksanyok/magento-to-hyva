@@ -1,0 +1,62 @@
+<?php
+/**
+ * FTC Cashmere — Hyvä Newsletter Subscription (CMS page)
+ * Replaces Luma validation widget with Alpine.js + HTML5 validation
+ */
+declare(strict_types=1);
+
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+?>
+
+<div class="block newsletter-page max-w-xl mx-auto mb-8"
+     x-data="{ email: '', submitted: false, loading: false }">
+    <div class="content">
+        <form class="form subscribe"
+              action="<?= $escaper->escapeUrl($block->getUrl('newsletter/subscriber/new', ['_secure' => true])) ?>"
+              method="post"
+              id="newsletter-validate-detail"
+              @submit="loading = true">
+            <?= $block->getBlockHtml('formkey') ?>
+            <div class="field newsletter">
+                <div class="control">
+                    <label for="newsletter" class="sr-only">
+                        <?= $escaper->escapeHtml(__('E-Mail Address')) ?>
+                    </label>
+                    <input name="email"
+                           type="email"
+                           id="newsletter"
+                           x-model.trim="email"
+                           placeholder="<?= $escaper->escapeHtmlAttr(__('E-Mail Address')) ?>"
+                           required
+                           class="w-full h-[50px] pl-8 pr-4 border border-dark text-base font-sans
+                                  placeholder-dark-lightest focus:outline-none focus:border-primary
+                                  transition-colors duration-DEFAULT"
+                    />
+                </div>
+            </div>
+            <div class="actions mt-8">
+                <button class="btn-primary w-full py-5 text-sm tracking-widest
+                               hover:bg-accent hover:border-accent"
+                        type="submit"
+                        :disabled="loading"
+                        title="<?= $escaper->escapeHtmlAttr(__('Subscribe')) ?>"
+                        aria-label="<?= $escaper->escapeHtmlAttr(__('Subscribe')) ?>">
+                    <span x-show="!loading"><?= $escaper->escapeHtml(__('Subscribe')) ?></span>
+                    <span x-show="loading" x-cloak class="inline-flex items-center gap-2">
+                        <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                            <circle class="opacity-25" cx="12" cy="12" r="10"
+                                    stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor"
+                                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                        </svg>
+                        <?= $escaper->escapeHtml(__('Subscribing...')) ?>
+                    </span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
