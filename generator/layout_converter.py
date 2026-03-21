@@ -220,6 +220,7 @@ def generate_hyva_catalog_product_view_xml() -> str:
 def generate_hyva_catalog_category_view_xml() -> str:
     """
     Generate catalog_category_view.xml for the Hyvä child theme.
+    Includes CMS banner blocks injected into the product list at positions 12 and 24.
     """
     return """<?xml version="1.0"?>
 <page layout="1column"
@@ -228,6 +229,20 @@ def generate_hyva_catalog_category_view_xml() -> str:
     <body>
         <!-- Move CMS content below product grid (FTC design) -->
         <move element="category.cms" destination="content" after="category.products"/>
+
+        <!-- CMS banner blocks injected into product list at positions 12 and 24 -->
+        <referenceBlock name="category.products.list">
+            <block class="Magento\\Cms\\Block\\Block" name="category_banner_2">
+                <arguments>
+                    <argument name="block_id" xsi:type="string">category_banner_2</argument>
+                </arguments>
+            </block>
+            <block class="Magento\\Cms\\Block\\Block" name="category_banner_3">
+                <arguments>
+                    <argument name="block_id" xsi:type="string">category_banner_3</argument>
+                </arguments>
+            </block>
+        </referenceBlock>
     </body>
 </page>
 """

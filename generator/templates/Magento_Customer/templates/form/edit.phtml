@@ -1,0 +1,267 @@
+<?php
+/**
+ * FTC Cashmere — Hyvä Customer Account Edit Form
+ * Replaces mage/validation + changeEmailPassword widget with Alpine.js
+ * Replaces jQuery password strength with Alpine.js
+ */
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Magento\Customer\Block\Form\Edit;
+use Magento\Framework\Escaper;
+
+/** @var Edit $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+$customer = $block->getCustomer();
+?>
+
+<div class="max-w-2xl mx-auto py-8 px-4"
+     x-data="{
+        loading: false,
+        changeEmail: false,
+        changePassword: <?= $block->getChangePassword() ? 'true' : 'false' ?>,
+        showCurrentPassword: false,
+        showNewPassword: false,
+        showConfirmPassword: false,
+        newPassword: '',
+
+        get showCredentials() {
+            return this.changeEmail || this.changePassword;
+        },
+
+        get legendText() {
+            if (this.changeEmail && this.changePassword) {
+                return '<?= $escaper->escapeJs(__('Change Email and Password')) ?>';
+            }
+            if (this.changeEmail) {
+                return '<?= $escaper->escapeJs(__('Change Email')) ?>';
+            }
+            return '<?= $escaper->escapeJs(__('Change Password')) ?>';
+        },
+
+        get passwordStrength() {
+            const p = this.newPassword;
+            if (!p) return { label: '<?= $escaper->escapeJs(__('No Password')) ?>', width: '0%', color: 'bg-container' };
+            let score = 0;
+            if (p.length >= <?= (int) $block->getMinimumPasswordLength() ?>) score++;
+            if (p.length >= 12) score++;
+            if (/[a-z]/.test(p) && /[A-Z]/.test(p)) score++;
+            if (/\d/.test(p)) score++;
+            if (/[^a-zA-Z0-9]/.test(p)) score++;
+            const levels = [
+                { label: '<?= $escaper->escapeJs(__('Weak')) ?>', width: '20%', color: 'bg-secondary' },
+                { label: '<?= $escaper->escapeJs(__('Fair')) ?>', width: '40%', color: 'bg-secondary' },
+                { label: '<?= $escaper->escapeJs(__('Good')) ?>', width: '60%', color: 'bg-primary' },
+                { label: '<?= $escaper->escapeJs(__('Strong')) ?>', width: '80%', color: 'bg-accent' },
+                { label: '<?= $escaper->escapeJs(__('Very Strong')) ?>', width: '100%', color: 'bg-accent' },
+            ];
+            return levels[Math.min(score, 4)];
+        }
+     }">
+
+    <h1 class="text-2xl font-semibold uppercase tracking-wider mb-8 text-center">
+        <?= $escaper->escapeHtml(__('Edit Account Information')) ?>
+    </h1>
+
+    <form action="<?= $escaper->escapeUrl($block->getUrl('customer/account/editPost')) ?>"
+          method="post"
+          id="form-validate"
+          enctype="multipart/form-data"
+          @submit="loading = true"
+          autocomplete="off">
+        <?= $block->getBlockHtml('formkey') ?>
+
+        <!-- Account Information -->
+        <fieldset class="mb-8">
+            <h2 class="text-sm font-semibold uppercase tracking-wider mb-4 pb-2 border-b border-container">
+                <?= $escaper->escapeHtml(__('Account Information')) ?>
+            </h2>
+            <div class="space-y-4">
+
+                <!-- Name widget -->
+                <?= $block->getLayout()
+                    ->createBlock(\Magento\Customer\Block\Widget\Name::class)
+                    ->setObject($customer)
+                    ->toHtml() ?>
+
+                <?php $_dob = $block->getLayout()->createBlock(\Magento\Customer\Block\Widget\Dob::class) ?>
+                <?php $_taxvat = $block->getLayout()->createBlock(\Magento\Customer\Block\Widget\Taxvat::class) ?>
+                <?php $_gender = $block->getLayout()->createBlock(\Magento\Customer\Block\Widget\Gender::class) ?>
+
+                <?php if ($_dob->isEnabled()) : ?>
+                    <?= $_dob->setDate($customer->getDob())->toHtml() ?>
+                <?php endif; ?>
+
+                <?php if ($_taxvat->isEnabled()) : ?>
+                    <?= $_taxvat->setTaxvat($customer->getTaxvat())->toHtml() ?>
+                <?php endif; ?>
+
+                <?php if ($_gender->isEnabled()) : ?>
+                    <?= $_gender->setGender($customer->getGender())->toHtml() ?>
+                <?php endif; ?>
+
+                <!-- Change email checkbox -->
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" name="change_email" id="change-email"
+                           value="1"
+                           x-model="changeEmail"
+                           class="form-checkbox">
+                    <label for="change-email" class="text-sm text-dark">
+                        <?= $escaper->escapeHtml(__('Change Email')) ?>
+                    </label>
+                </div>
+
+                <!-- Change password checkbox -->
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" name="change_password" id="change-password"
+                           value="1"
+                           x-model="changePassword"
+                           class="form-checkbox">
+                    <label for="change-password" class="text-sm text-dark">
+                        <?= $escaper->escapeHtml(__('Change Password')) ?>
+                    </label>
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- Change Email & Password section -->
+        <fieldset class="mb-8" x-show="showCredentials" x-cloak x-collapse>
+            <h2 class="text-sm font-semibold uppercase tracking-wider mb-4 pb-2 border-b border-container"
+                x-text="legendText"></h2>
+            <div class="space-y-4">
+
+                <!-- New Email -->
+                <div x-show="changeEmail">
+                    <label for="email" class="block text-xs uppercase tracking-wider text-dark-lighter mb-1">
+                        <?= $escaper->escapeHtml(__('Email')) ?> <span class="text-secondary">*</span>
+                    </label>
+                    <input type="email" name="email" id="email"
+                           value="<?= $escaper->escapeHtmlAttr($customer->getEmail()) ?>"
+                           autocomplete="email"
+                           :required="changeEmail"
+                           class="form-input w-full">
+                </div>
+
+                <!-- Current Password (always required when changing credentials) -->
+                <div>
+                    <label for="current-password" class="block text-xs uppercase tracking-wider text-dark-lighter mb-1">
+                        <?= $escaper->escapeHtml(__('Current Password')) ?> <span class="text-secondary">*</span>
+                    </label>
+                    <div class="relative">
+                        <input :type="showCurrentPassword ? 'text' : 'password'"
+                               name="current_password" id="current-password"
+                               required
+                               autocomplete="current-password"
+                               class="form-input w-full pr-12">
+                        <button type="button"
+                                @click="showCurrentPassword = !showCurrentPassword"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-dark-lighter hover:text-dark transition-colors">
+                            <template x-if="!showCurrentPassword">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.64 0 8.577 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.64 0-8.577-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            </template>
+                            <template x-if="showCurrentPassword">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12c1.292 4.338 5.31 7.5 10.066 7.5.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"/></svg>
+                            </template>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- New Password -->
+                <div x-show="changePassword">
+                    <label for="password" class="block text-xs uppercase tracking-wider text-dark-lighter mb-1">
+                        <?= $escaper->escapeHtml(__('New Password')) ?> <span class="text-secondary">*</span>
+                    </label>
+                    <div class="relative">
+                        <input :type="showNewPassword ? 'text' : 'password'"
+                               name="password" id="password"
+                               x-model="newPassword"
+                               :required="changePassword"
+                               minlength="<?= (int) $block->getMinimumPasswordLength() ?>"
+                               autocomplete="new-password"
+                               class="form-input w-full pr-12">
+                        <button type="button"
+                                @click="showNewPassword = !showNewPassword"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-dark-lighter hover:text-dark transition-colors">
+                            <template x-if="!showNewPassword">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.64 0 8.577 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.64 0-8.577-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            </template>
+                            <template x-if="showNewPassword">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12c1.292 4.338 5.31 7.5 10.066 7.5.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"/></svg>
+                            </template>
+                        </button>
+                    </div>
+
+                    <!-- Password Strength Meter -->
+                    <div class="mt-2" x-show="newPassword.length > 0">
+                        <div class="h-1 w-full bg-container-lighter rounded overflow-hidden">
+                            <div class="h-full transition-all duration-300"
+                                 :class="passwordStrength.color"
+                                 :style="'width: ' + passwordStrength.width">
+                            </div>
+                        </div>
+                        <p class="text-xs text-dark-lighter mt-1">
+                            <?= $escaper->escapeHtml(__('Password Strength')) ?>:
+                            <span x-text="passwordStrength.label" class="font-semibold"></span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Confirm New Password -->
+                <div x-show="changePassword">
+                    <label for="password-confirmation" class="block text-xs uppercase tracking-wider text-dark-lighter mb-1">
+                        <?= $escaper->escapeHtml(__('Confirm New Password')) ?> <span class="text-secondary">*</span>
+                    </label>
+                    <div class="relative">
+                        <input :type="showConfirmPassword ? 'text' : 'password'"
+                               name="password_confirmation" id="password-confirmation"
+                               :required="changePassword"
+                               autocomplete="new-password"
+                               class="form-input w-full pr-12">
+                        <button type="button"
+                                @click="showConfirmPassword = !showConfirmPassword"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-dark-lighter hover:text-dark transition-colors">
+                            <template x-if="!showConfirmPassword">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.64 0 8.577 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.64 0-8.577-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            </template>
+                            <template x-if="showConfirmPassword">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12c1.292 4.338 5.31 7.5 10.066 7.5.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"/></svg>
+                            </template>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- Actions -->
+        <div class="flex flex-wrap items-center justify-between gap-4 pt-6 border-t border-container">
+            <a href="<?= $escaper->escapeUrl($block->getUrl('customer/account')) ?>"
+               class="text-sm text-dark-lighter hover:text-dark transition-colors">
+                &larr; <?= $escaper->escapeHtml(__('Back')) ?>
+            </a>
+
+            <div class="flex items-center gap-4">
+                <span class="text-xs text-dark-lightest">
+                    <span class="text-secondary">*</span> <?= $escaper->escapeHtml(__('Required Fields')) ?>
+                </span>
+                <button type="submit"
+                        class="btn-primary"
+                        :class="{ 'opacity-50 pointer-events-none': loading }">
+                    <template x-if="!loading">
+                        <span><?= $escaper->escapeHtml(__('Save')) ?></span>
+                    </template>
+                    <template x-if="loading">
+                        <span class="flex items-center gap-2">
+                            <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                            </svg>
+                            <?= $escaper->escapeHtml(__('Saving...')) ?>
+                        </span>
+                    </template>
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

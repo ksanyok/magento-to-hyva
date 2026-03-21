@@ -1,0 +1,121 @@
+<?php
+/**
+ * FTC Cashmere — Hyvä Product Images (configurable variant gallery)
+ * Replaces ObjectManager usage with Hyvä ViewModels
+ * Replaces raw HTML/JS with Alpine.js for variant image switching
+ *
+ * This template provides per-variant (color/size) image sets for configurable products.
+ * Works alongside gallery.phtml — this feeds variant-specific images via Alpine.js events.
+ */
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\ProductPage;
+use Magento\Catalog\Block\Product\View\Gallery;
+use Magento\Catalog\Helper\Image as ImageHelper;
+use Magento\Framework\Escaper;
+
+/** @var Gallery $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+/** @var ProductPage $productPage */
+$productPage = $viewModels->require(ProductPage::class);
+
+$_product = $block->getProduct();
+/** @var ImageHelper $imageHelper */
+$imageHelper = $this->helper(ImageHelper::class);
+
+$variantImages = [];
+
+if ($_product->getTypeId() === 'configurable') {
+    $children = $_product->getTypeInstance()->getUsedProducts($_product);
+    foreach ($children as $child) {
+        if (!$child->isSaleable()) {
+            continue;
+        }
+
+        $colorName = $child->getAttributeText('color') ?: ($child->getData('color_name') ?: '');
+        $sizeName = $child->getAttributeText('size') ?: ($child->getData('size') ?: '');
+        $images = $child->getMediaGalleryImages();
+
+        if (!$images) {
+            continue;
+        }
+
+        $childImages = [];
+        foreach ($images as $image) {
+            $imageUrl = $imageHelper->init($_product, 'product_page_image_medium')
+                ->constrainOnly(true)
+                ->keepAspectRatio(true)
+                ->keepFrame(false)
+                ->setImageFile($image->getFile())
+                ->getUrl();
+
+            $childImages[] = [
+                'thumb' => $imageHelper->init($_product, 'product_page_image_small')
+                    ->constrainOnly(true)
+                    ->keepAspectRatio(true)
+                    ->keepFrame(false)
+                    ->setImageFile($image->getFile())
+                    ->getUrl(),
+                'img'   => $imageUrl,
+                'full'  => $imageHelper->init($_product, 'product_page_image_large')
+                    ->constrainOnly(true)
+                    ->keepAspectRatio(true)
+                    ->keepFrame(false)
+                    ->setImageFile($image->getFile())
+                    ->getUrl(),
+                'alt'   => $image->getData('label') ?: $_product->getName(),
+                'color' => (string) $colorName,
+                'size'  => (string) $sizeName,
+            ];
+        }
+
+        if (!empty($childImages)) {
+            $variantImages = array_merge($variantImages, $childImages);
+        }
+    }
+}
+?>
+
+<?php if (!empty($variantImages)) : ?>
+<script>
+    /**
+     * Variant images data for the product gallery.
+     * The gallery.phtml Alpine component listens for 'update-gallery' events
+     * dispatched by the swatch/option selectors.
+     */
+    window.ftcVariantImages = <?= /** @noEscape */ json_encode($variantImages) ?>;
+
+    document.addEventListener('alpine:init', () => {
+        Alpine.store('variantImages', {
+            all: window.ftcVariantImages || [],
+
+            /**
+             * Get images filtered by color (and optionally size).
+             * If no images match the exact color+size, falls back to color-only.
+             */
+            getForVariant(color, size) {
+                if (!this.all.length) return [];
+
+                // Try exact match (color + size)
+                if (color && size) {
+                    const exact = this.all.filter(
+                        img => img.color === color && img.size === size
+                    );
+                    if (exact.length) return exact;
+                }
+
+                // Fall back to color-only match
+                if (color) {
+                    const byColor = this.all.filter(img => img.color === color);
+                    if (byColor.length) return byColor;
+                }
+
+                return [];
+            }
+        });
+    });
+</script>
+<?php endif; ?>

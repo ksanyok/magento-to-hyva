@@ -29,6 +29,7 @@ from generator.layout_converter import (
     generate_hyva_catalog_product_view_xml,
     generate_hyva_catalog_category_view_xml,
 )
+from compatibility.compat_generator import run_phase3
 
 
 def find_luma_theme(project_path: str) -> str:
@@ -201,6 +202,7 @@ def main():
         theme_name=args.theme,
         title=args.title,
         tokens=tokens,
+        source_theme_path=luma_theme,
     )
     print(f"  Created: {theme_base}")
 
@@ -231,11 +233,16 @@ def main():
         print(f"    ✓ {l}")
 
     # 6. Copy static assets and translations
-    print("\n[6/6] Copying assets and translations...")
+    print("\n[6/7] Copying assets and translations...")
     assets = copy_luma_assets(luma_theme, theme_base)
     translations = copy_i18n(luma_theme, theme_base)
     print(f"  Assets:      {len(assets)} files")
     print(f"  Translations: {len(translations)} files")
+
+    # 7. Phase 3: Compatibility modules
+    print("\n[7/7] Phase 3: Analyzing module compatibility...")
+    compat_output = os.path.join(output_path, "compatibility")
+    compat_analysis, compat_modules = run_phase3(project_path, compat_output)
 
     # Generate summary report
     report = {
@@ -252,6 +259,11 @@ def main():
             "fonts": len(tokens.fonts),
             "breakpoints": len(tokens.breakpoints),
         },
+        "compatibility": {
+            "packages_available": len(compat_analysis.get("compatible", [])),
+            "needs_custom": len(compat_analysis.get("needs_custom", [])),
+            "stub_modules_generated": len(compat_modules),
+        },
     }
 
     report_path = os.path.join(output_path, "GENERATION_REPORT.json")
@@ -265,12 +277,14 @@ def main():
     print(f"  Templates: {len(copied_templates)}")
     print(f"  Layouts:   {len(layout_files)}")
     print(f"  Assets:    {len(assets)}")
+    print(f"  Compat:    {len(compat_modules)} stub modules")
     print(f"  Report:    {report_path}")
     print(f"\n  Next steps:")
-    print(f"  1. Copy web/fonts/ from the live server")
-    print(f"  2. cd {theme_base}/web/tailwind && npm install && npm run build")
-    print(f"  3. Deploy theme to Magento and activate")
-    print(f"  4. Test all pages and adjust templates as needed")
+    print(f"  1. cd {theme_base}/web/tailwind && npm install && npm run build")
+    print(f"  2. Install Hyvä compat packages (see compatibility/COMPATIBILITY_REPORT.md)")
+    print(f"  3. Copy stub modules from compatibility/stubs/ to app/code/")
+    print(f"  4. Deploy theme to Magento and activate")
+    print(f"  5. Test all pages and adjust templates as needed")
     print(f"{'='*60}\n")
 
 

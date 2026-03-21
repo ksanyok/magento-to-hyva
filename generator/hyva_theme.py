@@ -283,27 +283,84 @@ def generate_default_head_xml() -> str:
 """
 
 
-def generate_fonts_css() -> str:
-    """Generate @font-face declarations for custom fonts."""
-    return """/* FTC Cashmere Brand Fonts */
-@font-face {
-    font-family: 'Korpus-B';
-    src: url('../fonts/Korpus-B.woff2') format('woff2'),
-         url('../fonts/Korpus-B.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
+def generate_fonts_css(source_fonts_dir: str = "") -> str:
+    """Generate @font-face declarations for custom fonts.
 
-@font-face {
-    font-family: 'KorpusGrotesk-B';
-    src: url('../fonts/KorpusGrotesk-B.woff2') format('woff2'),
-         url('../fonts/KorpusGrotesk-B.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
+    If source_fonts_dir is provided, scans it to discover actual font files
+    and generates correct src references. Otherwise uses sensible defaults.
+    """
+    # Default font definitions — if source dir exists, we'll auto-detect
+    font_defs = [
+        {
+            "family": "Korpus-B",
+            "basename": "korpus-b-webfont",
+            "weight": "normal",
+            "style": "normal",
+        },
+        {
+            "family": "KorpusGrotesk-B",
+            "basename": "Korpus-Grotesk-B-webfont",
+            "weight": "normal",
+            "style": "normal",
+        },
+        {
+            "family": "Sartex",
+            "basename": "sartex",
+            "weight": "normal",
+            "style": "normal",
+        },
+    ]
+
+    # Map extensions to CSS format names
+    format_map = {
+        ".woff2": "woff2",
+        ".woff": "woff",
+        ".ttf": "truetype",
+        ".otf": "opentype",
+        ".eot": "embedded-opentype",
+        ".svg": "svg",
+    }
+
+    # Preferred order for modern browsers
+    format_order = [".woff2", ".woff", ".ttf", ".otf", ".eot", ".svg"]
+
+    css = "/* FTC Cashmere Brand Fonts */\n"
+
+    for fdef in font_defs:
+        basename = fdef["basename"]
+        available_exts = []
+
+        if source_fonts_dir and os.path.isdir(source_fonts_dir):
+            # Scan source directory for actual files matching this basename
+            for ext in format_order:
+                candidate = os.path.join(source_fonts_dir, basename + ext)
+                if os.path.isfile(candidate):
+                    available_exts.append(ext)
+        else:
+            # Default: assume woff2 + woff are available
+            available_exts = [".woff2", ".woff"]
+
+        if not available_exts:
+            continue
+
+        src_parts = []
+        for ext in available_exts:
+            fmt = format_map[ext]
+            src_parts.append(f"url('../fonts/{basename}{ext}') format('{fmt}')")
+
+        src_str = ",\n         ".join(src_parts)
+
+        css += f"""
+@font-face {{
+    font-family: '{fdef["family"]}';
+    src: {src_str};
+    font-weight: {fdef["weight"]};
+    font-style: {fdef["style"]};
     font-display: swap;
-}
+}}
 """
+
+    return css
 
 
 def scaffold_hyva_theme(
@@ -312,10 +369,18 @@ def scaffold_hyva_theme(
     theme_name: str,
     title: str,
     tokens: DesignTokens,
+    source_theme_path: str = "",
 ):
     """Create the complete Hyvä child theme directory structure."""
     base = os.path.join(output_path, vendor, theme_name)
     os.makedirs(base, exist_ok=True)
+
+    # Detect source fonts directory for accurate @font-face generation
+    source_fonts_dir = ""
+    if source_theme_path:
+        candidate = os.path.join(source_theme_path, "web", "fonts")
+        if os.path.isdir(candidate):
+            source_fonts_dir = candidate
 
     # Core theme files
     files = {
@@ -325,7 +390,7 @@ def scaffold_hyva_theme(
         "package.json": generate_package_json(theme_name),
         "web/tailwind/tailwind.config.js": generate_tailwind_config(tokens),
         "web/tailwind/tailwind-source.css": generate_tailwind_source_css(),
-        "web/css/fonts.css": generate_fonts_css(),
+        "web/css/fonts.css": generate_fonts_css(source_fonts_dir),
         "Magento_Theme/layout/default.xml": generate_default_xml(),
         "Magento_Theme/layout/default_head_blocks.xml": generate_default_head_xml(),
     }
