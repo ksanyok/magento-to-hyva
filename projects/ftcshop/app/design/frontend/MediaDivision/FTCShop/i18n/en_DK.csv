@@ -1,0 +1,212 @@
+Your %store_name order confirmation,Din %store_name ordrebekræftelse
+Ihre Bestellung bei FTC Cashmere,Din ordre fra FTC Cashmere
+Liebe(r),Kære
+"Vielen Dank für Ihre Bestellung bei FTC Cashmere. Sobald Ihre Sendung verschickt wurde, erhalten Sie eine Versandbestätigung per E-Mail. </p> Sie können den aktuellen Status Ihrer Bestellung jederzeit in Ihrem <a href=%account_url"">Benutzerkonto</a> einsehen.""","Tak for din ordre fra FTC Cashmere. Så snart din forsendelse er sendt, modtager du en forsendelsesbekræftelse via e-mail. </p> Du kan til enhver tid kontrollere din aktuelle ordres status i din <a href=%account_url"">brugerkonto</a>."""
+"Your Order <span class=no-link"">#%increment_id</span>""","Din bestilling <span class=no-link"">#%increment_id</span>"""
+"Placed on <span class=no-link"">%created_at</span>""","beordret den <span class=no-link"">%created_at</span>"""
+Billing Info,Betalingsadresse
+Shipping Info,Leveringsadresse
+Payment Method,Betalingsmetode
+Shipping Method,Forsendelsesmulighed
+Mit Ihrer Bestellung unterstützen Sie eine faire und nachhaltige Gewinnung und Produktion von Cashmere!,Med din ordre støtter du en retfærdig og bæredygtig udvinding og produktion af cashmere!
+"Vielen Dank, Ihr FTC Cashmere Team","Tak, dit FTC Cashmere Team"
+"Vielen Dank für Ihre Bestellung bei FTC Cashmere. Sobald Ihre Sendung verschickt wurde, erhalten Sie eine Versandbestätigung per E-Mail.","Tak for din ordre fra FTC Cashmere. Så snart din forsendelse er sendt, modtager du en forsendelsesbekræftelse via e-mail."
+Ihre Rechnung zur Bestellung #%increment_id,Din faktura for ordren #%increment_id
+"Wir freuen uns, dass Sie etwas Schönes gefunden haben – danke für Ihre Bestellung. Die Rechnung dazu finden Sie nachfolgend aufgeführt.","Vi er glade for, at du har fundet noget rart - tak for din ordre. Du kan finde fakturaen nedenfor."
+Ihre Rechnung #%invoice_id,Din regning #%invoice_id
+Invoice for your %store_name order,Faktura for din %store_name ordre
+Ihre Rechnung von FTC Cashmere,Din FTC Cashmere faktura
+"Wir freuen uns, dass Sie etwas Schönes gefunden haben – danke für Ihre Bestellung.","Vi er glade for, at du har fundet noget rart - tak for din ordre."
+Your Invoice #%invoice_id for Order #%order_id,Din faktura #%invoice_id for ordre #%order_id
+Information zu Ihrer Bestellung #%increment_id,Oplysninger om din ordre #%increment_id
+Sie haben folgende Nachricht bezüglich Ihrer Bestellung erhalten:,Du har modtaget følgende besked vedrørende din ordre:
+Update to your %store_name invoice,Opdater til din %store_name faktura
+Aktualisierung Ihrer Bestellung bei FTC Cashmere,Opdatering af din ordre hos FTC Cashmere
+"Ihre Bestellung #%increment_id wurde aktualisiert mit dem Status <strong>%order_status</strong>. Sie können den aktuellen Status Ihrer Bestellung jederzeit in Ihrem <a href=%account_url"">Benutzerkonto</a> einsehen.""","Din ordre #%increment_id er opdateret med status <strong>%order_status</strong>. Du kan til enhver tid se den aktuelle status for din ordre på din <a href=%account_url"">brugerkonto</a>."" "
+"Falls Sie Fragen oder Anregungen haben, kontaktieren Sie uns bitte per Mail oder Telefon unter <a href=mailto:%store_email"">%store_email</a>""","Hvis du har spørgsmål eller forslag, bedes du kontakte os via e-mail eller telefon <a href=mailto:%store_email"">%store_email</a>"""
+"oder <a href=tel:%store_phone"">%store_phone</a>""","eller <a href=tel:%store_phone"">%store_phone</a>"""
+Information zum Versand Ihrer Bestellung #%increment_id,"Oplysninger om, hvordan du sender din ordre #%increment_id"
+Update to your %store_name credit memo,Opdater din %store_name kredit
+Kontakt,Kontakt
+Kostenlose Servicetelefonnummer:,Gratis hotline:
+Informationen,Information
+Über uns,Om os
+Allgemeine Geschäftsbedingungen,Servicevilkår
+Stornierungsbedingungen,Annulleringsbetingelser
+Informationen zum Versand,Forsendelsesinformation
+Rückgabe,Tilbagesendelse
+Zahlungsmethoden,Betalingsmetoder
+Datenschutz,Data beskyttelse
+Haftungsausschluss,Ansvarsfraskrivelse
+Cashmere-Pflege,Cashmere pleje
+Philosophie,filosofi
+Ihre Bestellung #%order_id ist auf dem Weg,Din ordre #%order_id er på vej
+Versandbestätigung zu Ihrer Bestellung #%order_id,Forsendelsesbekræftelse for din ordre #% order_id
+Ihr Paket hat soeben unser Lager verlassen und ist auf dem Weg zu Ihnen. Mit der nachfolgenden und verlinkten Tracking-Nummer können Sie den Versand Ihrer Bestellung verfolgen. Es kann bis zu 24 Stunden dauern bis die Tracking-Informationen verfügbar sind.,"Din pakke har lige forladt vores lager og er på vej til dig. Med det følgende og linkede sporingsnummer kan du spore afsendelsen af ​​din ordre. Det kan tage op til 24 timer, før sporingsoplysninger er tilgængelige."
+"Sie können den aktuellen Status Ihrer Bestellung jederzeit in Ihrem <a href=%account_url"">Benutzerkonto</a> einsehen.""","Du kan til enhver tid se den aktuelle status for din ordre på din <a href=%account_url"">brugerkonto</a>."""
+Lieferadresse,Leveringsadresse
+Versandoption,Forsendelsesmulighed
+Ihre Gutschrift zur Bestellung #%order_id,Din kredit for ordren #%order_id
+"Vielen Dank für Ihre Bestellung bei FTC Cashmere. Sie können den aktuellen Status Ihrer Bestellung jederzeit in Ihrem <a href=%account_url"">Benutzerkonto</a> einsehen.""","Tak for din ordre fra FTC Cashmere. Du kan til enhver tid kontrollere din aktuelle ordres status i din <a href=%account_url"">brugerkonto </a>."""
+Vielen Dank für Ihre Bestellung bei FTC Cashmere.,Tak for din ordre fra FTC Cashmere.
+Willkommen bei FTC Cashmere,Velkommen til FTC Cashmere
+Ihr Benutzerkonto bei FTC Cashmere,Din brugerkonto hos FTC Cashmere
+"Liebe(r) %name,","Kære %name,"
+Welcome to %store_name.,Velkommen til %store_name.
+"To sign in to our site, use these credentials during checkout or on the <a href=%customer_url"">My Account</a> page:""","For at logge ind på vores side skal du bruge disse legitimationsoplysninger under kassen eller på <a href=%customer_url"">Min konto</a> page:"""
+Email:,E-mail:
+Password:,Password:
+Password you set when creating account,"Password, du angav, når du oprettede konto"
+"Forgot your account password? Click <a href=%reset_url"">here</a> to reset it.""","Har du glemt din password til din konto? Klik <a href=%reset_url"">here</a> for at nulstille det."""
+"To sign in to our site and set a password, click on the <a href=%create_password_url"">link</a>.""","For at logge ind på vores side og indstille en adgangskode skal du klikke på <a href=%create_password_url"">link</a>."""
+Bitte bestätigen Sie Ihr FTC-Cashmere-Konto,Bekræft din FTC-cashmere-konto
+You must confirm your %customer_email email before you can sign in (link is only valid once):,"Du skal bekræfte din %customer_email e-mail, før du kan logge på (linket er kun gyldigt én gang):"
+Confirm Your Account,Bekræft din konto
+Passwort für FTC Cashmere zurücksetzen,Nulstil adgangskode til FTC Cashmere
+There was recently a request to change the password for your account.,Der var for nylig en anmodning om at ændre adgangskoden til din konto.
+"If you requested this change, set a new password here:","Hvis du anmodede om denne ændring, skal du angive en ny adgangskode her:"
+Set a New Password,Indstil en ny password 
+"If you did not make this request, you can ignore this email and your password will remain the same.","Hvis du ikke fremsatte denne anmodning, kan du ignorere denne e-mail, og din adgangskode forbliver den samme."
+Ihr Passwort bei FTC Cashmere wurde geändert,Din adgangskode hos FTC Cashmere er blevet ændret
+Ihr Passwort bei FTC Cashmere,Din adgangskode hos FTC Cashmere
+We have received a request to change the following information associated with your account at %store_name: password.,Vi har modtaget en anmodning om at ændre følgende oplysninger tilknyttet din konto på %store_name: password.
+"If you have not authorized this action, please contact us immediately at <a href=mailto:%store_email"">%store_email</a>"""," Hvis du ikke har godkendt denne handling, bedes du kontakte os straks på <a href=mailto:%store_email"">%store_email</a>"""
+"or call us at <a href=tel:%store_phone"">%store_phone</a>""","eller ring til os på <a href=tel:%store_phone"">%store_phone</a>"""
+"Thanks,<br>%store_name","Mange tak,<br>%store_name"
+Ihre E-Mail-Adresse bei FTC Cashmere wurde geändert,Din FTC Cashmere-e-mail-adresse er blevet ændret
+Ihre E-Mail-Adresse bei FTC Cashmere,Din FTC Cashmere-e-mail-adresse
+We have received a request to change the following information associated with your account at %store_name: email.,"Vi har modtaget en anmodning om at ændre følgende oplysninger, der er knyttet til din konto på %store_name: e-mail."
+E-Mail-Adresse und Passwort bei FTC Cashmere geändert,FTC Cashmere e-mail-adresse og password ændret
+"We have received a request to change the following information associated with your account at %store_name: email, password.","Vi har modtaget en anmodning om at ændre følgende oplysninger, der er knyttet til din konto på %store_name: e-mail, password "
+Newsletter subscription confirmation,Bekræftelse af abonnement på nyhedsbrev
+Thank you for subscribing to our newsletter.,Tak fordi du abonnerer på vores nyhedsbrev.
+"To begin receiving the newsletter, you must first confirm your subscription by clicking on the following link:",For at begynde at modtage nyhedsbrevet skal du først bekræfte dit abonnement ved at klikke på følgende link:
+Newsletter subscription success,Vellykket registrering af nyhedsbrev
+You have been successfully subscribed to our newsletter.,Du er med succes abonneret på vores nyhedsbrev.
+Newsletter unsubscription success,Afmeld abonnement på nyhedsbrevet
+You have been unsubscribed from the newsletter.,Du er afmeldt nyhedsbrevet.
+Information zu Ihrer Rücksendung der Bestellung #%increment_id,Oplysninger om din returnering af ordren #%increment_id
+Neue Rücksendung,Nyt afkast
+You have been unsubscribed from the newsletter.,Kundenavn
+Email address,Email adresse
+Status,Status
+Created,Oprettet
+Updated,Opdateret
+Return,Tilbagesendelse
+Nachricht von FTC Cashmere,Besked fra FTC Cashmere
+Zahlung fehlgeschlagen,Betaling mislykkedes
+Reason,Grund
+Checkout Type,Kassetype
+Customer:,Kunde:
+Items,Artikel
+Total:,Total:
+Billing Address:,Betalingsadresse
+Shipping Address:,Leveringsadresse:
+Shipping Method:,Forsendelsesmulighed:
+Payment Method:,Betalingsmetode:
+Date & Time:,Dato og tid:
+Verfügbarkeitsbenachrichtigung von FTC Cashmere,Meddelelse om tilgængelighed fra FTC Cashmere
+"Hello,","God dag,"
+Thank you!,Mange tak!
+Status Ihrer Bestellung prüfen,Tjek status for din ordre
+Sie können den Status Ihrer Bestellung jederzeit unter dem nachfolgenden Link überprüfen oder uns eine Nachricht zukommen lassen:,Du kan til enhver tid tjekke status for din ordre ved at klikke på linket nedenfor eller ved at sende os en besked:
+Bestellübersicht,Ordreoversigt
+"Bitte prüfen Sie die Angaben ggfs. nochmals, da Pakete mit falschen/unvollständigen Adressen wieder an uns retourniert werden.","Kontroller om nødvendigt oplysningerne igen, da pakker med forkerte/ufuldstændige adresser vil blive returneret til os."
+Your Order #%increment_id,Din bestilling #%increment_id
+Vielen Dank,Tak
+Ihr FTC Cashmere Team,dit FTC Cashmere Team
+Die nachfolgenden Artikel wurden Ihnen gutgeschrieben:,Du har fået tildelt følgende elementer:
+"Die Rückerstattung folgt automatisch auf die beim Kauf gewählte Zahlungsmethode. Sollten Sie auf Rechnung bestellt haben, so erfolgt eine entsprechende Rechnungskorrektur.","Refusionen følger automatisk den betalingsmetode, der blev valgt på købstidspunktet. Hvis du har bestilt på konto, vil der blive foretaget en tilsvarende korrektion af fakturaen."
+"Wir hoffen, Sie bald wieder in unserem Onlineshop begrüssen zu dürfen.",Vi håber at kunne byde dig velkommen snart igen i vores online shop.
+Ihre Größe ist wieder verfügbar – bestellen Sie jetzt!,Din størrelse er tilgængelig igen - bestil nu!
+"Ein Artikel, der Ihnen gefällt, ist wieder in Ihrer Grösse verfügbar. Seien Sie schnell und bestellen Sie jetzt Ihren neuen FTC Cashmere Artikel.","En vare, du kan lide, er tilgængelig igen i din størrelse. Vær hurtig og bestil din nye FTC Cashmere-artikel nu."
+Ihre Rücksendung zur Bestellung #%increment_id,Din tilbagevenden til ordre #%increment_id
+Wir haben Ihren Rücksendeauftrag erhalten. Sie können nun die Ware verpacken und an uns zurücksenden.,Vi har modtaget din returordre. Du kan nu pakke varerne og sende dem tilbage til os.
+Hilfe und Kontakt,Hjælp og kontakt
+Bestellung,Bestil
+Zahlung,Betaling
+Versand und Lieferung,Forsendelse og levering
+Rücksendung und Rückerstattung,Returnering og tilbagebetaling
+Widerrufsbelehrung,Afbestillingsregler
+Mein Kundenkonto,Min kundekonto
+Unsere Firmenphilosophie,Vores virksomhedsfilosofi
+Eigene Farm mit hohen Standards für den Tierschutz,Egen bedrift med høje standarder for dyrevelfærd
+Komplette Lieferkette im Besitz des Familienunternehmens,Hele forsyningskæden ejes af familievirksomheden
+Upcycling zur Minimuerung von Abfall,Upcycling for at minimere affald
+Soziale Verantwortung und Umweltschutz,Socialt ansvar og miljøbeskyttelse
+Finden Sie Inspiration:,Find inspiration:
+Impressum,Tryk
+Der Online-Shop von FTC Cashmere wird betrieben durch:,FTC Cashmere online shop drives af:
+Cashmere World Shop GmbH,Cashmere World Shop GmbH
+"Rather Strasse 49c, Rote Halle","Rather Strasse 49c, Rote Halle"
+40476 Düsseldorf,40476 Düsseldorf
+Deutschland,Deutschland
+UMSATZSTEUER ID NUMMER,OMSÆTNINGSAFGIFT ID-NUMMER
+Hinweis: Dies ist nicht die Rücksende-Adresse. Retouren werden hier nicht angenommen.,Bemærk: Dette er ikke returadressen. Returneringer accepteres ikke her.
+CASHMERE WORLD SHOP GMBH,CASHMERE WORLD SHOP GMBH
+Versendete Artikel,Varer afsendt
+Bitte bestätigen Sie Ihre Anmeldung,Bekræft venligst din registrering
+"Vielen Dank für Ihre Anmeldung. Um die Registrierung Ihres Kundenkontos erfolgreich abzuschliessen, klicken Sie bitte auf die Schaltfläche weiter unten.",Tak for din tilmelding. For at gennemføre registreringen af din kundekonto skal du klikke på knappen nedenfor for at fuldføre registreringen.
+Kundenkonto-Anmeldung bestätigen,Bekræft registrering af kundekonto
+Erst nach dieser Bestätigung wird Ihr Kundenkonto aktiviert.,Først efter denne bekræftelse bliver din kundekonto aktiveret.
+"Sollte Ihre E-Mail-Adresse ohne Ihr Wissen für ein FTC Cashmere Kundenkonto eingetragen worden sein, bitten wir Sie, diese E-Mail zu ignorieren.","Hvis din e-mailadresse er blevet indtastet til en FTC Cashmere-kundekonto uden din viden, bedes du ignorere denne e-mail."
+"Datenschutz ist bei FTC Cashmere ein sehr wichtiges Thema. Für die Registrierung eines Kundenkontos verwenden wir das sogenannte Double-opt-in-Verfahren. Mit dem doppeltem Bestätigungsverfahren bestätigen Sie nochmals explizit Ihre Anmeldung, indem Sie die oben aufgeführte Schaltfläche anklicken. Wir möchten somit sicherstellen, dass Ihre E-Mail-Adresse nicht von Dritten eingetragen wurde.","Databeskyttelse er et meget vigtigt emne hos FTC Cashmere. Ved registrering af en kundekonto anvender vi den såkaldte dobbeltopt-in-procedure. Ved dobbeltopt-in-proceduren bekræfter du udtrykkeligt din registrering igen ved at klikke på knappen ovenfor. På denne måde ønsker vi at sikre, at din e-mailadresse ikke er blevet indtastet af tredjeparter."
+Sie haben sich erfolgreich bei FTC Cashmere registriert.,Du har registreret dig hos FTC Cashmere.
+"Um sich in Ihrem Kundenkonto anzumelden, verwenden Sie bitte Ihre registrierten Anmeldedaten auf ""Mein Konto""- oder während des Check-Outs. Haben Sie Ihr Passwort vergessen, dann klicken Sie  <a href=""%reset_url"">hier</a>.","For at logge ind på din kundekonto skal du bruge dine registrerede loginoplysninger på ""Min konto"" - eller under checkout. Hvis du har glemt din adgangskode, skal du klikke på <a href=""%reset_url"">her</a>."
+Freuen Sie sich auf diese Vorteile:,Se frem til disse fordele:
+Schnellerer Bezahlvorgang,Hurtigere betalingsproces
+Den Status Ihrer Bestellung jederzeit prüfen,Tjek status for din ordre når som helst
+Adress- und Kundendaten verwalten,Administrer adresse- og kundedata
+Übersicht all Ihrer Bestellungen,Oversigt over alle dine ordrer
+Lassen Sie sich von unserer exklusiven Cashmere Auswahl inspirieren. Wir wünschen Ihnen viel Spass beim Einkaufen!,"Lad dig inspirere af vores eksklusive udvalg af cashmere. Vi håber, at du nyder at handle hos os!"
+zum Kundenkonto,til kundekontoen
+Ihr Passwort wurde geändert,Din adgangskode er blevet ændret
+Sie haben das Passwort in Ihrem Kundenkonto erfolgreich geändert.,Du har ændret adgangskoden på din kundekonto.
+Ihre E-Mail-Adresse wurde geändert,Din e-mailadresse er blevet ændret
+Sie haben die E-Mail-Adresse in Ihrem Kundenkonto erfolgreich geändert.,Du har ændret e-mailadressen på din kundekonto med succes.
+"Im Interesse Ihres persönlichen Datenschutzes empfehlen wir Ihnen, das Passwort sicher aufzubewahren und nicht an Dritte weiterzugeben.","Af hensyn til beskyttelsen af dine personlige oplysninger anbefaler vi, at du opbevarer din adgangskode sikkert og ikke videregiver den til tredjeparter."
+"Im Interesse Ihres persönlichen Datenschutzes empfehlen wir Ihnen, Ihre Logindaten sicher aufzubewahren und nicht an Dritte weiterzugeben.","Af hensyn til dit personlige privatliv anbefaler vi, at du opbevarer dine loginoplysninger sikkert og ikke deler dem med tredjeparter."
+Ihre E-Mail-Adresse und Passwort wurden geändert,Din e-mailadresse og adgangskode er blevet ændret
+Sie haben sowohl die E-Mail-Adresse als auch das Passwort in Ihrem Kundenkonto erfolgreich geändert.,Du har ændret både e-mail-adresse og adgangskode på din kundekonto med succes.
+Passwort zurücksetzen,nulstille adgangskode
+"Sie haben ein neues Passwort für Ihr FTC Cashmere Kundenkonto angefordert. Klicken Sie auf den nachfolgenden Link, um Ihr Passwort zurück zu setzen.",Du har anmodet om en ny adgangskode til din FTC Cashmere-konto. Klik på linket nedenfor for at nulstille din adgangskode.
+Dieser Link ist aus Sicherheitsgründen nur während 24h gültig.,Af sikkerhedsmæssige årsager er dette link kun gyldigt i 24 timer.
+Geschenkgutschein erhalten,Modtag gavekort
+Geschenkgutschein laüft bald ab,Gavekortet udløber snart
+%sender_name purchased a,%sender_navn købte en
+gift card for you at %store_name,Gavekort til dig hos %store_name
+You have been bought a,Du er blevet købt en
+gift card for %customer_name,gavekort til %customer_name
+Please find below message from %sender_name,Nedenstående meddelelse fra %sender_name
+Please use the following gift card code at %store_name:,Brug venligst følgende gavekortkode på %store_name:
+Look forward to seeing you at our store.,Vi glæder os til at se dig i vores butik.
+Your gift card expires in,Dit gavekort udløber om
+days,dage
+Ihr Geschenkgutschein wurde zugestellt,Du har købt et gavekort til
+You purchased a gift card for,Du har købt et gavekort til
+Your message:,Din besked:
+Ihre Bestellung #%increment_id  – fehlende Vorkassezahlung,Din ordre #%increment_id - manglende forudbetaling
+Wir beziehen uns auf Ihre Bestellung vom,Vi henviser til din ordre fra
+Sie haben die Zahlungsart Vorkasse gewählt.,Du har valgt betalingsmetoden forudbetaling.
+Leider haben wir Ihre Überweisung bis heute noch nicht erhalten.,Vi har desværre endnu ikke modtaget din overførsel.
+Besten Dank für Ihre Überweisung.,Tak for din henvisning.
+"Wir bitten Sie den unten aufgeführten Gesamtbetrag innerhalb von 3 Tagen auf folgendes Konto nachzuzahlen, ansonsten müssen wir die Bestellung aufgrund Nichtbezahlung stornieren, damit der Artikel wieder freigegeben wird.","Vi beder dig betale det samlede beløb, der er anført nedenfor, inden for 3 dage til følgende konto, ellers må vi annullere ordren på grund af manglende betaling, så varen frigives igen."
+Konto-Nr.,Konto nr.
+Ihre Bestellung #%increment_id war nicht erfolgreich,Din ordre #%increment_id blev ikke gennemført
+"Hierfür könnten viele Fehler in Frage kommen, meistens betrifft es aber die nachfolgenden Punkte:","Dette kan skyldes mange fejl, men det drejer sig for det meste om følgende punkter:"
+Falsche Kreditkartennummer oder CVV-Nr. (Kartenprüfnummer - dreistelliger Code auf der Rückseite Ihrer Karte eingegeben),Forkert kreditkortnummer eller CVV-nr. (kortbekræftelsesnummer - en trecifret kode på bagsiden af dit kort)
+Sonstige falsche Angaben wie Kreditkarteninhaber oder Ablaufdatum eingegeben,"Indtastede andre forkerte oplysninger, f.eks. kreditkortindehaver eller udløbsdato"
+Kein Secure Code vorhanden,Ingen sikker kode tilgængelig
+Gültigkeit der Kreditkarte abgelaufen,Kreditkortet er udløbet
+Kreditkartenlimit überschritten,overskridelse af kreditkortgrænsen
+Keine akzeptierte Kreditkarte gemäss untenstehender Auflistung,Ingen kreditkort accepteres i henhold til nedenstående liste
+"Bitte versuchen Sie es noch einmal und geben Sie die Angaben, sofern die Kreditkarte noch gültig und ein genügendes Kreditkartenlimit vorhanden ist, nochmals vorsichtig ein. Falls die Angaben stimmen, die Bestellung aus anderen, unerklärlichen Gründen nicht möglich ist, bitten wir Sie die Zahlungsart zu wechseln.","Prøv venligst igen og indtast oplysningerne omhyggeligt igen, forudsat at kreditkortet stadig er gyldigt, og at der er en tilstrækkelig kreditkortgrænse. Hvis oplysningerne er korrekte, men ordren ikke er mulig af andre uforklarlige årsager, beder vi dig om at ændre betalingsmetoden."
+"Wir akzeptieren Kreditkarten der Anbieter Visa, Master Card und American Express nur mit einem zusätzlichem 3D-Secure Code. Durch dieses SSL-Authentifizierungsverfahren sind Ihre Kreditkartendaten bei der Übertragung geschützt. Wir bitten Sie um Verständnis, dass wir auch in Ihrem Interesse Kreditkarten ohne dem sicheren Verschlüsselungsverfahren nicht annehmen können. Bitte wählen Sie daher eine andere Zahlungsart aus.","Vi accepterer kun kreditkort fra udbyderne Visa, Master Card og American Express med en ekstra 3D-Secure-kode. Denne SSL-godkendelsesprocedure beskytter dine kreditkortdata under overførslen. Vi beder om din forståelse for, at vi ikke kan acceptere kreditkort uden den sikre krypteringsprocedure, hvilket også er i din interesse. Vælg derfor venligst en anden betalingsmetode."
+"Bitte beachten Sie, dass bei dieser Zahlungsart der Anbieter PayPal im Hintergrund entsprechende Adress- und Bonitätsprüfung durchführt.","Bemærk venligst, at udbyderen PayPal med denne betalingsmetode udfører tilsvarende adresse- og kreditkontrol i baggrunden."
+"Sollte die Überprüfung negativ ausfallen, so bitten wir Sie eine andere Zahlungsart anzuwenden. Weitere Informationen finden Sie unter","Hvis bekræftelsen er negativ, beder vi dig om at bruge en anden betalingsmetode. Du kan finde flere oplysninger under"
+Hinweis:,Bemærk:
+"Hierbei handelt es sich um einen komplexen automatisierten Prozess. FTC Cashmere keinen Einfluss auf diese Zahlungsart hat. Daher hat unser Kundenservice nicht die Möglichkeit, die angebotenen Zahlungsarten zu ändern.","Dette er en kompleks automatiseret proces. FTC Cashmere har ingen kontrol over denne betalingsmetode. Derfor har vores kundeservice ikke mulighed for at ændre de betalingsmetoder, der tilbydes."
+Kauf auf Rechnung,køb på regning
+Kreditkarte,Kreditkort
+DE 814442953,DE 814442953
+"Bitte beachten Sie, dass bei dieser Zahlungsart der Anbieter Klarna im Hintergrund entsprechende Adress- und Bonitätsprüfung durchführt.","Bemærk venligst, at udbyderen Klarna med denne betalingsmetode udfører tilsvarende adresse- og kreditkontrol i baggrunden."

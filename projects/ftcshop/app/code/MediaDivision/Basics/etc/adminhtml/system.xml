@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="mediadivision" translate="label" sortOrder="10">
+            <label>Media Division</label>
+        </tab>
+        <section id="basics" translate="label" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Basics</label>
+            <tab>mediadivision</tab>
+            <resource>MediaDivision_Basics::basics_config</resource>
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>General Configuration</label>
+                <field id="php_binary" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>PHP Binary</label>
+                    <comment>Which PHP binary should be used for CLI scripts?</comment>
+                </field>
+                <field id="php_options" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>PHP Options</label>
+                    <comment>Which PHP options should be used for CLI scripts?</comment>
+                </field>
+            </group>
+        </section>
+        <section id="ust_id" translate="label" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Umsatz-Steuer IDs</label>
+            <tab>mediadivision</tab>
+            <resource>MediaDivision_Basics::ust_id_config</resource>
+            <group id="country" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Länder-Konfiguration</label>
+                <field id="se" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Schweden</label>
+                </field>
+                <field id="ch" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Schweiz</label>
+                </field>
+                <field id="dk" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Dänemark</label>
+                </field>
+                <field id="pl" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Polen</label>
+                </field>
+                <field id="at" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Österreich</label>
+                </field>
+                <field id="de" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Deutschland</label>
+                </field>
+                <field id="nl" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Niederlande</label>
+                </field>
+                <field id="eu" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Europäische Union</label>
+                </field>
+                <field id="us" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>International</label>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

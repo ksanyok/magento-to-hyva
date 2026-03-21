@@ -1,0 +1,89 @@
+<div class="opc-block-summary" data-bind="blockLoader: isLoading">
+    <span data-bind="i18n: 'Order Summary'" class="title"></span>
+    <!-- ko foreach: elems() -->
+    <!-- ko template: getTemplate() --><!-- /ko -->
+    <!-- /ko -->
+</div>
+
+<!-- ko if: (isVisible()) -->
+<div id="confirm-agreements-block" data-role="checkout-agreements">
+    <div class="checkout-agreements fieldset" data-bind="visible: agreementVisible">
+        <!-- ko foreach: agreementList -->
+        <!-- ko if: ($parent.isAgreementRequired($data)) -->
+        <div class="checkout-agreement field choice required" style="display: none;">
+            <input type="checkbox" class="required-entry"
+                   data-bind="attr: {
+                                    'id': 'agreement__' + agreementId,
+                                    'name': 'agreement[' + agreementId + ']',
+                                    'value': agreementId
+                                    }"/>
+            <label class="label" data-bind="attr: {'for': 'agreement__' + agreementId}">
+                <button type="button"
+                        class="action action-show"
+                        data-bind="click: function(data, event) { return $parent.showContent(data, event) }"
+                        >
+                    <span data-bind="html: checkboxText"></span>
+                </button>
+            </label>
+        </div>
+        <!-- /ko -->
+        <!-- /ko -->
+
+        <div  class="checkout-agreement field choice required">
+            <input 
+                type="checkbox" 
+                class="required-entry" 
+                id="multiple_agreement" 
+                name="multiple_agreement" value="1"
+                data-bind="click: setHiddenCheckboxes"
+                />
+            <label data-bind="click: setHiddenCheckboxes, i18n: 'I have read, understood and accepted the following texts:'" 
+                   for="multiple_agreement"></label>
+            <!-- ko foreach: agreementList -->
+            <!-- ko if: ($parent.isAgreementRequired($data)) -->      
+            <button type="button"
+                    class="action action-show"
+                    data-bind="click: function(data, event) { return $parent.showContent(data, event) }"
+                    >
+                <span data-bind="html: checkboxText"></span>
+            </button>,
+            <!-- /ko -->
+            <!-- ko ifnot: ($parent.isAgreementRequired($data)) -->
+            <div class="checkout-agreement">
+                <button type="button" class="action action-show"
+                        data-bind="click: function(data, event) { return $parent.showContent(data, event) }">
+                    <span data-bind="html: checkboxText"></span>
+                </button>
+            </div>
+            <!-- /ko -->
+            <!-- /ko -->
+        </div>
+
+        <div id="checkout-agreements-modal" data-bind="afterRender: initModal" style="display: none">
+            <div class="checkout-agreements-item-content" data-bind="html: modalContent, style: {height: contentHeight, overflow:'auto' }"></div>
+        </div>
+    </div>
+</div>
+<div class="field choice">
+    <input type="checkbox" id="newsletter_subscribe_id" name="newsletter_subscribe" value="1">
+    <label class="label"  for="newsletter_subscribe_id">
+        Ja, ich möchte über exklusive Angebote und Neuigkeiten per E-Mail informiert werden. 
+        Dieser Service ist kostenlos und kann jederzeit widerrufen werden.
+    </label>
+</div>
+
+<div class="actions-toolbar-trigger" id="place-order-trigger-wrapper">
+    <button data-bind="click: placeOrder" type="button" class="button action primary" id="place-order-triggers" value="Place Order" >
+        <span>Place Order</span>
+    </button>
+</div>
+<!-- /ko -->
+
+<div class="billing-address-title">
+    <!-- ko i18n: 'Billing address'--><!-- /ko -->
+</div>
+
+<div class="required-fields">
+    <span>*</span>
+    <!-- ko i18n: 'Required Fields'--><!-- /ko -->
+</div>

@@ -1,0 +1,214 @@
+Your %store_name order confirmation,Your %store_name order confirmation
+Ihre Bestellung bei FTC Cashmere,Your order at FTC Cashmere
+Liebe(r),Dear
+"Vielen Dank für Ihre Bestellung bei FTC Cashmere. Sobald Ihre Sendung verschickt wurde, erhalten Sie eine Versandbestätigung per E-Mail. </p> Sie können den aktuellen Status Ihrer Bestellung jederzeit in Ihrem <a href=%account_url"">Benutzerkonto</a> einsehen.""","Thank you for placing your order at FTC Cashmere. As soon as your order has been shipped, you will receive a shipping confirmation by email. </p> You can check the current status of your order at any time in your  <a href=%account_url"">User account</a> ."""
+"Your Order <span class=no-link"">#%increment_id</span>""","Your Order <span class=no-link"">#%increment_id</span>"""
+"Placed on <span class=no-link"">%created_at</span>""","Placed on <span class=no-link"">%created_at</span>"""
+Billing Info,Billing Info
+Shipping Info,Shipping Info
+Payment Method,Payment Method
+Shipping Method,Shipping Method
+Mit Ihrer Bestellung unterstützen Sie eine faire und nachhaltige Gewinnung und Produktion von Cashmere!,With your order you support a fair and sustainable harvest and manufacturing of cashmere.
+"Vielen Dank, Ihr FTC Cashmere Team","Many thanks, Your FTC Cashmere Team"
+"Vielen Dank für Ihre Bestellung bei FTC Cashmere. Sobald Ihre Sendung verschickt wurde, erhalten Sie eine Versandbestätigung per E-Mail.","Thank you for your order at FTC Cashmere. Once your shipment has been dispatched, you will receive a shipping confirmation by email."
+Ihre Rechnung zur Bestellung #%increment_id,Your invoice for the order #%increment_id
+"Wir freuen uns, dass Sie etwas Schönes gefunden haben – danke für Ihre Bestellung. Die Rechnung dazu finden Sie nachfolgend aufgeführt.",We are pleased that you have found something beautiful - thank you for your order. You can find the invoice here/below.
+Ihre Rechnung #%invoice_id,Your Invoice #%invoice_id
+Invoice for your %store_name order,Invoice for your %store_name order
+Ihre Rechnung von FTC Cashmere,Your invoice from FTC Cashmere
+"Wir freuen uns, dass Sie etwas Schönes gefunden haben – danke für Ihre Bestellung.",We are pleased that you have found something beautiful - thank you for your order. 
+Your Invoice #%invoice_id for Order #%order_id,Your Invoice #%invoice_id for Order #%order_id
+Information zu Ihrer Bestellung #%increment_id,Information about your order  #%increment_id
+Sie haben folgende Nachricht bezüglich Ihrer Bestellung erhalten:,You have received the following message regarding your order:
+Update to your %store_name invoice,Update to your %store_name invoice
+Aktualisierung Ihrer Bestellung bei FTC Cashmere,Update of your order at FTC Cashmere
+"Ihre Bestellung #%increment_id wurde aktualisiert mit dem Status <strong>%order_status</strong>. Sie können den aktuellen Status Ihrer Bestellung jederzeit in Ihrem <a href=%account_url"">Benutzerkonto</a> einsehen.""","Your order #%increment_id was updated with status <strong>%order_status</strong>. You can check the current status of your order at any time in your <a href=%account_url"">User account</a>."""
+"Falls Sie Fragen oder Anregungen haben, kontaktieren Sie uns bitte per Mail oder Telefon unter <a href=mailto:%store_email"">%store_email</a>""","If you have any questions or suggestions, please contact us by email or phone at <a href=mailto:%store_email"">%store_email</a>"""
+"oder <a href=tel:%store_phone"">%store_phone</a>""","or <a href=tel:%store_phone"">%store_phone</a>"""
+Information zum Versand Ihrer Bestellung #%increment_id,Information about shipping of your order  #%increment_id
+Update to your %store_name credit memo,Update to your %store_name credit memo
+Kontakt,Contact
+Kostenlose Servicetelefonnummer:,Free Hotline:
+Informationen,Information
+Über uns,About us
+Allgemeine Geschäftsbedingungen,General terms and conditions
+Stornierungsbedingungen,Cancellation Terms
+Informationen zum Versand,Shipping information
+Rückgabe,Return
+Zahlungsmethoden,Payment methods
+Datenschutz,Data Privacy
+Haftungsausschluss,Disclaimer
+Cashmere-Pflege,Cashmere Care
+Philosophie,Philosophy
+Ihre Bestellung #%order_id ist auf dem Weg,Your order #%order_id is on its way
+Versandbestätigung zu Ihrer Bestellung #%order_id,Shipping Confirmation of your order #%order_id
+Ihr Paket hat soeben unser Lager verlassen und ist auf dem Weg zu Ihnen. Mit der nachfolgenden und verlinkten Tracking-Nummer können Sie den Versand Ihrer Bestellung verfolgen. Es kann bis zu 24 Stunden dauern bis die Tracking-Informationen verfügbar sind.,Your package has just left our warehouse and is on its way to you. With the following and linked tracking number you can track the shipment of your order. It may take up to 24 hours before the tracking information is available.
+"Sie können den aktuellen Status Ihrer Bestellung jederzeit in Ihrem <a href=%account_url"">Benutzerkonto</a> einsehen.""","You can check the current status of your order at any time in your <a href=%account_url"">user account</a>."""
+Lieferadresse,Delivery address
+Versandoption,Shipping option
+Ihre Gutschrift zur Bestellung #%order_id,Your credit note for the order #%order_id
+"Vielen Dank für Ihre Bestellung bei FTC Cashmere. Sie können den aktuellen Status Ihrer Bestellung jederzeit in Ihrem <a href=%account_url"">Benutzerkonto</a> einsehen.""","Thank you for your order at FTC Cashmere. You can check the current status of your order at any time in your <a href=%account_url"">user account</a>."""
+Vielen Dank für Ihre Bestellung bei FTC Cashmere.,Thank you for placing your order at FTC Cashmere
+Willkommen bei FTC Cashmere,Welcome to FTC Cashmere
+Ihr Benutzerkonto bei FTC Cashmere,Your FTC Cashmere user account
+"Liebe(r) %name,","Dear %name,"
+Welcome to %store_name.,Welcome to %store_name.
+"To sign in to our site, use these credentials during checkout or on the <a href=%customer_url"">My Account</a> page:""","To sign in to our site, use these credentials during checkout or on the <a href=%customer_url"">My Account</a> page:"""
+Email:,Email:
+Password:,Password:
+Password you set when creating account,Password you set when creating account
+"Forgot your account password? Click <a href=%reset_url"">here</a> to reset it.""","Forgot your account password? Click <a href=%reset_url"">here</a> to reset it."""
+"To sign in to our site and set a password, click on the <a href=%create_password_url"">link</a>.""","To sign in to our site and set a password, click on the <a href=%create_password_url"">link</a>."""
+Bitte bestätigen Sie Ihr FTC-Cashmere-Konto,Please confirm your FTC Cashmere account
+You must confirm your %customer_email email before you can sign in (link is only valid once):,You must confirm your %customer_email email before you can sign in (link is only valid once):
+Confirm Your Account,Confirm Your Account
+Passwort für FTC Cashmere zurücksetzen,Reset password for FTC Cashmere
+There was recently a request to change the password for your account.,There was recently a request to change the password for your account.
+"If you requested this change, set a new password here:","If you requested this change, set a new password here:"
+Set a New Password,Set a New Password
+"If you did not make this request, you can ignore this email and your password will remain the same.","If you did not make this request, you can ignore this email and your password will remain the same."
+Ihr Passwort bei FTC Cashmere wurde geändert,Your password at FTC Cashmere has been changed
+Ihr Passwort bei FTC Cashmere,Your password at FTC Cashmere
+We have received a request to change the following information associated with your account at %store_name: password.,We have received a request to change the following information associated with your account at %store_name: password.
+"If you have not authorized this action, please contact us immediately at <a href=mailto:%store_email"">%store_email</a>""","If you have not authorized this action, please contact us immediately at <a href=mailto:%store_email"">%store_email</a>"""
+"or call us at <a href=tel:%store_phone"">%store_phone</a>""","or call us at <a href=tel:%store_phone"">%store_phone</a>"""
+"Thanks,<br>%store_name","Thanks,<br>%store_name"
+Ihre E-Mail-Adresse bei FTC Cashmere wurde geändert,Your FTC Cashmere email address has been changed
+Ihre E-Mail-Adresse bei FTC Cashmere,Your email address at FTC Cashmere
+We have received a request to change the following information associated with your account at %store_name: email.,We have received a request to change the following information associated with your account at %store_name: email.
+E-Mail-Adresse und Passwort bei FTC Cashmere geändert,Email address and password at FTC Cashmere has been changed
+"We have received a request to change the following information associated with your account at %store_name: email, password.","We have received a request to change the following information associated with your account at %store_name: email, password."
+Newsletter subscription confirmation,Newsletter subscription confirmation
+Thank you for subscribing to our newsletter.,Thank you for subscribing to our newsletter.
+"To begin receiving the newsletter, you must first confirm your subscription by clicking on the following link:","To begin receiving the newsletter, you must first confirm your subscription by clicking on the following link:"
+Newsletter subscription success,Newsletter subscription success
+You have been successfully subscribed to our newsletter.,You have been successfully subscribed to our newsletter.
+Newsletter unsubscription success,Newsletter unsubscription success
+You have been unsubscribed from the newsletter.,You have been unsubscribed from the newsletter.
+Information zu Ihrer Rücksendung der Bestellung #%increment_id,Information about your return of order #%increment_id
+Neue Rücksendung,New Return
+You have been unsubscribed from the newsletter.,You have been unsubscribed from the newsletter.
+Email address,Email address
+Status,Status
+Created,Created
+Updated,Updated
+Return,Return
+Nachricht von FTC Cashmere,Message from FTC Cashmere
+Zahlung fehlgeschlagen,Payment failed
+Reason,Reason
+Checkout Type,Checkout Type
+Customer:,Customer:
+Items,Items
+Total:,Total:
+Billing Address:,Billing Address:
+Shipping Address:,Shipping Address:
+Shipping Method:,Shipping Method:
+Payment Method:,Payment Method:
+Date & Time:,Date & Time:
+Verfügbarkeitsbenachrichtigung von FTC Cashmere,Availability notification from FTC Cashmere
+"Hello,","Hello,"
+Thank you!,Thank you!
+Status Ihrer Bestellung prüfen,Check your order status
+Sie können den Status Ihrer Bestellung jederzeit unter dem nachfolgenden Link überprüfen oder uns eine Nachricht zukommen lassen:,You can check the status of your order at any time using the link below or send us a message:
+Bestellübersicht,Order overview
+"Bitte prüfen Sie die Angaben ggfs. nochmals, da Pakete mit falschen/unvollständigen Adressen wieder an uns retourniert werden.","Please check the details again if necessary, as parcels with incorrect/incomplete addresses will be returned to us."
+Your Order #%increment_id,Your Order #%increment_id
+Vielen Dank,Many thanks
+Ihr FTC Cashmere Team,Your FTC Cashmere Team
+Die nachfolgenden Artikel wurden Ihnen gutgeschrieben:,The following articles were credited to your account:
+"Die Rückerstattung folgt automatisch auf die beim Kauf gewählte Zahlungsmethode. Sollten Sie auf Rechnung bestellt haben, so erfolgt eine entsprechende Rechnungskorrektur.","The refund will automatically follow the payment method chosen at the time of purchase. If you have ordered on account, a corresponding invoice correction will be made.  "
+"Wir hoffen, Sie bald wieder in unserem Onlineshop begrüssen zu dürfen.",We hope to welcome you back to our online shop soon.
+Ihre Größe ist wieder verfügbar – bestellen Sie jetzt!,Your size is available again – order now!
+"Ein Artikel, der Ihnen gefällt, ist wieder in Ihrer Grösse verfügbar. Seien Sie schnell und bestellen Sie jetzt Ihren neuen FTC Cashmere Artikel.",An article that you like is available again in your size. Be quick and order now your new FTC Cashmere item.
+Ihre Rücksendung zur Bestellung #%increment_id,Your return of order #%increment_id
+Wir haben Ihren Rücksendeauftrag erhalten. Sie können nun die Ware verpacken und an uns zurücksenden.,We have received your return request. You can now pack the goods and send them back to us.
+Hilfe und Kontakt,Help and Contact
+Bestellung,Order
+Zahlung,Payment
+Versand und Lieferung,Shipping and Delivery
+Rücksendung und Rückerstattung,Return and Refund
+Widerrufsbelehrung,Cancellation Terms
+Mein Kundenkonto,Customer account
+Unsere Firmenphilosophie,Our company philosophy
+Eigene Farm mit hohen Standards für den Tierschutz,Own farm with high animal welfare standards
+Komplette Lieferkette im Besitz des Familienunternehmens,Complete supply chain owned by the family business 
+Upcycling zur Minimuerung von Abfall,Upcycling to minimise waste
+Soziale Verantwortung und Umweltschutz,Social responsibility and environmental protection
+Finden Sie Inspiration:,Find inspiration
+Impressum,Disclaimer
+Der Online-Shop von FTC Cashmere wird betrieben durch:,The online shop of FTC Cashmere is operated by:
+Cashmere World Shop GmbH,Cashmere World Shop GmbH
+"Rather Strasse 49c, Rote Halle","Rather Strasse 49c, Rote Halle"
+40476 Düsseldorf,40476 Düsseldorf
+Deutschland,Deutschland
+UMSATZSTEUER ID NUMMER,VAT ID NUMBER
+Hinweis: Dies ist nicht die Rücksende-Adresse. Retouren werden hier nicht angenommen.,Note: this is not the return address. Returns are not accepted here. 
+CASHMERE WORLD SHOP GMBH,CASHMERE WORLD SHOP GMBH
+Versendete Artikel,Shippend articles
+Bitte bestätigen Sie Ihre Anmeldung,Please confirm your registration
+"Vielen Dank für Ihre Anmeldung. Um die Registrierung Ihres Kundenkontos erfolgreich abzuschliessen, klicken Sie bitte auf die Schaltfläche weiter unten.","Thank you for your registration. To complete your registration successfully, please click on the button below."
+Kundenkonto-Anmeldung bestätigen,Confirm customer account registration
+Erst nach dieser Bestätigung wird Ihr Kundenkonto aktiviert.,Your customer account will only be activated after this confirmation.
+"Sollte Ihre E-Mail-Adresse ohne Ihr Wissen für ein FTC Cashmere Kundenkonto eingetragen worden sein, bitten wir Sie, diese E-Mail zu ignorieren.","If your e-mail address has been registered for a FTC Cashmere customer account without your knowledge, please ignore this email. "
+"Datenschutz ist bei FTC Cashmere ein sehr wichtiges Thema. Für die Registrierung eines Kundenkontos verwenden wir das sogenannte Double-opt-in-Verfahren. Mit dem doppeltem Bestätigungsverfahren bestätigen Sie nochmals explizit Ihre Anmeldung, indem Sie die oben aufgeführte Schaltfläche anklicken. Wir möchten somit sicherstellen, dass Ihre E-Mail-Adresse nicht von Dritten eingetragen wurde.","Data protection is a very important issue at FTC Cashmere. For the registration of a customer account we use the so-called double-opt-in procedure. With the double-opt-in procedure, you explicitly confirm the registration again by clicking the button listed above. With this verification we want to ensure that your e-mail address has not been entered by third parties. "
+Sie haben sich erfolgreich bei FTC Cashmere registriert.,You have successfully registered with FTC Cashmere. 
+"Um sich in Ihrem Kundenkonto anzumelden, verwenden Sie bitte Ihre registrierten Anmeldedaten auf ""Mein Konto""- oder während des Check-Outs. Haben Sie Ihr Passwort vergessen, dann klicken Sie  <a href=""%reset_url"">hier</a>.","To log in to your account, please use your registered login details on ""My Account"" or during check-out. If you have forgotten your password, click <a href=""%reset_url"">here</a>."
+Freuen Sie sich auf diese Vorteile:,Look forward to these advantages:
+Schnellerer Bezahlvorgang,Faster payment process
+Den Status Ihrer Bestellung jederzeit prüfen,Check the status of your order at any time
+Adress- und Kundendaten verwalten,Manage address and customer data
+Übersicht all Ihrer Bestellungen,Overview of all your orders 
+Lassen Sie sich von unserer exklusiven Cashmere Auswahl inspirieren. Wir wünschen Ihnen viel Spass beim Einkaufen!,Be inspired by our exclusive cashmere selection. We hope you enjoy shopping with us!
+zum Kundenkonto,To the customer account
+Ihr Passwort wurde geändert,Your password has been changed
+Sie haben das Passwort in Ihrem Kundenkonto erfolgreich geändert.,You have successfully changed the password in your customer account. 
+Ihre E-Mail-Adresse wurde geändert,Your e-mail address has been changed
+Sie haben die E-Mail-Adresse in Ihrem Kundenkonto erfolgreich geändert.,You have successfully changed the e-mail-address in your customer account. 
+"Im Interesse Ihres persönlichen Datenschutzes empfehlen wir Ihnen, das Passwort sicher aufzubewahren und nicht an Dritte weiterzugeben.","In the interest of your personal data protection, we recommend that you keep the password safe and do not pass it on to third parties."
+"Im Interesse Ihres persönlichen Datenschutzes empfehlen wir Ihnen, Ihre Logindaten sicher aufzubewahren und nicht an Dritte weiterzugeben.","In the interest of your personal data protection, we recommend that you keep your login date safe and do not pass it on to third parties."
+Ihre E-Mail-Adresse und Passwort wurden geändert,Your e-mail address and password has been changed
+Sie haben sowohl die E-Mail-Adresse als auch das Passwort in Ihrem Kundenkonto erfolgreich geändert.,You have successfully changed the email address and password in your customer account.
+Passwort zurücksetzen,Reset password
+"Sie haben ein neues Passwort für Ihr FTC Cashmere Kundenkonto angefordert. Klicken Sie auf den nachfolgenden Link, um Ihr Passwort zurück zu setzen.",You have requested a new password for your FTC Cashmere customer account. Click on the following link to reset your password.
+Dieser Link ist aus Sicherheitsgründen nur während 24h gültig.,"For security reasons, this link is only valid for 24 hours. "
+Geschenkgutschein erhalten,Received a gift voucher
+Geschenkgutschein laüft bald ab,Gift voucher expires soon
+%sender_name purchased a,%sender_name purchased a
+gift card for you at %store_name,gift card for you at %store_name
+You have been bought a,You have been bought a
+gift card for %customer_name,gift card for %customer_name
+Please find below message from %sender_name,Please find below message from %sender_name
+Please use the following gift card code at %store_name:,Please use the following gift card code at %store_name:
+Look forward to seeing you at our store.,Look forward to seeing you at our store.
+Your gift card expires in,Your gift card expires in
+days,days
+Ihr Geschenkgutschein wurde zugestellt,Your gift voucher has been delivered
+You purchased a gift card for,You purchased a gift card for
+Your message:,Your message:
+Ihre Bestellung #%increment_id  – fehlende Vorkassezahlung,Your order #%increment_id - missing prepayment
+Wir beziehen uns auf Ihre Bestellung vom,We refer to your order from 
+Sie haben die Zahlungsart Vorkasse gewählt.,You have chosen the payment method prepayment. 
+Leider haben wir Ihre Überweisung bis heute noch nicht erhalten.,"Unfortunately, we have not received your bank transfer yet."
+Besten Dank für Ihre Überweisung.,Thank you for your transfer.
+"Wir bitten Sie den unten aufgeführten Gesamtbetrag innerhalb von 3 Tagen auf folgendes Konto nachzuzahlen, ansonsten müssen wir die Bestellung aufgrund Nichtbezahlung stornieren, damit der Artikel wieder freigegeben wird.","We kindly ask you to pay the total amount within 3 days to the following account, otherwise we have to cancel the order due to non-payment so that the item can be released again."
+Konto-Nr.,Account no.
+Ihre Bestellung #%increment_id war nicht erfolgreich,Your order #%increment_id was not successful
+"Hierfür könnten viele Fehler in Frage kommen, meistens betrifft es aber die nachfolgenden Punkte:","This could be due to many errors, but mostly it concerns the following points:"
+Falsche Kreditkartennummer oder CVV-Nr. (Kartenprüfnummer - dreistelliger Code auf der Rückseite Ihrer Karte eingegeben),Incorrect credit card number or CVC number (card verification code - three-digit code which you´ll find on the back of your card)
+Sonstige falsche Angaben wie Kreditkarteninhaber oder Ablaufdatum eingegeben,Other incorrect information such as credit card holder or expiry date 
+Kein Secure Code vorhanden,No existing secure code 
+Gültigkeit der Kreditkarte abgelaufen,Credit card validity expired
+Kreditkartenlimit überschritten,Credit card limit exceeded
+Keine akzeptierte Kreditkarte gemäss untenstehender Auflistung,No accepted credit card as listed below
+"Bitte versuchen Sie es noch einmal und geben Sie die Angaben, sofern die Kreditkarte noch gültig und ein genügendes Kreditkartenlimit vorhanden ist, nochmals vorsichtig ein. Falls die Angaben stimmen, die Bestellung aus anderen, unerklärlichen Gründen nicht möglich ist, bitten wir Sie die Zahlungsart zu wechseln.","Please try again and enter carefully the details, if the credit card is still valid and the credit card limit is sufficient. If the information was correct but the order is still not possible for other, inexplicable reasons, we kindly ask you to change the payment method. "
+"Wir akzeptieren Kreditkarten der Anbieter Visa, Master Card und American Express nur mit einem zusätzlichem 3D-Secure Code. Durch dieses SSL-Authentifizierungsverfahren sind Ihre Kreditkartendaten bei der Übertragung geschützt. Wir bitten Sie um Verständnis, dass wir auch in Ihrem Interesse Kreditkarten ohne dem sicheren Verschlüsselungsverfahren nicht annehmen können. Bitte wählen Sie daher eine andere Zahlungsart aus.","We accept credit cards from Visa, Master Card and American Express only with an additional 3D-Secure Code. This SSL authentication procedure protects your credit card data during transmission. For safety reasons, we kindly ask for your understanding that we cannot accept credit cards without the secure encryption procedure. Therefore, please select another payment method. "
+"Bitte beachten Sie, dass bei dieser Zahlungsart der Anbieter PayPal im Hintergrund entsprechende Adress- und Bonitätsprüfung durchführt.","Please note that with this payment method, the payment service provider PayPal carries out the address and creditworthiness checks in the background. "
+"Sollte die Überprüfung negativ ausfallen, so bitten wir Sie eine andere Zahlungsart anzuwenden. Weitere Informationen finden Sie unter","If the verification is negative, we kindly ask you to choose another payment method. You can find further information about PayPal at "
+Hinweis:,Note:
+"Hierbei handelt es sich um einen komplexen automatisierten Prozess. FTC Cashmere keinen Einfluss auf diese Zahlungsart hat. Daher hat unser Kundenservice nicht die Möglichkeit, die angebotenen Zahlungsarten zu ändern.","This is a complex automated process. FTC Cashmere does not have any influence on this payment method. Therefore, our customer service does not have the ability to change the payment methods offered."
+Kauf auf Rechnung,Purchase on account
+Kreditkarte,Credit card
+DE 814442953,DE 814442953
+"Bitte beachten Sie, dass bei dieser Zahlungsart der Anbieter Klarna im Hintergrund entsprechende Adress- und Bonitätsprüfung durchführt.","Please note that with this payment method, the payment service provider Klarna carries out the address and creditworthiness checks in the background. "
+"You added %1 to your shopping cart.","%1 został dodany do Twojego koszyka."
+

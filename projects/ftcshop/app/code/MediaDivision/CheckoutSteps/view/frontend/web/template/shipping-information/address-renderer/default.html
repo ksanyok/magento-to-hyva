@@ -1,0 +1,13 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<if args="visible()">
+    <text args="address().firstname"/> <text args="address().lastname"/><br/>
+    <text args="_.values(address().street).join(', ')"/><br/>
+    <text args="address().postcode"/> <text args="address().city "/><br/>
+    <text args="getCountryName(address().countryId)"/><br/>
+    <a if="address().telephone" attr="'href': 'tel:' + address().telephone" text="address().telephone"></a><br/>
+</if>

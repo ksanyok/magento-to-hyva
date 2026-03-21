@@ -1,0 +1,38 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+?>
+<?php $_invoice = $block->getInvoice() ?>
+<?php $_order   = $block->getOrder() ?>
+<?php if ($_invoice && $_order) : ?>
+    <br><br>
+    <table class="email-items">
+        <thead>
+            <tr>
+            <th></th>
+            <th style="text-align:left; color:#ad8b70; text-transform: uppercase; font-size: 12px;" class="item-info"> 
+                    <?= $block->escapeHtml(__('Items')) ?>
+                </th>
+                <th style="text-align:center; color:#ad8b70; text-transform: uppercase; font-size: 12px;" class="item-qty">
+                    <?= $block->escapeHtml(__('Qty')) ?>
+                </th>
+                <th style="text-align:right; color:#ad8b70; text-transform: uppercase; font-size: 12px;"  class="item-subtotal">
+                    <?= $block->escapeHtml(__('Subtotal')) ?>
+                </th>
+            </tr>
+        </thead>
+        <?php foreach ($_invoice->getAllItems() as $_item) : ?>
+            <?php if (!$_item->getOrderItem()->getParentItem()) : ?>
+                <tbody>
+                    <?= $block->getItemHtml($_item) ?>
+                </tbody>
+            <?php endif; ?>
+        <?php endforeach; ?>
+        <tfoot style="text-align:right;" class="order-totals">
+            <?= $block->getChildHtml('invoice_totals') ?>
+        </tfoot>
+    </table>
+<?php endif; ?>

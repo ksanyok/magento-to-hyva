@@ -1,0 +1,19 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php
+/**
+ * Product list toolbar
+ *
+ * @var $block \Magento\Catalog\Block\Product\ProductList\Toolbar
+ */
+?>
+<p class="toolbar-amount" id="toolbar-amount">
+    <?= $block->escapeHtml(
+        __('%1 Items', '<span class="toolbar-number">' . $block->getTotalNum() . '</span>'),
+        ['span']
+    ) ?>
+</p>

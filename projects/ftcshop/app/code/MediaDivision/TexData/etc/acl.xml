@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+  <acl>
+    <resources>
+      <resource id="Magento_Backend::admin">
+        <resource id="MediaDivision_Basics::general">
+          <resource id="MediaDivision_TexData::sequence" title="Sequence" sortOrder="25"/>
+          <resource id="MediaDivision_TexData::sequence_grid" title="Sequence Grid" sortOrder="25"/>
+          <resource id="MediaDivision_TexData::sequence_edit" title="Sequence Edit" sortOrder="25"/>
+          <resource id="MediaDivision_TexData::sequence_new" title="Sequence New" sortOrder="25"/>
+        </resource>
+      </resource>
+    </resources>
+  </acl>
+</config>

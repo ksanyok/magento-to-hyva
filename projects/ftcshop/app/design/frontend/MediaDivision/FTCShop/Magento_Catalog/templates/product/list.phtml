@@ -1,0 +1,388 @@
+<?php
+
+    use Magento\Framework\App\Action\Action;
+    // @codingStandardsIgnoreFile
+
+
+    $_productCollection         = $block->getLoadedProductCollection();
+    $_helper                    = $this->helper('Magento\Catalog\Helper\Output');
+    $_helperGallery             = $this->helper('MediaDivision\GalleryImages\Helper\Data');
+    $objectManager              = \Magento\Framework\App\ObjectManager::getInstance();
+    $imageHelper                = $objectManager->get('\Magento\Catalog\Helper\Image');
+    $websiteCode                = $objectManager->get('Magento\Store\Model\StoreManager')->getWebsite()->getCode();
+    $stockId                    = $objectManager->get('Magento\InventorySales\Model\ResourceModel\GetAssignedStockIdForWebsite')->execute($websiteCode);
+    $productSalableQty          = $objectManager->get('Magento\InventorySalesApi\Api\GetProductSalableQtyInterface');
+    // $ga4Helper = $this->helper('WeltPixel\GA4\Helper\Data');
+    $registry                   = $objectManager->get('\Magento\Framework\Registry');
+    $category                   = $registry->registry('current_category');
+
+
+    function countWithoutVideos($images) {
+      $count = 0;
+      foreach ($images as $image) {
+        if (!isVideoImage($image)) {
+          $count++;
+        }
+      }
+      return $count;
+    }
+
+    function isVideoImage($image) {
+      return $image->getData()["video_url"] !== null;
+    }
+
+?>
+
+
+
+
+<?php if (!$_productCollection->count()): ?>
+  
+    <div class="message info empty"><div><?php /* @escapeNotVerified */ echo __('We can\'t find products matching the selection.') ?></div></div>
+
+<?php else: ?>
+
+    <?php echo $block->getToolbarHtml() ?>
+    <?php //echo $block->getAdditionalHtml() ?>
+
+    <?php
+      $offset = $_productCollection->getPageSize() * ($_productCollection->getCurPage() - 1);
+      if ($block->getMode() == 'grid') {
+        $viewMode = 'grid';
+        $image = 'category_page_grid';
+        $showDescription = false;
+        $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::SHORT_VIEW;
+      } else {
+        $viewMode = 'list';
+        $image = 'category_page_list';
+        $showDescription = true;
+        $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::FULL_VIEW;
+      }
+    ?>
+
+
+
+
+    <div class="products wrapper <?php /* @escapeNotVerified */ echo $viewMode; ?> products-<?php /* @escapeNotVerified */ echo $viewMode; ?>">
+      
+      <?php $iterator = 1; ?>
+      <?php $i = 0; ?>
+      
+      <ol class="products list items product-items">
+      
+        <?php foreach ($_productCollection as $_product): ?>
+        <?php
+        if(!$_product->isSalable()) {
+            continue;
+        }
+        ?>
+
+        <?php 
+          if((($i + $offset)==12) && $category){
+            $blockId = $category->getLandingPage2();
+            if($blockId!=false && $blockId!=""){
+              echo "</ol>";
+              echo '<div class="catalog-banner-cms">';
+              echo $this->getLayout()
+                  ->createBlock('Magento\Cms\Block\Block')
+                  ->setBlockId($blockId)
+                  ->toHtml();
+                  echo '</div>';
+              echo '<ol class="products list items product-items">';
+            }                  
+          }
+         if((($i + $offset)==24) && $category){
+            $blockId = $category->getLandingPage3();
+            if($blockId!=false && $blockId!=""){
+              echo "</ol>";
+               echo '<div class="catalog-banner-cms">';
+              echo $this->getLayout()
+                  ->createBlock('Magento\Cms\Block\Block')
+                  ->setBlockId($blockId)
+                  ->toHtml();
+                  echo '</div>';
+                  echo '<ol class="products list items product-items">';
+            }                  
+          }          
+        ?>
+
+
+
+
+
+
+
+          <?php 
+            $productComplete = $objectManager->create('Magento\Catalog\Model\Product')->load($_product->getId()); 
+            $_children = $productComplete->getTypeInstance()->getUsedProducts($productComplete);
+          ?>
+          <?php /* @escapeNotVerified */ echo($iterator++ == 1) ? '<li class="item product product-item">' : '</li><li class="item product product-item">' ?>
+           
+            <div class="FTC-ListItem">
+
+      
+              <div class="toplabels">
+                <?php if ($productComplete->getNew()) : ?>
+                  <span class="new-product"><?= $block->escapeHtml(__('New')) ?></span>
+                <?php elseif ($productComplete->getSale()) : ?>
+                  <span class="sale-product">Sale</span>
+                <?php endif; ?>          
+                <?php if ($productComplete->getUpcycled()) : ?>
+                  <span class="upcycled-product">Upcycled</span>
+                <?php endif; ?>
+              </div>
+              
+
+
+
+              <a 
+                            href="<?php /* @escapeNotVerified */ echo $_product->getProductUrl() ?>" class="product photo product-item-photo" tabindex="-1">
+
+
+
+
+
+
+
+
+                        <?php
+
+
+                            
+                            $imgarr = array();
+                            $path = "/pub/media/catalog/product";
+                            $colors = array();
+                            $sizes = array();
+                            foreach($_children as $child){    
+                              if($child->isSalable()){
+                                $childComplete = $objectManager->create('Magento\Catalog\Model\Product')->load($child->getId()); 
+                                if(!in_array($child["image"], $imgarr)){                                
+                                  $imgarr[] = $child["image"];      
+                                }  
+                                $getColor = $childComplete->getRgbFarbe();
+                                if(!in_array($getColor, $colors)){
+                                  $colors[] = $getColor;
+                                }
+                                $getSize = $childComplete->getAttributeText("size");
+                                if(!in_array($getSize, $sizes) && $child->isSaleable()){
+                                  $sizes[] = $getSize;
+                                }
+                              }        
+								
+								$imgarr2 = array();
+				                $images = $child->getMediaGalleryImages();
+                                if ($images && $images->getSize()) {
+                                    foreach ($images as $image) {
+                                        $url = $image->getUrl();
+                                        if(preg_match('/mfz/',$url) && !in_array($url, $imgarr2)) {
+                                            $imgarr2[] = $image->getUrl();
+                                        }
+                                    }
+                                }
+								
+                            }    
+				 
+				 
+				 
+
+				 
+				 
+                            $imageHelper = $objectManager->get('Magento\Catalog\Helper\Image');
+                            $ProductImage = $imageHelper->init($productComplete, 'category_page_grid')->getUrl();
+                            //if(isset($imgarr[0])){
+
+
+                            //$ProductImage = $imgarr[0];
+                            if(!preg_match('/(mf1|mfz1)/',$ProductImage)) {
+                                foreach ($imgarr as $item) {
+									 $ProductImage = $path.$item;
+                                     break;
+                                }
+							}	
+				 
+
+								$ProductImage2 = false;
+                                if(isset($imgarr2[0])){
+								  $ProductImage2 = $imgarr2[0];
+								}
+			                   
+                            
+                            //}else{
+                            //    $ProductImage = "/pub/media/placeholder.png";
+                            //}
+                            echo '<img src="'.$ProductImage.'">';
+				 if($ProductImage2){ echo '<div class="image-overlay" style="background-image: url('.$ProductImage2.');"></div>'; }
+				 else{ echo '<div class="image-overlay"></div>'; }
+							
+                                  
+                /*
+                        <span class="product-image-container">
+                                    <span class="product-image-wrapper">
+                                 
+                                    </span>
+                                </span>   
+                                */
+                        ?>
+
+
+
+
+
+
+                    </a>
+
+
+                <?php if ($this->helper('Magento\Wishlist\Helper\Data')->isAllow()) : ?>
+                  <div class="wishlit-container">
+                    <div>                    
+                      <a href="#"
+                         data-post='<?= /** @noEscape */ $block->getAddToWishlistParams($_product); ?>'
+                         class="action to-wishlist" data-action="add-to-wishlist"
+                         title="<?= /** @noEscape */ __('Add to Wish List') ?>">
+                      </a>                    
+                    </div>  
+                  </div>
+                <?php endif; ?>  
+
+
+
+
+
+
+                    <div class="product details product-item-details">
+                        <?php
+                            $_productNameStripped = $block->stripTags($_product->getName(), null, true);
+                        ?>
+                        <strong class="product name product-item-name">
+                            <a 
+                                class="product-item-link"
+                                href="<?php /* @escapeNotVerified */ echo $_product->getProductUrl() ?>">
+                                <?php /* @escapeNotVerified */ echo $_helper->productAttribute($_product, $_product->getName(), 'name'); ?>
+                            </a>
+                        </strong>
+
+
+                        <?php // echo $block->getReviewsSummaryHtml($_product, $templateType); ?>
+                        <?php /* @escapeNotVerified */ echo $block->getProductPrice($_product) ?>
+                     
+                     
+                        <?php if ($_product->isAvailable()) :?>
+                                <?php // $block->getProductDetailsHtml($_product) ?>
+                            <?php endif; ?>
+
+
+
+
+
+
+
+
+
+
+
+        <div class="available-colors">
+          <div>
+            <?php
+              $ii=0;
+              foreach($colors as $e){
+                if($ii>3){ break; }
+                $r = substr($e,0,3);
+                $g = substr($e,3,3);
+                $b = substr($e,6,3);
+                $style = 'background: rgb('.$r.','.$g.','.$b.');';
+                echo '<span style="'.$style.'"></span>';                
+                $ii++;
+              }
+              if(count($colors)>4){
+                $newcalc = count($colors)-4;
+                echo '<span class="more-available-colors">'.$newcalc.' weitere Farben</span>';
+              }
+            ?>
+          </div>
+          <div class="available-sizes">
+            <div>
+              <?php
+                $check = array(
+                  "UNI" => "no",
+                  "2XS" => "no",
+                  "XS" => "no",
+                  "S" => "no",
+                  "M" => "no",
+                  "L" => "no",
+                  "XL" => "no",
+                  "2XL" => "no",
+                  "XXL" => "no",
+                  "3XL" => "no",
+                  "4XL" => "no",
+                  "5XL" => "no"
+                );
+                foreach($sizes as $e){
+                  $transform = strtoupper($e);
+                  $check[$transform] = "yes";
+                }
+                foreach($check as $e => $a){
+                  if($a=="yes"){
+                    echo '<span>'.$e.'</span>';
+                  }
+                }                            
+              ?>
+            </div>  
+          </div>
+        </div>
+
+
+               
+                    </div>
+
+
+
+
+
+
+                <?php echo($iterator == count($_productCollection)+1) ? '</li>' : '' ?>
+
+              <?php $i++; ?> 
+
+            <?php endforeach; ?>
+        </ol>
+    </div>
+
+    <?php // echo $block->getToolbarHtml() ?>
+
+    <?php if (!$block->isRedirectToCartEnabled()) : ?>
+        <script type="text/x-magento-init">
+        {
+            "[data-role=tocart-form], .form.map.checkout": {
+                "catalogAddToCart": {
+                    "product_sku": "<?= $block->escapeJs($_product->getSku()) ?>"
+                }
+            }
+        }
+        </script>
+    <?php endif; ?>
+<?php endif; ?>
+
+<style>
+
+
+
+.more-available-colors {
+width: auto !important;
+position: relative;
+top: -3px;
+margin-left: 5px;
+}
+	
+	.image-overlay{
+	  background-position: center center !important;
+      background-size: 100% !important;
+	}
+	.FTC-ListItem:hover .image-overlay{
+	  opacity: 1 !important;
+	}
+
+  .catalog-category-view .columns .product-item .FTC-ListItem .product-item-photo, .catalogsearch-result-index .columns .product-item .FTC-ListItem .product-item-photo {
+
+  display: block;
+}
+</style>

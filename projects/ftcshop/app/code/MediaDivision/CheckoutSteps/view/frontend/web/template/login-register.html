@@ -1,0 +1,107 @@
+<li id="login_register" data-bind="fadeVisible: isVisible">
+    <div id="checkout-step-title"
+         class="step-content"
+         data-role="content">
+        <!-- ko ifnot: isCustomerLoggedIn  -->
+        <div class="login-container">
+            <div class="block block-customer-login">
+                <div class="block-title">
+                    <strong id="block-customer-login-heading" role="heading" aria-level="2"><!-- ko i18n: 'Login'--><!-- /ko --></strong>
+                </div>
+                <div class="block-content" aria-labelledby="block-customer-login-heading">
+                    <form class="form form-login" action="/customer/account/loginPost/" method="post" id="login-form" novalidate="novalidate">
+                        <input name="form_key" type="hidden" data-bind="value: formKey">
+                        <fieldset class="fieldset login" data-hasrequired="* Pflichtfelder">
+                            <div class="field email required">
+                                <label class="label" for="email"><!-- ko i18n: 'Email address'--><!-- /ko --></label>
+                                <div class="control">
+                                    <input
+                                        name="login[username]"
+                                        value="" autocomplete="off"
+                                        id="email"
+                                        type="email"
+                                        class="input-text"
+                                        title="E-Mail  "
+                                        data-validate="{required:true, 'validate-email':true}"
+                                        aria-required="true">
+                                </div>
+                            </div>
+                            <div class="field password required">
+                                <label for="pass" class="label"><!-- ko i18n: 'Password'--><!-- /ko --></label>
+                                <div class="control">
+                                    <input
+                                        name="login[password]"
+                                        type="password"
+                                        autocomplete="off"
+                                        class="input-text"
+                                        id="pass"
+                                        title="Passwort"
+                                        data-validate="{required:true}"
+                                        aria-required="true">
+                                </div>
+                            </div>
+                            <div class="secondary">
+                                <a class="action remind" href="http://ftcshop2.local/de-ch/customer/account/forgotpassword/">
+                                    <span><!-- ko i18n: 'Forgotten Password?'--><!-- /ko --></span>
+                                </a>
+                            </div>
+                            <div class="actions-toolbar">
+                                <div class="primary">
+                                    <button type="submit" class="action login primary" name="send" id="send2">
+                                        <span><!-- ko i18n: 'Login'--><!-- /ko --></span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="required-fields">
+                                <span>*</span>
+                                <!-- ko i18n: 'Required Fields'--><!-- /ko -->
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+
+            <div class="block block-new-customer">
+                <div class="block-title">
+                    <strong id="block-new-customer-heading" role="heading" aria-level="2"><!-- ko i18n: "I'm new here"--><!-- /ko --></strong>
+                </div>
+                <div class="block-content" aria-labelledby="block-new-customer-heading">
+                    <div class="actions-toolbar">
+                        <div class="primary">
+                            <a href="/customer/account/create/" class="action create primary">
+                                <!-- ko i18n: 'Create New Account'--><!-- /ko -->
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /ko -->
+        <!-- ko if: isCustomerLoggedIn  -->
+        <div class="already-logged-in">
+            <p>
+                <!-- ko i18n: 'You are already logged in. You can go on to the next step.' --><!-- /ko -->
+            </p>
+            <button data-role="opc-continue" type="submit" class="button action continue primary">
+                <!-- ko i18n: 'Next'--><!-- /ko -->
+            </button>
+        </div>
+        <!-- /ko -->
+    </div>
+    <!-- ko ifnot: isCustomerLoggedIn  -->
+    <div class="guest">
+        <div class="block-title">
+            <strong id="block-guest-heading" role="heading" aria-level="2"><!-- ko i18n: 'Shop without account'--><!-- /ko --></strong>
+        </div>
+        <form data-bind="submit: navigateToNextStep" novalidate="novalidate">
+            <div class="actions-toolbar">
+                <div class="primary">
+                    <button data-role="opc-continue" type="submit" class="button action continue primary">
+                        <!-- ko i18n: 'Proceed As Guest'--><!-- /ko -->
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!-- /ko -->
+</li>

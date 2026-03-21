@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+  <type name="Magento\Framework\Console\CommandList">
+    <arguments>
+      <argument name="commands" xsi:type="array">
+        <item name="develop_module" xsi:type="object">MediaDivision\Basics\Console\Command\DevelopModule</item>
+        <item name="basics_cleanup" xsi:type="object">MediaDivision\Basics\Console\Command\BasicsCleanup</item>
+        <item name="import_customers" xsi:type="object">MediaDivision\Basics\Console\Command\ImportCustomers</item>
+        <item name="develop_createpasswordresetlinks" xsi:type="object">MediaDivision\Basics\Console\Command\DevelopCreatepasswordresetlinks</item>
+      </argument>
+    </arguments>
+  </type>
+</config>

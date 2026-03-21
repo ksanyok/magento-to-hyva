@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add 
+            id="MediaDivision_Basics::mediadivision" 
+            title="MediaDivision" 
+            translate="title" 
+            module="MediaDivision_Basics" 
+            parent="Magento_Backend::stores" 
+            sortOrder="50" 
+            dependsOnModule="MediaDivision_Basics" 
+            resource="MediaDivision_Basics::mediadivision"/>
+    </menu>
+</config>

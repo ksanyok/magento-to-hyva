@@ -1,0 +1,201 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/**
+ * Product media data template
+ *
+ * @var $block \Magento\Catalog\Block\Product\View\Gallery
+ */
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$imageHelper = $objectManager->create('\Magento\Catalog\Helper\Image');
+$_product = $block->getProduct();
+?>
+
+<?php
+$images = $block->getGalleryImages()->getItems();
+$mainImage = current(array_filter($images, function ($img) use ($block) {
+    return $block->isMainImage($img);
+}));
+
+if (!empty($images) && empty($mainImage)) {
+    $mainImage = $block->getGalleryImages()->getFirstItem();
+}
+
+$helper = $block->getData('imageHelper');
+$mainImageData = $mainImage ?
+    $mainImage->getData('medium_image_url') :
+    $helper->getDefaultPlaceholderUrl('image');
+
+?>
+<div style="position: relative;">
+<div class="gallery-placeholder _block-content-loading" data-gallery-role="gallery-placeholder">
+    <img
+        alt="main product photo"
+        class="gallery-placeholder__image"
+        src="<?= /* @noEscape */ $mainImageData ?>"
+    />
+  
+</div>
+<div class="icons-gallery-bottom" style="transform: translateY(-50%);">
+<div class="md-product-badges">
+<?php if ($_product->getNew()) : ?>
+                            <span class="new-product"><?= $block->escapeHtml(__('New')) ?></span>
+                        <?php elseif ($_product->getSale()) : ?>
+                            <span class="sale-product">Sale</span>
+                        <?php endif; ?>
+                        <?php if ($_product->getUpcycled()) : ?>
+                            <span class="upcycled-product">Upcycled</span>
+                        <?php endif; ?>
+                        </div>
+
+                        <div id="md-zoom-icon">
+                        </div>
+</div>
+
+                        <div id="md-back-link">
+                        <a href="javascript:history.back()">
+                        <svg version="1.1" id="Ebene_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#9A9B9B;}
+</style>
+<polygon class="st0" points="3.5,10 12.8,0 15,2.5 8,10 15,17.4 12.8,19.9 "/>
+</svg>
+                        </a>
+                        </div>
+
+                        </div>
+<script type="text/x-magento-init">
+    {
+        "[data-gallery-role=gallery-placeholder]": {
+            "mage/gallery/gallery": {
+                "mixins":["magnifier/magnify"],
+                "magnifierOpts": <?= /* @noEscape */ $block->getMagnifier() ?>,
+                "data": <?= /* @noEscape */ $block->getGalleryImagesJson() ?>,
+                "options": <?= /* @noEscape */ $block->getGalleryOptions()->getOptionsJson() ?>,
+                "maxheight": "900",
+                "fullscreen": <?= /* @noEscape */ $block->getGalleryOptions()->getFSOptionsJson() ?>,
+                 "breakpoints": <?= /* @noEscape */ $block->getBreakpoints() ?>
+           
+            }
+        }
+    }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+<?php
+  if($_product->getTypeId() == 'configurable') {
+    $children = $_product->getTypeInstance()->getUsedProducts($_product);
+  }
+
+
+  if($children) {
+    $colorcheck = array();
+    foreach ($children as $child) {
+      //if($child->isAvailable() && $child->isSaleable()){
+        $images = $child->getMediaGalleryImages();
+        $getsize = $child->getSize();
+        $groesse = "";
+        $colorname = "";
+        $groesse = $getsize;
+        $colorname = $child->getColorName();
+        if(!in_array($colorname, $colorcheck)){
+          $colorcheck[] = $colorname;
+          if($images){
+            foreach ($images as $image){
+              $imageUrl = $imageHelper->init($_product, 'product_page_image_medium')
+                        ->constrainOnly(true)->keepAspectRatio(true)->keepFrame(false)
+                        ->setImageFile($image->getFile())
+                        ->getUrl();
+
+              $pos = strpos($imageUrl, '_pfg.');
+              if($pos === false){
+             
+              }else{
+                $imgarray[] = array("groesse" => $groesse, "farbe" => $colorname, "url" => $imageUrl);
+              }
+
+
+            
+            }     
+          } 
+        //}
+      }
+    }
+  }else{
+    //$DescriptionText = htmlspecialchars(getDescription($product->getDescription()));
+  }
+?>
+
+
+<div id="ProductImages" style="display: none;">
+  <?php 
+    $i = 0;
+    if(isset($imgarray) && is_array($imgarray) && count($imgarray)>0){
+      foreach($imgarray as $e){
+        echo '<div style="display: none;" data-nth="'.$i.'" data-groesse="'.$e["groesse"].'" data-image="'.$i.'" data-farbe="'.$e["farbe"].'" data-url="'.$e["url"].'"><img src="'.$e["url"].'" /></div>';
+        $i++;
+      }
+    }
+  ?>  
+</div>
+
+
+
+
+
+
+<script type="text/javascript">
+  require([
+    "jquery",
+    'mage/translate'
+  ], function($){
+
+
+    function ReplaceColorSwatchImages() {
+      if($('#product-options-wrapper .swatch-attribute.color_name .swatch-attribute-options >div').length>0){
+        var i = 0;
+        var amount = $('#product-options-wrapper .swatch-attribute.color_name .swatch-attribute-options >div').length;
+        $('#product-options-wrapper .swatch-attribute.color_name .swatch-attribute-options >div').each(function(){
+          var colorid = $(this).attr("data-option-id");
+          var width = $(this).attr("data-thumb-width");
+          $(this).css("width", "93.5px");
+          var colorimage = $('#ProductImages div[data-farbe="'+colorid+'"]').attr("data-url");
+          if(i==4 && amount>5){
+            var newamount = parseInt(amount)-parseInt(5);
+            $('#product-options-wrapper .swatch-attribute.color_name .swatch-attribute-options').append('<div class="showmoreswatches">+'+newamount+'</div>');             
+          }
+          if(i<5){
+            $(this).html('<img src="'+colorimage+'" />');
+          }else{
+            $(this).html('<img src="'+colorimage+'" />');
+            $(this).hide();
+          }
+          i++;
+        });
+        clearInterval(ReplaceColorSwatchImagesInterval);
+      }
+    }
+    var ReplaceColorSwatchImagesInterval = setInterval(ReplaceColorSwatchImages, 200);
+
+    $(document).on("click", '#product-options-wrapper .swatch-attribute.color_name .swatch-attribute-options .showmoreswatches', function(){
+      $('#product-options-wrapper .swatch-attribute.color_name .swatch-attribute-options >div').show();
+      $(this).hide();
+
+    });
+
+  });
+</script>

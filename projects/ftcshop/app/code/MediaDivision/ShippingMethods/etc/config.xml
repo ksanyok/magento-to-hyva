@@ -1,0 +1,79 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <carriers>
+            <germany_standard>
+                <model>MediaDivision\ShippingMethods\Model\Carrier\GermanyStandard</model>
+                <active>0</active>
+                <title>Deutschland (Standard)</title>
+                <name>Deutschland (Standard)</name>
+                <price>0.00</price>
+                <days_min>2</days_min>
+                <days_max>5</days_max>
+                <showmethod>0</showmethod>
+                <specificerrmsg>This shipping method is not available. To use this shipping method, please contact us.</specificerrmsg>
+                <sallowspecific>0</sallowspecific>
+            </germany_standard>
+            <germany_express>
+                <model>MediaDivision\ShippingMethods\Model\Carrier\GermanyExpress</model>
+                <active>0</active>
+                <title>Deutschland (Express)</title>
+                <name>Deutschland (Express)</name>
+                <price>0.00</price>
+                <days_min>1</days_min>
+                <days_max>2</days_max>
+                <showmethod>0</showmethod>
+                <specificerrmsg>This shipping method is not available. To use this shipping method, please contact us.</specificerrmsg>
+                <sallowspecific>0</sallowspecific>
+            </germany_express>
+            <switzerland_standard>
+                <model>MediaDivision\ShippingMethods\Model\Carrier\SwitzerlandStandard</model>
+                <active>0</active>
+                <title>Schweiz (Standard)</title>
+                <name>Schweiz (Standard)</name>
+                <price>0.00</price>
+                <days_min>2</days_min>
+                <days_max>5</days_max>
+                <showmethod>0</showmethod>
+                <specificerrmsg>This shipping method is not available. To use this shipping method, please contact us.</specificerrmsg>
+                <sallowspecific>0</sallowspecific>
+            </switzerland_standard>
+            <switzerland_express>
+                <model>MediaDivision\ShippingMethods\Model\Carrier\SwitzerlandExpress</model>
+                <active>0</active>
+                <title>Schweiz (Express)</title>
+                <name>Schweiz (Express)</name>
+                <price>0.00</price>
+                <days_min>1</days_min>
+                <days_max>2</days_max>
+                <showmethod>0</showmethod>
+                <specificerrmsg>This shipping method is not available. To use this shipping method, please contact us.</specificerrmsg>
+                <sallowspecific>0</sallowspecific>
+            </switzerland_express>
+            <eu_standard>
+                <model>MediaDivision\ShippingMethods\Model\Carrier\EuStandard</model>
+                <active>0</active>
+                <title>EU (Standard)</title>
+                <name>EU (Standard)</name>
+                <price>0.00</price>
+                <days_min>2</days_min>
+                <days_max>5</days_max>
+                <showmethod>0</showmethod>
+                <specificerrmsg>This shipping method is not available. To use this shipping method, please contact us.</specificerrmsg>
+                <sallowspecific>0</sallowspecific>
+            </eu_standard>
+            <eu_express>
+                <model>MediaDivision\ShippingMethods\Model\Carrier\EuExpress</model>
+                <active>0</active>
+                <title>EU (Express)</title>
+                <name>EU (Express)</name>
+                <price>0.00</price>
+                <days_min>1</days_min>
+                <days_max>2</days_max>
+                <showmethod>0</showmethod>
+                <specificerrmsg>This shipping method is not available. To use this shipping method, please contact us.</specificerrmsg>
+                <sallowspecific>0</sallowspecific>
+            </eu_express>
+        </carriers>
+    </default>
+</config>

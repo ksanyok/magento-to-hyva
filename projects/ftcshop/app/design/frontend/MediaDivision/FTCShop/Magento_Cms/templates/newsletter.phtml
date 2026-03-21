@@ -1,0 +1,93 @@
+<?php
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+// @codingStandardsIgnoreFile
+/** @var \Magento\Store\Block\Switcher $block */
+
+?>
+
+    <div class="block newsletter-page">
+        <div class="content">
+            <form class="form subscribe"
+                  novalidate
+                  action="<?= $this->getUrl('newsletter/subscriber/new', ['_secure' => true]) ?>"
+                  method="post"
+                  data-mage-init='{"validation": {"errorClass": "mage-error"}}'
+                  id="newsletter-validate-detail">
+                <div class="field newsletter">
+                    <div class="control">
+                        <label for="newsletter">
+                            <input name="email" type="email" id="newsletter"
+                                   placeholder="<?= $block->escapeHtmlAttr(__('E-Mail Address')) ?>"
+                                   data-mage-init='{"mage/trim-input":{}}'
+                                   data-validate="{required:true, 'validate-email':true}"
+                            />
+                        </label>
+                    </div>
+                </div>
+                <div class="actions">
+                    <button class="action subscribe primary"
+                            title="<?= $block->escapeHtmlAttr(__('Subscribe')) ?>"
+                            type="submit"
+                            aria-label="Subscribe">
+                        <span><?= $block->escapeHtml(__('Subscribe')) ?></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <style>
+      .cms-newsletter.cms-page-view .page-main {
+    max-width: 100%;
+
+}
+
+.cms-newsletter.cms-page-view .page-main .page-title-wrapper {
+padding-left: 60px;
+padding-right: 60px;
+text-align:center;
+}
+
+.block.newsletter-page input {
+height: 50px;
+padding-left: 30px;
+
+}
+
+.block.newsletter-page {
+margin-bottom: 30px;
+}
+
+
+.block.newsletter-page button {
+margin-top: 30px;
+    background: #000;
+    color: #fff !important;
+    opacity: 1 !important;
+    padding: 20px 35px !important;
+    display: inline-block !important;
+    margin-bottom: 5px;
+    margin-right: 5px;
+    font-size: 14px;
+    border: none !important;
+    border-radius: 0 !important;
+    min-width: 80px;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase !important;
+    font-family: "KorpusGrotesk-B",sans-serif;
+    transition: all 0.3s ease-in-out !important;
+    box-sizing: content-box !important;
+
+}
+.block.newsletter-page button:hover, .block.newsletter-page button:focus {
+    background-color: #a6bb9a;
+    border: none !important;
+}
+    </style>
+
+

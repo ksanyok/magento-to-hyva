@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+  <type name="Magento\Framework\Console\CommandListInterface">
+    <arguments>
+      <argument name="commands" xsi:type="array">
+        <item name="import_products" xsi:type="object">MediaDivision\TexData\Console\Command\ImportProducts</item>
+        <item name="import_images" xsi:type="object">MediaDivision\TexData\Console\Command\ImportImages</item>
+        <item name="import_stock" xsi:type="object">MediaDivision\TexData\Console\Command\ImportStock</item>
+        <item name="check_products" xsi:type="object">MediaDivision\TexData\Console\Command\CheckProducts</item>
+        <item name="export_orders" xsi:type="object">MediaDivision\TexData\Console\Command\ExportOrders</item>
+      </argument>
+    </arguments>
+  </type>
+  <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+    <arguments>
+      <argument name="collections" xsi:type="array">
+        <item name="mediadivision_texdata_sequence_listing_data_source" xsi:type="string">MediaDivision\TexData\Model\ResourceModel\Sequence\Grid\Collection</item>
+     </argument>
+    </arguments>
+  </type>
+  <virtualType name="MediaDivision\TexData\Model\ResourceModel\Sequence\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+    <arguments>
+      <argument name="mainTable" xsi:type="string">md_sequence</argument>
+      <argument name="resourceModel" xsi:type="string">MediaDivision\TexData\Model\ResourceModel\Sequence\Collection</argument>
+    </arguments>
+  </virtualType>
+</config>

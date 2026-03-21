@@ -1,0 +1,268 @@
+<?php
+$objectManager              = \Magento\Framework\App\ObjectManager::getInstance();
+$url                        = $block->getBaseUrl();
+$getproduct                 = $block->getProduct();
+$product                    = $objectManager->create('Magento\Catalog\Model\Product')->load($getproduct->getId()); 
+
+
+
+
+$getmaterial = $product->getAttributeText("materials");
+if(is_array($getmaterial)){
+ $material = implode(',', $getmaterial);
+}else{
+ $material = $getmaterial;
+}
+
+
+
+//$images = array_values($_SESSION["product"]["media_gallery"]["images"]);
+$images = false;
+
+$isLyocell =  strpos($material, "Lyocell") !== false || strpos($material, "Seacell") !== false;
+$isCashmere =  strpos($material, "Cashmere") !== false || strpos($material, "Kaschmir") !== false;
+$isCotton =  strpos($material, "Cotton") !== false || strpos($material, "Baumwolle") !== false;
+$isLinen =  strpos($material, "Linen") !== false || strpos($material, "Leinen") !== false;
+
+if (strpos($url, "staging") !== false) {
+    $url = substr($url, 0, -6);
+}
+
+
+$children = false;
+if($product->getTypeId() == 'configurable') {
+    $children = $product->getTypeInstance()->getUsedProducts($product);
+    
+}
+
+function getDescription($string) {
+    if (strpos($string, '<ul') === false) {
+        return $string;
+    }
+
+    return explode("<ul", $string)[0];
+}
+
+function getDetails($string) {
+    if (strpos($string, '<ul') === false) {
+        return false;
+    }
+
+    return "<ul" . explode("<ul", $string)[1];
+}
+
+function getShortDescription($string) {
+    return trim($string, "\"");
+}
+
+
+
+
+
+
+$DescriptionText = '';
+
+if($children) {
+  foreach ($children as $child) {
+    if(getDescription($child->getDescription())){
+      //$DescriptionText = htmlspecialchars(getDescription($child->getDescription()));
+      $DescriptionText = getDescription($child->getDescription());
+      break;
+    } 
+  }
+}else{
+  //$DescriptionText = htmlspecialchars(getDescription($product->getDescription()));  
+  $DescriptionText = getDescription($product->getDescription());
+}
+
+
+$DetailsText = '';
+if($children) {
+  foreach ($children as $child) {
+    if(getDetails($child->getDescription())){
+      $DetailsText = getDetails($child->getDescription());
+      break;
+    } 
+  }
+}else{
+   $DetailsText = getDetails($product->getDescription());
+}
+
+$DescriptionText = str_replace("<div>", "", $DescriptionText);
+$DescriptionText = str_replace("</div>", "", $DescriptionText);
+
+$DetailsText = str_replace("<div>", "", $DetailsText);
+$DetailsText = str_replace("</div>", "", $DetailsText);
+
+?>
+
+<section class="overview">
+
+
+
+  <!--  <h2><?= __("Overview") ?></h2> -->
+    <div class="left container fadeInUp animatable">
+
+       <!-- <div class="description">
+            <p>
+              <?= $DescriptionText ?>
+            </p>
+        </div> -->
+
+        <div class="details">
+            <h3><?= __("Details") ?></h3>
+            <div class="content">
+                <?= $DetailsText ?>
+            </div>
+        </div>
+
+        <div class="short-description">
+            <h3><?= __("Size and Fit") ?></h3>
+            <div class="content">
+                <?php  echo $product->getShortDescription(); ?>
+            </div>
+       
+        </div>
+
+
+
+
+    <h3><?= __("Material & Care") ?></h3>
+    <div class="content">
+
+        <p class="material-image-md">
+            <?php if ($isCashmere): ?>
+            <img class="product-popup-link" data-popup="cashmere-care" src="<?= $url . "pub/media/product/material-and-care-cashmere.jpg"; ?>" alt="">
+            <?php elseif ($isLyocell): ?>
+            <img class="product-popup-link" data-popup="lyocell-care" src="<?= $url . "pub/media/product/material-and-care-lyocell.jpg"; ?>" alt="">
+            <?php elseif ($isCotton): ?>
+            <img src="<?= $url . "pub/media/product/material-and-care-cotton.jpg"; ?>" alt="">
+            <?php elseif ($isLinen): ?>
+            <img src="<?= $url . "pub/media/product/material-and-care-linen.jpg"; ?>" alt="">
+            <?php endif; ?>
+        </p>
+      
+        <div class="care">
+        
+
+
+        <?php
+        $pflegesymbole = $product->getResource()->getAttribute('pflegesymbol')->getFrontend()->getValue($product);
+        
+        if (isset($pflegesymbole)): ?>
+                <span class="care-symbol"><?= implode("",explode(";", $pflegesymbole)); ?></span>
+            <?php endif; ?>
+
+
+        </div>
+        <div class="material">
+
+            <p class="material-text"><?php echo  $product->getResource()->getAttribute('material')->getFrontend()->getValue($product); ?></p>
+            <?php if ($isCashmere): ?>
+                <span class="product-popup-link" data-popup="cashmere-care"><?= __("Cashmere Care") ?></span>
+            <?php endif; ?>
+            <?php if ($isLyocell): ?>
+                <span class="product-popup-link" data-popup="lyocell-care"><?= __("Lyocell Care") ?></span>
+            <?php endif; ?>
+        </div>
+    </div>
+    </div>
+    <?php if ($isCashmere): ?>
+        <div class="popup-container cashmere-care">
+            <div class="popup">
+                <div class="close-icon"></div>
+                <?php
+                echo $this->getLayout()
+                    ->createBlock("Magento\Cms\Block\Block")
+                    ->setBlockId("cashmere_care_popup")
+                    ->toHtml();
+                ?>
+                <div class="close-button">
+                    <?= __("Close Window") ?>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($isLyocell): ?>
+        <div class="popup-container lyocell-care">
+            <div class="popup">
+                <div class="close-icon"></div>
+                <?php
+                echo $this->getLayout()
+                    ->createBlock("Magento\Cms\Block\Block")
+                    ->setBlockId("lyocell_care_popup")
+                    ->toHtml();
+                ?>
+                <div class="close-button">
+                    <?= __("Close Window") ?>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
+</section>
+
+<?php
+/*
+$videos = array_values($_SESSION["product"]["media_gallery"]["images"]);
+
+
+
+for ($i = 0; $i < count($videos); $i++) {
+    $video = $videos[$i];
+
+    if ($video["media_type"] !== "external-video") {
+        continue;
+    } else {
+        echo '<iframe class="video" src="' . $video["video_url"] . '?controls=0&fs=0&color=white&rel=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+    }
+}
+*/
+?>
+
+
+
+
+<?php
+/*
+echo $this->getLayout()
+    ->createBlock("Magento\Cms\Block\Block")
+    ->setBlockId("recently_viewed")
+    ->toHtml();
+*/
+?>
+
+<section class="hidden descriptions" style="display: none;">
+    <?php
+    if($children) {
+        foreach ($children as $child) {
+            echo "<div style='display: none;' class='child-id-" . $child->getId() . "'>";
+            echo "<div style='display: none;' class='description'>" . getDescription($child->getDescription()) . "</div>";
+            echo "<div style='display: none;' class='details'>" . getDetails($child->getDescription()) . "</div>";
+            echo "<div style='display: none;' class='short-description'>" . getShortDescription($child->getShortDescription()) . "</div>";
+            echo "</div>";
+        }
+    } else {
+            echo "<div style='display: none;' class='child-id-" . $product->getId() . "'>";
+            echo "<div style='display: none;' class='description'>" . getDescription($product->getDescription()) . "</div>";
+            echo "<div style='display: none;' class='details'>" . getDetails($product->getDescription()) . "</div>";
+            echo "<div style='display: none;' class='short-description'>" . getShortDescription($product->getShortDescription()) . "</div>";
+            echo "</div>";
+    }
+    ?>
+</section>
+
+
+<section class="hidden dump">
+    <?php
+    /*
+    echo "<pre>";
+    var_dump($_SESSION["product"]);
+    echo "</pre>";
+    */
+    ?>
+</section>
+
+
+<div id="fullscreen-zoom"></div>

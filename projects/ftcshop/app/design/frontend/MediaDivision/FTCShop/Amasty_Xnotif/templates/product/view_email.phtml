@@ -1,0 +1,109 @@
+<?php
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) 2020 Amasty (https://www.amasty.com)
+ * @package Amasty_Xnotif
+ */
+?>
+<?php
+// @codingStandardsIgnoreStart
+/** @var Magento\Framework\Url\Helper\Data $urlHelper */
+
+use Amasty\Xnotif\Model\Config\GdprXnotif;
+
+$urlHelper = $this->helper(\Magento\Framework\Url\Helper\Data::class);
+/** @var Amasty\Xnotif\Helper\Data $helper */
+$helper = $this->helper(\Amasty\Xnotif\Helper\Data::class);
+// @codingStandardsIgnoreEnd
+
+$productId = (int)$helper->getOriginalProduct($block)->getId();
+$parentId = (int)$block->getData('parent_product_id');
+$url = $block->escapeHtml($helper->getEmailUrl('stock'));
+?>
+
+<div class="amxnotif-block"  data-action="<?= /* @noEscape */ $url; ?>">
+    <form id="form-validate-stock" method="post" action="<?= /* @noEscape */ $url; ?>">
+    <h3><?= /* @noEscape */ __('Sold out') ?></h3>
+        <label for="notification-container-<?= /* @noEscape */ $productId ?>">
+            <?= /* @noEscape */ __('Sorry, this item is currently not available. <br>We will inform you by e-mail as soon as your desired item is available again.') ?>
+        </label>
+        <div class="notification-container" id="notification-container-<?= /* @noEscape */ $productId ?>">
+            <div class="input-fields fieldset">
+                <input name="guest_email"
+                       class="input-text amxnotif-guest-email"
+                       id="amxnotif-guest-email-<?= /* @noEscape */ $productId ?>"
+                       size="30"
+                       type="email"
+                       data-validate="{required:true, 'validate-email':true}"
+                       placeholder="<?= /* @noEscape */ __('Insert your email') ?>"
+                />
+                <input type="hidden" name="product_id"
+                       value="<?= /* @noEscape */ $productId ?>"/>
+                <input type="hidden" name="type" value="email"/>
+
+                <?php if ($parentId):?>
+                <input type="hidden" name="parent_id"
+                       value="<?= /* @noEscape */ $parentId ?>"/>
+                <?php endif; ?>
+
+                <input type="hidden" name="form_key" value="<?= $block->escapeHtmlAttr($helper->getFormKey()) ?>">
+                <input type="hidden"
+                       name="<?= /* @noEscape */ \Magento\Framework\App\Action\Action::PARAM_NAME_URL_ENCODED ?>"
+                       value="<?= /* @noEscape */ $urlHelper->getEncodedUrl(); ?>"/>
+                <?php if ($helper->isGDRPEnabled()): ?>
+                    <div class="field required">
+                        <input type="checkbox"
+                               name="gdrp"
+                               id="amxnotif-stock-gdrp-<?= /* @noEscape */ $productId ?>"
+                               title="<?= $block->escapeHtml(__('GDRP')); ?>"
+                               data-validate="{required:true}"
+                               value="1">
+                        <label class="label" for="amxnotif-stock-gdrp-<?= /* @noEscape */ $productId ?>">
+                            <?= /* @noEscape */ $helper->getGDRPText(); ?>
+                        </label>
+                    </div>
+                <?php endif; ?>
+
+                <?php $gdprCheckboxesHtml = $helper->getGdprCheckboxHtml(GdprXnotif::GDPR_XNOTIF_STOCK_FORM); ?>
+                <?php if (!empty($gdprCheckboxesHtml)): ?>
+                    <?= /** @noEscape */ $gdprCheckboxesHtml ?>
+                <?php endif; ?>
+            </div>
+
+            <div class="actions-toolbar amxnotif_guest_action">
+                <div class="primary">
+                    <button type="submit" class="action submit primary">
+                        <span><?= $block->escapeHtml(__('Notify')); ?></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript">
+    require([
+        'jquery',
+        "mage/mage",
+        "mage/validation"
+    ], function ($) {
+        "use strict";
+        $('#form-validate-stock').mage('validation');
+    });
+</script>
+
+
+
+
+<style>
+.amstockstatus-stockalert {
+    width: calc(100% - 30px);
+  
+}
+
+.amxnotif-block .amxnotif_guest_action {
+
+    max-width: none;
+min-width: auto;
+}
+</style>

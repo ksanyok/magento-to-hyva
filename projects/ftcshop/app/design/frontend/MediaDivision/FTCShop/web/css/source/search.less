@@ -1,0 +1,699 @@
+
+/** LAYOUT **/
+
+@use-flex: false;
+@responsive: true;
+
+@screen__xxs: 320px;
+@screen__xs: 480px;
+@screen__s: 640px;
+@screen__m: 768px;
+@screen__l: 1024px;
+@screen__xl: 1440px;
+
+@layout__max-width: 1540px;
+@screen__max-width: 1920px;
+
+
+/** COLORS **/
+
+@brand-primary: #ad8b70;
+@brand-secondary: #f3633c;
+@green: #7dc97d;
+
+@white: #fff;
+@black: #111;
+@light-black: #333;
+@lighter-black: #555;
+@lightest-black: #777;
+
+@gray: #b3b3b3;
+@light-gray: #e0e0e0;
+@lighter-gray: #eee;
+@lightest-gray: #f8f8f8;
+
+
+
+/** PATHS **/
+
+@fonts-path: "../fonts/";
+@icon-path: "../images/icons/";
+@social-path: "../images/social/";
+@flag-path: "../images/flags/";
+
+
+
+/** FONTS **/
+
+@korpus-b: "Korpus-B", serif;
+@grotesk-b: "KorpusGrotesk-B", sans-serif;
+@sartex: "Sartex", sans-serif;
+@luma-icons: "luma-icons", sans-serif;
+
+/* 🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷 */
+/* 🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷 */
+/* Suchfenster Overlay bei Klick auf Lupe  */
+/* 🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷 */
+/* 🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷 */
+/*
+.block-search {
+    opacity: 1;
+    display: none;
+    position: fixed;
+    z-index: 90000;
+    width: 80%;
+    top: 190px;
+    left: 10%;
+    right: 10%;
+    margin: 0 auto;
+    height: auto;
+    margin: 0; 
+    padding: 0 !important;
+    background-color: none !important;
+    transition: all 0.5s;
+    @media (min-width: 1920px) {
+      width: 1720px;
+      left: 50%;
+      margin-left: -860px;
+    }           
+    @media (max-width: 900px) {
+      left: 5%;
+      right: 5%;
+      width: 90%;
+    }
+    @media (max-width: 768px) {
+      z-index: 9999999999;
+      position: fixed; 
+      left: 0; 
+      top: 0; 
+      right: 0; 
+      bottom: 0; 
+      width: 100%;
+    }
+    .form.minisearch{
+      .field.search{
+        >label.label{
+          @media (max-width: 768px) {
+            display: none !important;
+          }
+        }
+      }
+    }
+    .block-content{
+      .search-inner {
+         position: static;
+         height: auto;
+         min-height: 300px;
+         max-height: 500px;
+         width: 100%;
+         margin: 0;
+         padding: 0;
+         background: rgba(255,255,255,0.95);
+         padding-top: 50px;
+         padding-bottom: 50px;
+         .action.search {
+            display: none;
+         }
+         #search {
+            display: block;
+            width: 760px;
+            height: 60px;
+            margin: 100px auto 0 auto;
+            padding: 20px 20px 20px 35px;
+            border: none;
+            border-bottom: 2px solid @black;
+            background: url("@{icon-path}search.png") left center no-repeat;
+            background-size: 20px 20px;
+            font-size: 30px;
+            color: @light-black;
+            filter: brightness(0.1);
+
+            @media (max-width: 1040px) {
+                width: 80%;
+                margin-left: 10%;
+            }
+            @media (max-width: 768px) {
+                width: 80% !important;
+                margin-left: 10% !important;
+                left: 0 !important;
+                position: static !important;
+            }
+
+            &::placeholder {
+                color: @light-black;
+                transition: color 300ms;
+            }
+
+            &:focus {
+                box-shadow: none;
+
+                &::placeholder {
+                    color: transparent;
+                }
+            }
+         }
+        .trending {
+          width: 760px;
+          margin: 35px auto 0 auto;
+          text-align: center;
+          .trending-item {
+            margin: 0 0 0 40px;
+            padding: 0 0 0 15px;
+            background: url("@{icon-path}search.png") left center no-repeat;
+            background-size: 10px 10px;
+            filter: brightness(0.1);
+          }
+        }
+      }
+    }
+    .control {
+        border: none;
+    }
+
+    label:before {
+        content: none;
+    }
+
+    .close.icon-button{
+      position: fixed;
+      width: 20px;
+      height: 20px;            
+      right: 10%;
+      margin-right: 50px;
+      top: 240px;
+      @media (min-width: 1920px) {
+        top: 50px !important;
+        right: 50px !important;
+        margin-right: 0 !important;
+        position: absolute !important;
+      }        
+      @media (max-width: 900px) {
+        right: 5%;
+      }
+      @media (max-width: 768px) {
+        top: 50px !important;
+        right: 50px !important;
+        margin-right: 0 !important;
+      }      
+    }
+
+ */
+/* 🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷 */
+/* 🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷 */
+/* Fullscreen einstellungen der suche nach eingabe */
+/* 🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷 */
+/* 🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷 */
+/*
+  &.fullscreen{
+    z-index: 9999999999;
+    position: fixed; 
+    left: 0; 
+    top: 0; 
+    right: 0; 
+    bottom: 0; 
+    width: 100%;
+    @media (min-width: 1920px) {
+      margin-left: 0!important;
+    }     
+    .block-content{
+      .search-inner{
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        box-sizing: border-box;
+        min-height: 100%;
+        max-height: 100%;
+        height: 100%;
+        width: 100%;
+        background: rgba(249,247,248,1);
+        overflow-y: auto;
+          .close.icon-button{
+            position: fixed;
+            width: 30px;
+            height: 30px;
+            top: 70px;
+            right: 100px;
+            margin: 0;
+            transition: all 0.5s;
+            @media (max-width: 940px) {
+              top: 20px;
+              right: 20px;              
+            }
+            @media (max-width: 768px) {
+              top: 50px !important;
+              right: 50px !important;
+            }                  
+          }
+      }
+    }    
+    .clone-search-popular{
+      display: none;
+    }
+  }
+}
+ */
+/* 🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷 */
+/* 🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷 */
+/* suchergebnisse etc. (extension mirasvit) überschreibungen */
+/* 🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷 */
+/* 🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷 */
+
+.mst-searchautocomplete__autocomplete{
+  border-radius: 0 !important;
+  position: absolute !important;
+  margin: 0 auto !important;
+  border: none !important;
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+  background: #fff;
+
+top: 60px !important;
+padding-right: 20px;
+padding-bottom: 20px;
+    min-width: 50rem;
+    right: 0 !important;
+    left: auto !important;
+
+opacity: 0;
+max-height: 70vh;
+display: none !important;
+
+
+@media (max-width: 600px) {
+  top: auto !important;
+  width: 100%;
+  left: 0;
+  min-width: 100%;
+}
+
+&._active {
+ opacity: 1;
+ overflow-y: auto;
+ display: block  !important;
+}
+  a{
+    &:hover{
+      text-decoration: none !important;
+    }
+  }
+  .mst-searchautocomplete__autocomplete ul li._active a.title:hover{
+    text-decoration: none !important;
+  }
+  .magento_catalog_categoryproduct{
+    .mst-searchautocomplete__index-title{
+      display: none;
+    }
+    ul{
+      margin-bottom: 50px;
+      li{
+        display: inline-block;
+        width: auto;
+        padding-right: 10px;
+        a{
+          text-decoration: none;
+          border-bottom: 0 !important;
+          &:hover{
+            text-decoration: underline !important;
+            border-bottom: 0 !important;
+            &:after{
+              display: none !important;
+            }
+          }
+          span{
+            text-decoration: none;            
+            border-bottom: 0 !important;
+            &:hover{
+              text-decoration: none !important;
+              border-bottom: 0 !important;
+              &:after{
+                display: none !important;
+              }
+            }
+          }
+        }
+        &:hover{
+          border-bottom: 0 !important;
+          text-decoration: none !important;
+          &:after{
+            display: none !important;
+          }
+        }
+      }
+    }
+  }    
+  .mst-searchautocomplete__empty-result{
+    font-size: 1.5rem;
+  }
+}
+.mst-searchautocomplete__index-title{
+  font-size: 20px !important;
+  font-weight: 400 !important;
+  font-family: "Korpus-B", serif !important;
+  color: #111 !important;
+  text-align: center !important;
+  text-transform: uppercase !important;
+  margin-bottom: 20px !important;
+  background: none !important;
+  span{
+    
+  }
+}
+.mst-searchautocomplete__show-all{
+  height: 70px !important;
+  border-radius: 0 !important;
+  border: none !important;
+  background: #111 !important;
+  text-transform: uppercase !important;
+  font-size: 1.4rem !important;
+  color: #fff !important;
+  line-height: 70px;
+  font-family: "KorpusGrotesk-B", sans-serif !important;
+  transition: all 0.3s;
+  position: absolute !important;
+  top: inherit !important;
+  bottom: 0px !important;
+  width: 500px !important;
+  left: auto !important;
+  overflow: hidden;
+
+  @media (max-width: 600px) {
+
+    width: 100% !important;
+  
+  }
+  &:hover{
+    background: #303030 !important;
+  }
+  a{
+    color: white !important;
+    transition: all 0.3s;
+    padding: 0 !important;
+    span{
+      font-size: 15px !important;
+      transition: all 0.3s;
+    }
+  }
+}
+.mst-searchautocomplete__highlight{
+  background: rgba(173,139,112,0.9);
+  color: #fff;
+  padding: 4px;
+  padding-bottom: 2px;
+  border-radius: 2px;
+  margin-left: 4px;
+  margin-right: 4px;
+}
+.mst-searchautocomplete__item.magento_catalog_product{
+  transition: all 0.2s;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 10px; 
+  padding-right: 10px;
+  background: rgba(249,247,248,1) !important;
+      &:nth-child(odd){
+        background: rgba(255,255,255,0.3) !important;
+      }
+      &:nth-child(even){
+        background: rgba(255,255,255,0.0) !important;
+      }    
+  .mst-product-image-wrapper{
+     height: 15rem !important;
+     width: 15rem !important;
+     @media (max-width: 550px) {
+       height: 8rem !important;
+       width: 8rem !important;
+     }                 
+     img{
+       height: 15rem !important;
+       width: 15rem !important;
+       max-width: 15rem !important;
+       @media (max-width: 550px) {
+         height: 8rem !important;
+         width: 8rem !important;
+         max-width: 8rem !important;
+       }           
+     }
+  }
+  .price{
+    color: #ad8b70 !important;
+    font-family: "KorpusGrotesk-B", sans-serif !important;
+    font-size: 15px !important;
+  }
+  .title{
+    font-family: "KorpusGrotesk-B", sans-serif !important;
+    a{
+      font-family: "KorpusGrotesk-B", sans-serif !important;
+      opacity: 70% !important;
+      font-size: 18px !important;
+      color: #111 !important;
+      transition: all 0.3s !important;
+    }
+  }
+  .description{
+      font-family: "KorpusGrotesk-B", sans-serif !important;      
+      font-size: 15px !important;
+      color: #111 !important;      
+      line-height: 1.4 !important;
+      height: auto !important;
+  }
+  img{
+    transition: all 0.2s;
+  }
+  &:hover{
+    background: #eeeeee !important;
+    a{
+      text-decoration: none !important;
+    }
+    img{
+      transform: scale(1.2);
+    }
+  }
+}
+.mst-searchautocomplete__spinner{
+  position: relative !important;
+
+}
+
+/* 🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷 */
+/* 🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷 */
+/* beliebte suchbegriffe clonen mit js clonen da oberhalb benötigt */
+/* 🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷 */
+/* 🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷 */
+/* 
+.clone-search-popular{
+  padding-top: 50px;
+  >span{
+    font-family: "Korpus-B", serif !important;
+    font-weight: 400;
+    color: #111;
+    text-align: center;
+    display: block;
+    text-transform: uppercase;
+    line-height: 1.2rem;
+    font-size: 40px;
+    margin-bottom: 40px;
+    @media (max-width: 550px) {
+      font-size: 30px;
+      line-height: 38px;
+    }        
+  }
+  ul{      
+    text-align: center;      
+    margin: 0;
+    padding: 0;
+    float: none;
+    clear: left;
+    li{
+      display: inline-block;
+      width: auto;
+      margin-left: 10px;
+      margin-right: 10px;
+      float: none;
+      clear: left;
+      a{
+        font-size: 17px;
+        text-decoration: none;
+        transition: all 0.3s;
+        color: #575757;
+        &:hover{
+          text-decoration: none;
+          color: #111;
+        }
+      }
+    }
+  }
+}
+*/
+/* 🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷 */
+/* 🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷 */
+/* original beliebte vorschläge ausblenen, da raus kopiert */
+/* 🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷 */
+/* 🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷🍷 */
+
+.mst-searchautocomplete__index.popular{
+  visibility: hidden !important;
+  height: 0px !important;
+  width: 0px !important;
+  opacity: 0 !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+}
+
+
+.block-search {
+
+  width: 200px;
+  @media (max-width: 768px) {
+    margin-top: 0px !important
+    
+  }
+ 
+
+
+  margin-right: 20px;
+  input {
+
+
+    border: 1px solid #c2c2c2 !important;
+    background: #f8f8f8 !important;
+    font-size: 14px !important;
+    @media (max-width: 768px) {
+      border: 1px solid #c2c2c2 !important;
+      background: #f8f8f8 !important;
+      position: relative;
+      left: auto;
+      margin: 0px 0;
+
+      
+    }
+    @media (max-width: 600px) {
+      width: calc(~"100% - 40px");
+      margin-left: 20px;
+      margin-right: 20px;
+
+    }
+  }
+  @media (max-width: 768px) {
+  .control {
+    border-top: none !important;
+  }
+}
+@media (max-width: 768px) {
+ 
+
+
+  .label {
+    position: absolute;
+    right: 20px;
+    top: 18px;
+    z-index: 20;
+  }
+}
+  @media (max-width: 600px) {
+    width:100%;
+    position: absolute;
+    margin-top: 26px !important;
+    top: 26px !important;
+
+    .control {
+      border-top: none;
+    }
+
+    .field.search {
+      position: relative;
+    }
+
+    .label {
+      position: absolute;
+      right: 20px;
+      top: 2px;
+      z-index: 20;
+    }
+  }
+
+
+}
+
+
+
+.mst-searchautocomplete__autocomplete .mst-searchautocomplete__close  {
+  display: none;
+
+
+    opacity: 1;
+    position: absolute;
+
+    width: 15px !important;
+    height: 15px !important;
+    font-size: 0px;
+    background: url("@{icon-path}close.png") center center no-repeat;
+    background-size: 15px 15px;
+    transition: opacity 300ms;
+    cursor: pointer;
+    right: 55px;
+    top: -25px;
+    z-index: 9999;
+    &:hover {
+        opacity: 100%;
+    }
+
+
+}
+
+
+
+.clear_field {
+  display: block;
+    opacity: 1;
+    position: absolute;
+    width: 15px !important;
+    height: 15px !important;
+    font-size: 0;
+    background: url(https://ftcshop2.staging.mediadivision.ch/pub/static/version1663836286/frontend/MediaDivision/FTCShop/de_DE/images/icons/close.png) center center no-repeat;
+    background-size: 15px 15px;
+    transition: opacity 300ms;
+    cursor: pointer;
+    right: 55px;
+    top: 8px;
+    z-index: 9999;
+    opacity: 0;
+
+    &.active {
+      opacity: 1;
+    }
+
+    @media (max-width: 600px) {
+      right: 65px;
+    }
+}
+
+.mst-searchautocomplete__autocomplete._active {
+   padding: 0 !important;
+}
+
+.search-inner{
+.mst-searchautocomplete__item.magento_catalog_product {
+  .price {
+  color: #000 !important;
+  }
+}
+}
+
+@media screen and (min-width:768px){
+.block-search {
+  width: 200px !important;
+}
+}
+
+.mst-searchautocomplete__item.magento_catalog_product:last-child{
+  height: 180px;
+}
+
+.mst-searchautocomplete__results {
+  &.__all {
+      margin-bottom: 75px !important;
+  }
+}

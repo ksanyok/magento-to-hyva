@@ -1,0 +1,487 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+use Magento\Framework\App\Action\Action;
+
+/** @var \Magento\CatalogWidget\Block\Product\ProductsList $block */
+?>
+<?php if ($exist = ($block->getProductCollection() && $block->getProductCollection()->getSize())) : ?>
+    <?php
+    $type = 'widget-product-grid';
+
+    $mode = 'grid';
+
+    $image = 'new_products_content_widget_grid';
+    $items = $block->getProductCollection()->getItems();
+ 
+
+
+
+    $showWishlist = true;
+    $showCompare = false;
+    $showCart = true;
+    $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::SHORT_VIEW;
+    $description = false;
+
+    $_helper = $this->helper(Magento\Catalog\Helper\Output::class);
+    $_helperGallery = $this->helper('MediaDivision\GalleryImages\Helper\Data');
+
+    ?>
+    <div class="block widget block-products-list product-slider <?= /* @noEscape */ $mode ?>">
+        <?php if ($block->getTitle()) : ?>
+            <div class="block-title">
+                <strong><?= $block->escapeHtml(__($block->getTitle())) ?></strong>
+            </div>
+        <?php endif ?>
+
+        <div class="block-content">
+            <?= /* @noEscape */ '<!-- ' . $image . '-->' ?>
+            <div class="products-<?= /* @noEscape */ $mode ?> <?= /* @noEscape */ $mode ?>">
+                <ol class="product-items <?= /* @noEscape */ $type ?>">
+                    <?php $iterator = 1; ?>
+                    <?php foreach ($items as $_item) : ?>
+
+
+
+
+                        <?= /* @noEscape */ ($iterator++ == 1) ? '<li class="product-item">' : '</li><li class="product-item">' ?>
+                        <div class="product-item-info">
+                            
+                            <?php if ($_item->getNew()) : ?>
+                                <span class="new-product"><?= $block->escapeHtml(__('New')) ?></span>
+                            <?php elseif ($_item->getSale()) : ?>
+                                <span class="sale-product">Sale</span>
+                            <?php endif; ?>
+                            <?php if ($_item->getUpcycled()) : ?>
+                                <span class="upcycled-product">Upcycled</span>
+                            <?php endif; ?>
+
+                            <?php
+                            // Product Image
+                            $productImage = $block->getImage($_item, "category_page_slider");
+                            ?>
+
+                            <a href="<?= $block->escapeUrl($_item->getProductUrl()) ?>"
+                               class="product photo product-item-photo"
+                               tabindex="-1">
+                                <?= $productImage->toHtml() ?>
+                            </a>
+
+                            <?php
+                            // Additional Image
+                            $_helperGallery->addGallery($_item);
+                            $images = $_helperGallery->getGalleryImages($_item);
+                            ?>
+
+                            <?php if ($images instanceof \Magento\Framework\Data\Collection && count($images) > 2) : ?>
+                                <?php
+                                $i = 0;
+
+                                foreach ($images as $image) {
+                                    $i++;
+
+                                    if ($i < count($images)) {
+                                        continue;
+                                    }
+
+                                    $item = $image->getData();
+                                }
+                                ?>
+
+                                <a class="hover-image" href="<?= $block->escapeUrl($_item->getProductUrl()) ?>">
+                                <span class="product-image-container" >
+                                    <span class="product-image-wrapper">
+                                        <img class="product-hover-image-photo" src="<?php echo isset($item['medium_image_url']) ? $item['medium_image_url'] : null; ?>" alt="Preview image">
+                                    </span>
+                                </span>
+                                </a>
+                            <?php endif; ?>
+                            <div class="product-item-details">
+                                <strong class="product-item-name">
+                                    <a title="<?= $block->escapeHtmlAttr($_item->getName()) ?>"
+                                       href="<?= $block->escapeUrl($block->getProductUrl($_item)) ?>"
+                                       class="product-item-link">
+                                        <?= $block->escapeHtml($_item->getName()) ?>
+                                    </a>
+                                </strong>
+                                <?php if ($templateType) : ?>
+                                    <?= $block->getReviewsSummaryHtml($_item, $templateType) ?>
+                                <?php endif; ?>
+
+                                <?= $block->getProductPriceHtml($_item, $type) ?>
+
+                                <?= $block->getProductDetailsHtml($_item) ?>
+
+                                <?php if ($showWishlist) : ?>
+                               
+                                        
+                                                <?php if ($this->helper('Magento\Wishlist\Helper\Data')->isAllow()) : ?>
+                                                    <a href="#"
+                                                       data-post='<?= /** @noEscape */ $block->getAddToWishlistParams($_item); ?>'
+                                                       class="action towishlist add-to-wishlist" data-action="add-to-wishlist"
+                                                       title="<?= /** @noEscape */ __('Add to Wish List') ?>">
+                                                    </a>
+                                                <?php endif; ?>
+                                    
+                                <?php endif; ?>
+
+
+
+                                <?php
+                                    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+                                     $productComplete = $objectManager->create('Magento\Catalog\Model\Product')->load($_item->getId()); 
+                                     $_children = $productComplete->getTypeInstance()->getUsedProducts($productComplete);
+
+                                $imgarr = array();
+                            $path = "/pub/media/catalog/product";
+                            $colors = array();
+                            $sizes = array();
+                            foreach($_children as $child){    
+                              if($child->isSalable()){
+                                $childComplete = $objectManager->create('Magento\Catalog\Model\Product')->load($child->getId()); 
+                                if(!in_array($child["image"], $imgarr)){                                
+                                  $imgarr[] = $child["image"];      
+                                }  
+                                $getColor = $childComplete->getRgbFarbe();
+                                if(!in_array($getColor, $colors)){
+                                  $colors[] = $getColor;
+                                }
+                                $getSize = $childComplete->getAttributeText("size");
+                                if(!in_array($getSize, $sizes) && $child->isSaleable()){
+                                  $sizes[] = $getSize;
+                                }
+                              }                                
+                            }    
+                            ?>
+
+
+                                <div class="available-colors">
+          <div>
+            <?php
+              $ii=0;
+              foreach($colors as $e){
+                if($ii>3){ break; }
+                $r = substr($e,0,3);
+                $g = substr($e,3,3);
+                $b = substr($e,6,3);
+                $style = 'background: rgb('.$r.','.$g.','.$b.');';
+                echo '<span style="'.$style.'"></span>';                
+                $ii++;
+              }
+              if(count($colors)>4){
+                $newcalc = count($colors)-4;
+                echo '<span class="more-available-colors">'.$newcalc.' weitere Farben</span>';
+              }
+            ?>
+          </div>
+
+
+
+
+
+
+
+
+                            </div>
+
+                            <div class="quick-view">
+                                <div class="quick-view-container">
+                                    <div class="close icon-button"></div>
+                                    <div class="left part">
+                                        <?php if ($_item->getNew()) : ?>
+                                            <span class="new-product"><?= $block->escapeHtml(__('New')) ?></span>
+                                        <?php elseif ($_item->getSale()) : ?>
+                                            <span class="sale-product">Sale</span>
+                                        <?php endif; ?>
+                                        <?php if ($_item->getUpcycled()) : ?>
+                                            <span class="upcycled-product">Upcycled</span>
+                                        <?php endif; ?>
+
+                                        <?php
+                                        // Product Image
+                                        $productImage = $block->getImage($_item, "category_page_slider");
+                                        ?>
+
+                                        <a href="<?= $block->escapeUrl($_item->getProductUrl()) ?>"
+                                           class="product photo product-item-photo"
+                                           tabindex="-1">
+                                            <?= $productImage->toHtml() ?>
+                                        </a>
+
+                                        <div class="gallery-container">
+                                            <?php if ($images instanceof \Magento\Framework\Data\Collection) : ?>
+                                                <?php
+                                                $i = 0;
+
+                                                foreach ($images as $image) {
+                                                    $item = $image->getData();
+                                                    ?>
+                                                    <div class="image-container">
+                                                        <img class="gallery-image <?php if($i === 0) { echo "active"; } ?>" src="<?php echo isset($item['medium_image_url']) ? $item['medium_image_url'] : null; ?>" alt="">
+                                                    </div>
+                                                    <?php $i++; } endif; ?>
+                                        </div>
+                                    </div>
+
+                                    <div class="right part">
+                                        <?php
+                                        $_productNameStripped = $block->stripTags($_item->getName(), null, true);
+                                        ?>
+
+                                        <h2 class="product name product-item-name">
+                                            <a class="product-item-link"
+                                               href="<?= $block->escapeUrl($_item->getProductUrl()) ?>">
+                                                <?= /* @noEscape */
+                                                $_helper->productAttribute($_item, $_item->getName(), 'name') ?>
+                                            </a>
+                                        </h2>
+
+                                        <?= $block->getReviewsSummaryHtml($_item, $templateType) ?>
+                                        <?= /* @noEscape */
+                                        $block->getProductPrice($_item) ?>
+                                        <?php if ($_item->isAvailable()) :?>
+                                            <?= $block->getProductDetailsHtml($_item) ?>
+                                        <?php endif; ?>
+
+                                        <div class="vat">
+                                            <?= __("Incl. VAT, plus shipment") ?>
+                                        </div>
+
+                                        <div class="sku">
+                                            <?= $_item->getResource()->getAttribute('sku')->getStoreLabel(); ?>
+                                            <?= $block->escapeHtmlAttr($_item->getSku()); ?>
+                                        </div>
+
+                                        <?php if ($showCart) : ?>
+                                            <div class="actions-primary">
+                                                <?php if ($_item->isSaleable()) : ?>
+                                                    <?php $postParams = $block->getAddToCartPostParams($_item); ?>
+                                                    <form data-role="tocart-form" data-product-sku="<?= $block->escapeHtmlAttr($_item->getSku()) ?>" action="<?= $block->escapeUrl($postParams['action']) ?>" method="post">
+                                                        <input type="hidden" name="product" value="<?= $block->escapeHtmlAttr($postParams['data']['product']) ?>">
+                                                        <input type="hidden" name="<?= /* @noEscape */ Action::PARAM_NAME_URL_ENCODED ?>" value="<?= /* @noEscape */ $postParams['data'][Action::PARAM_NAME_URL_ENCODED] ?>">
+                                                        <?= $block->getBlockHtml('formkey') ?>
+                                                        <button type="submit"
+                                                                title="<?= $block->escapeHtmlAttr(__('Add to Cart')) ?>"
+                                                                class="action tocart primary">
+                                                            <span><?= $block->escapeHtml(__('Add to Cart')) ?></span>
+                                                        </button>
+                                                    </form>
+                                                <?php else : ?>
+                                                    <?php if ($_item->getIsSalable()) : ?>
+                                                        <div class="stock available"><span><?= $block->escapeHtml(__('In stock')) ?></span></div>
+                                                    <?php else : ?>
+                                                        <div class="stock unavailable"><span><?= $block->escapeHtml(__('Out of stock')) ?></span></div>
+                                                    <?php endif; ?>
+                                                <?php endif; ?>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <?= ($iterator == count($items) + 1) ? '</li>' : '' ?>
+
+                    <?php endforeach ?>
+                </ol>
+            </div>
+            <?= $block->getPagerHtml() ?>
+        </div>
+
+        <div class="nav-buttons">
+         
+            <div class="prev button"><span></span></div>
+            <div class="next button"><span></span></div>
+        </div>
+
+  
+    </div>
+<?php endif;?>
+
+
+
+
+
+
+<script>
+
+require(['jquery', 'jquery/ui'], function($){
+  jQuery(document).ready( function() {
+
+
+    let body = $("body");
+    let productItems = body.find(".product-slider .product-items");
+    let sliderOverflow = body.find(".product-slider .product-items").prop('scrollWidth');
+    $(".product-slider .prev.button").hide();
+
+    if (sliderOverflow <= productItems.width() ) {
+        $(".product-slider .next.button").hide();
+}
+
+    body.on("click", ".product-slider .prev.button", function() {
+         
+        $(".product-slider .next.button").show();
+            productItems.animate({scrollLeft: "-=" + (productItems.width() + 10)}, 450);
+            setTimeout(function() {
+            if(productItems.scrollLeft() == 0) {
+     
+                $(".product-slider .prev.button").hide();
+    }
+}, 500);
+
+        });
+
+    
+
+        body.on("click", ".product-slider .next.button", function() {
+            $(".product-slider .prev.button").show();
+         
+            productItems.animate({scrollLeft: "+=" + (productItems.width() + 10)}, 450);
+            let maxscroll = productItems.prop("scrollWidth") - productItems.width();
+            setTimeout(function() {
+            if(productItems.scrollLeft() == maxscroll) {
+            
+                $(".product-slider .next.button").hide();
+    }
+}, 500);
+        });
+
+
+        if($('.product-slider').length){
+
+        let isDown = false;
+let startX;
+let scrollLeft;
+const slider = document.querySelector('.product-slider .product-items');
+
+const end = () => {
+	isDown = false;
+  slider.classList.remove('active');
+}
+
+const start = (e) => {
+  isDown = true;
+  slider.classList.add('active');
+  startX = e.pageX || e.touches[0].pageX - slider.offsetLeft;
+  scrollLeft = slider.scrollLeft;	
+}
+
+const move = (e) => {
+	if(!isDown) return;
+
+  e.preventDefault();
+  const x = e.pageX || e.touches[0].pageX - slider.offsetLeft;
+  const dist = (x - startX);
+  slider.scrollLeft = scrollLeft - dist;
+}
+  (() => {
+	slider.addEventListener('mousedown', start);
+	slider.addEventListener('touchstart', start);
+
+	slider.addEventListener('mousemove', move);
+	slider.addEventListener('touchmove', move);
+
+	slider.addEventListener('mouseleave', end);
+	slider.addEventListener('mouseup', end);
+	slider.addEventListener('touchend', end);
+})();
+
+
+
+}
+
+
+
+  });
+});
+</script>
+
+<style>
+    .more-available-colors {
+width: auto !important;
+position: relative;
+top: -3px;
+margin-left: 5px;
+
+}
+
+.product-slider {
+margin-bottom: 30px;
+}
+
+.product-slider .available-colors {
+	 transition: all 0.3s;
+	 position: relative;
+     text-align: left;
+}
+.product-slider .available-colors div {
+	 transition: all 0.3s;
+}
+.product-slider .available-colors div span {
+	 transition: all 0.3s;
+	 width: 15px;
+	 height: 15px;
+	 border-radius: 100%;
+	 display: inline-block;
+	 margin-right: 5px;
+	 border: 1px solid #e5e5e5;
+}
+.product-slider .more-available-colors {
+	 width: auto !important;
+	 position: relative;
+	 top: -3px;
+	 margin-left: 5px;
+     border: none !important;
+}
+ @media only screen and (max-width: 600px) {
+    .product-slider .more-available-colors {
+		 font-size: 11px;
+         display: block !important;
+         margin-left: 0px;
+         top: 0px;
+border: none !important;
+	}
+
+    .product-slider .add-to-wishlist {
+display: none !important;
+}
+
+
+}
+
+.product-slider .swatch-attribute.color_name {
+    display: none; 
+}
+
+
+.product-slider .nav-buttons .next:hover {
+    right: 5px !important;
+}
+
+.product-slider .nav-buttons .prev:hover {
+    left: 5px !important;
+}
+@media (min-width: 768px) {
+.product-slider .products-grid ol.product-items li.product-item {
+    position: relative;
+    width: 200px !important;
+}
+
+.catalog-category-view .columns .product-item:nth-of-type(4n), .catalogsearch-result-index .columns .product-item:nth-of-type(4n) {
+    margin-right: 10px !important;
+}
+}
+
+
+@media (max-width: 600px) {
+
+    .product-slider .products-grid ol.product-items li.product-item {
+    width: 40% !important;
+    margin-right: 6px !important;
+}
+}
+.product-slider .add-to-wishlist {
+    z-index: 10;
+}
+</style>

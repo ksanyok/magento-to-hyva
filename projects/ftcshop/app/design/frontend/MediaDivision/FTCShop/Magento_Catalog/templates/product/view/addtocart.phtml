@@ -1,0 +1,130 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var $block \Magento\Catalog\Block\Product\View */
+?>
+<?php $_product = $block->getProduct(); ?>
+<?php $buttonTitle = __('Add to Cart'); ?>
+<?php if ($_product->isSaleable()) :?>
+    <div class="box-tocart">
+
+
+
+
+    <?php 
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$product = $objectManager->get('Magento\Framework\Registry')->registry('current_product');
+$categories = $product->getCategoryIds(); /*will return category ids array*/
+
+foreach($categories as $category){
+    $cat = $objectManager->create('Magento\Catalog\Model\Category')->load($category);
+    // echo $cat->getParentId();
+   // echo $cat->getName();
+
+if (($cat->getParentId() == "4") || ($cat->getId() == "4") || ($cat->getParentId() == "5") || ($cat->getId() == "5")) {
+
+  ?>
+
+<div class="sizes"><?= __("Sizes Chart"); ?>
+</div>
+
+<div id="show-chart-sizes">
+      <div id="chart-sizes-popup">
+        <div id="chart-sizes-close"></div>
+        <?php 
+        if (($cat->getParentId() == "4") || ($cat->getId() == "4")) { ?>
+          <img src="https://shop.ftc-cashmere.com/pub/media/Size_Guide_MMT_Damen_2021.png">
+
+          <?php } 
+
+          if (($cat->getParentId() == "5") || ($cat->getId() == "5")) { ?>
+  <img src="https://shop.ftc-cashmere.com/pub/media/Size_Guide_MMT_Herren_2021.png">
+
+          <?php } ?>
+
+       
+
+      </div>
+    </div>
+
+
+<?php 
+    }
+  }
+ 
+?>
+
+
+
+
+        <div class="fieldset">
+            <?php if ($block->shouldRenderQuantity()) :?>
+                <div class="field qty">
+                    <span class="change-qty minus">-</span>
+                    <span class="change-qty plus">+</span>
+                    <input type="number"
+                           name="qty"
+                           id="qty"
+                           min="0"
+                           value="<?= $block->getProductDefaultQty() * 1 ?>"
+                           title="<?= $block->escapeHtmlAttr(__('Qty')) ?>"
+                           class="input-text qty"
+                           data-validate="<?= $block->escapeHtmlAttr(json_encode($block->getQuantityValidators())) ?>"
+                    />
+                </div>
+            <?php endif; ?>
+            <div class="actions">
+                <button type="submit"
+                        title="<?= $block->escapeHtmlAttr($buttonTitle) ?>"
+                        class="action primary tocart"
+                        id="product-addtocart-button" disabled>
+                    <span><?= $block->escapeHtml($buttonTitle) ?></span>
+                </button>
+                <?= $block->getChildHtml('', true) ?>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
+<script type="text/x-magento-init">
+    {
+        "#product_addtocart_form": {
+            "Magento_Catalog/js/validate-product": {}
+        }
+    }
+</script>
+
+
+<script>
+require(['jquery', 'jquery/ui'], function($){
+
+
+  $(document).on("click", ".sizes", function() {
+    $('#show-chart-sizes').fadeIn(300);  
+  });
+  $('#chart-sizes-popup').click(function() {
+    $('#show-chart-sizes').fadeOut(300);
+  });
+
+
+
+});
+
+</script>
+
+

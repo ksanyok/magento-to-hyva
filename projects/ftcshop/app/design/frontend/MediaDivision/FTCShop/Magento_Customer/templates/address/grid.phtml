@@ -1,0 +1,64 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var \Magento\Customer\Block\Address\Grid $block */
+$customerAddressView = $block->getData('customer_address');
+?>
+
+<div class="block block-addresses-list">
+    <div class="block-title"><strong><?= $block->escapeHtml(__('Additional Address Entries')) ?></strong></div>
+
+    <div class="block-content">
+        <?php if ($_pAddsses = $block->getAdditionalAddresses()) : ?>
+            <div class="additional-addresses">
+
+                <?php foreach ($_pAddsses as $address) : ?>
+                <div class="box box-additional-address">
+                    <strong class="box-title">
+                        <span><?= $block->escapeHtml(__('Additional Address')) ?></span>
+                    </strong>
+                    <div class="box-content">
+                        <address>
+                            <?= $block->escapeHtml($address->getFirstname()) ?>
+                            <?= $block->escapeHtml($address->getLastname()) ?><br>
+                            <?= $block->escapeHtml($block->getStreetAddress($address)) ?><br>
+                            <?= $block->escapeHtml($address->getCity()) ?>, <?= $block->escapeHtml($address->getRegion()->getRegion()) ?>, <?= $block->escapeHtml($address->getPostcode()) ?><br>
+                            <?= $block->escapeHtml($block->getCountryByCode($address->getCountryId())) ?><br>
+                            T: <?= $block->escapeHtml($address->getTelephone()) ?><br>
+                        </address>
+                    </div>
+                    <div class="box-actions">
+                        <a class="action edit" href="<?= $block->escapeUrl($block->getUrl('customer/address/edit', ['id' => $address->getId()])) ?>"><span><?= $block->escapeHtml(__('Edit Address')) ?></span></a>
+                        <a class="action delete" href="#" role="delete-address" data-address="<?= $block->escapeHtmlAttr($address->getId()) ?>"><span><?= $block->escapeHtml(__('Delete Address')) ?></span></a>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+
+            </div>
+        <?php else : ?>
+            <p class="empty"><?= $block->escapeHtml(__('You have no other address entries in your address book.')) ?></p>
+        <?php endif ?>
+    </div>
+</div>
+
+<div class="actions-toolbar">
+    <div class="primary">
+        <button type="button" role="add-address" title="<?= $block->escapeHtmlAttr(__('Add New Address')) ?>" class="action primary add"><span><?= $block->escapeHtml(__('Add New Address')) ?></span></button>
+    </div>
+</div>
+
+<script type="text/x-magento-init">
+    {
+        ".page-main": {
+            "address": {
+                "deleteAddress": "a[role='delete-address']",
+                "deleteUrlPrefix": "<?= $block->escapeJs($block->escapeUrl($block->getDeleteUrl())) ?>id/",
+                "addAddress": "button[role='add-address']",
+                "addAddressLocation": "<?= $block->escapeJs($block->escapeUrl($block->getAddAddressUrl())) ?>"
+            }
+        }
+    }
+</script>

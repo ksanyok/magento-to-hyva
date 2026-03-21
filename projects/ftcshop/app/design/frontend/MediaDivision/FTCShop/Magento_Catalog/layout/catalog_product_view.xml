@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<page layout="1column" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+
+
+
+        <referenceContainer name="content">
+            <container name="product.info.container" htmlTag="div" htmlClass="product-info-container" before="-"/>
+        </referenceContainer>
+        <referenceContainer name="content">
+            <block class="Magento\Catalog\Block\Product\View" name="product.info.overview" template="Magento_Catalog::product/view/overview.phtml"/>
+        </referenceContainer>
+            <referenceContainer name="content">
+            <block class="Magento\Catalog\Block\Product\View" name="product.info.underview" template="Magento_Catalog::product/view/underview.phtml"/>
+        </referenceContainer>
+
+
+
+        <move element="product.info.main" destination="product.info.container"/>
+           <move element="product.info.underview" destination="content" after="product.info.detail"/>
+        <move element="product.info.overview" destination="product.info.main" after="product.info"/>
+        <move element="product.info.details" destination="product.info.main" after="product.info.price"/>
+<move element="view.addto.wishlist" destination="product.info.options.wrapper.bottom" after="-"/>
+<move element="product.info.stock.sku" destination="product.info.main" after="page.main.title"/>
+<move element="breadcrumbs" destination="product.info.container" after="-" />
+
+        <referenceBlock name="view.addto.compare" remove="true"/>
+    </body>
+</page>

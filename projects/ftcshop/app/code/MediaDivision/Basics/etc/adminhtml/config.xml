@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <basics>
+            <general>
+                <enable>1</enable>
+                <php_binary>/usr/bin/php</php_binary>
+                <php_options></php_options>
+            </general>
+        </basics>
+    </default>
+</config>

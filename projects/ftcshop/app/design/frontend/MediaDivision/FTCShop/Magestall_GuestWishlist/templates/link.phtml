@@ -1,0 +1,21 @@
+<?php
+/**
+ * Magestall GuestWishlist
+ *
+ * @category  Magestall
+ * @package   Magestall_GuestWishlist
+ * @author    Magestall Team <info@magestall.com>
+ * @copyright 2019 Magestall (https://www.magestall.com)
+ * @license   https://www.magestall.com/license-agreement.html License
+ * @link      https://www.magestall.com
+ */
+?>
+<?php $helper = $this->getHelper(); ?>
+
+<div class="guestwishlist-wrapper">
+    <a class="action guestwishlist" title="<?php echo __('Wishlist') ?>" href="<?php echo $block->getWishlistUrl() ?>">
+        <img id="wishlisticon" src='<?php echo $this->getViewFileUrl('images/icons/wishlist3.png'); ?>' alt="wishlist">
+        <span class="counter qty"><?php echo $helper->getItemCount() ?></span>
+    </a>
+</div>
+

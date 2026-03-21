@@ -1,0 +1,62 @@
+
+<?php
+
+$objectManager              = \Magento\Framework\App\ObjectManager::getInstance();
+$url                        = $block->getBaseUrl();
+$getproduct                 = $block->getProduct();
+$product                    = $objectManager->create('Magento\Catalog\Model\Product')->load($getproduct->getId()); 
+
+
+$getmaterial = $product->getAttributeText("materials");
+if(is_array($getmaterial)){
+ $material = implode(',', $getmaterial);
+}else{
+ $material = $getmaterial;
+}
+
+$isLyocell =  strpos($material, "Lyocell") !== false || strpos($material, "Seacell") !== false;
+$isCashmere =  strpos($material, "Cashmere") !== false || strpos($material, "Kaschmir") !== false;
+$isCotton =  strpos($material, "Cotton") !== false || strpos($material, "Baumwolle") !== false;
+$isLinen =  strpos($material, "Linen") !== false || strpos($material, "Leinen") !== false;
+
+
+
+if ($isCashmere) {
+    echo $this->getLayout()
+        ->createBlock("Magento\Cms\Block\Block")
+        ->setBlockId("cashmere_details")
+        ->toHtml();
+}
+
+if ($isLyocell) {
+    echo $this->getLayout()
+        ->createBlock("Magento\Cms\Block\Block")
+        ->setBlockId("lyocell_details")
+        ->toHtml();
+}
+
+if ($isCotton) {
+    echo $this->getLayout()
+        ->createBlock("Magento\Cms\Block\Block")
+        ->setBlockId("cotton_details")
+        ->toHtml();
+}
+
+if ($isLinen) {
+    echo $this->getLayout()
+        ->createBlock("Magento\Cms\Block\Block")
+        ->setBlockId("linen_details")
+        ->toHtml();
+}
+
+
+?>
+
+
+
+<?php
+echo $this->getLayout()
+    ->createBlock("Magento\Cms\Block\Block")
+    ->setBlockId("related_products")
+    ->toHtml();
+?>

@@ -1,0 +1,166 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var Gallery $block */
+
+use Magento\Catalog\Block\Product\Gallery;
+
+?>
+
+<?php
+
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$imageHelper = $objectManager->create('\Magento\Catalog\Helper\Image');
+
+$product            = $block->getProduct();
+$attributes         = $product->getAttributes();
+$url                = $block->getBaseUrl();
+$children           = false;
+$imgarray           = array();
+
+
+foreach ($attributes as $attribute) {
+    $name = $attribute->getName();
+    $value = $product->getResource()->getAttribute($name)->getFrontend()->getValue($product);
+    $_SESSION["product"][$name] = $value;
+}
+
+
+
+
+if($product->getTypeId() == 'configurable') {
+  $children = $product->getTypeInstance()->getUsedProducts($product);
+}
+
+
+if($children) {
+  foreach ($children as $child) {
+  if($child->isAvailable() && $child->isSaleable()){
+    $images = $child->getMediaGalleryImages();
+    $getsize = $child->getSize();
+    $groesse = "";
+    $colorname = "";
+/*
+    if($getsize == "5490"){ $groesse = "44"; }
+    if($getsize == "5479"){ $groesse = "46"; }
+    if($getsize == "5480"){ $groesse = "48"; }
+    if($getsize == "5481"){ $groesse = "50"; }
+    if($getsize == "5482"){ $groesse = "52"; }
+    if($getsize == "5483"){ $groesse = "54"; }
+    if($getsize == "5484"){ $groesse = "56"; }                    
+    if($getsize == "5485"){ $groesse = "58"; }
+    if($getsize == "5534"){ $groesse = "I"; }        
+    if($getsize == "5535"){ $groesse = "II"; }    
+    if($getsize == "5536"){ $groesse = "III"; }
+    if($getsize == "5436"){ $groesse = "XS"; }
+    if($getsize == "5434"){ $groesse = "S"; }
+    if($getsize == "5433"){ $groesse = "M"; }
+    if($getsize == "5432"){ $groesse = "L"; }  
+    if($getsize == "5435"){ $groesse = "XL"; }
+    if($getsize == "5437"){ $groesse = "XXL"; }
+    if($getsize == "5446"){ $groesse = "pcs"; }
+    if($getsize == "5575"){ $groesse = "pair"; }
+    if($getsize == "5490"){ $groesse = "44"; }
+    if($getsize == "5490"){ $groesse = "44"; }
+    if($getsize == "5490"){ $groesse = "44"; }
+    if($getsize == "5490"){ $groesse = "44"; }
+*/
+    $groesse = $getsize;
+    $colorname = $child->getColorName();
+
+    if($images){
+      foreach ($images as $image){
+        $imageUrl = $imageHelper->init($product, 'product_page_image_medium')
+                        ->constrainOnly(true)->keepAspectRatio(true)->keepFrame(false)
+                        ->setImageFile($image->getFile())
+                        ->getUrl();
+        $imgarray[] = array("groesse" => $groesse, "farbe" => $colorname, "url" => $imageUrl);
+      }     
+    } 
+
+
+  }
+  }
+}else{
+  //$DescriptionText = htmlspecialchars(getDescription($product->getDescription()));
+}
+
+
+
+
+?>
+
+<div id="ProductImages" style="display: none;">
+            <?php 
+              $i = 0;
+              foreach($imgarray as $e){
+                echo '<div style="display: none;" data-nth="'.$i.'" data-groesse="'.$e["groesse"].'" data-image="'.$i.'" data-farbe="'.$e["farbe"].'" data-url="'.$e["url"].'"><img src="'.$e["url"].'" /></div>';
+                $i++;
+              }
+            ?>  
+</div>
+
+
+
+
+<div class="product-images-container">
+    <div class="product-images">
+
+
+        <div class="thumbnails">
+            <?php 
+              $i = 0;
+              $erstefarbe = false;
+              $erstegroesse = false;
+              $erstefarbearray = array();              
+              foreach($imgarray as $e){
+                if($i==0){
+                  $erstefarbe = $e["farbe"];
+                  $erstegroesse = $e["groesse"];
+                }
+                if($erstefarbe==$e["farbe"] && $erstegroesse==$e["groesse"]){
+                  echo '<div class="thumbnail-container" data-nth="'.$i.'" data-groesse="'.$e["groesse"].'" data-image="'.$i.'" data-farbe="'.$e["farbe"].'" data-url="'.$e["url"].'"><img src="'.$e["url"].'" /></div>';
+                }else{
+                  echo '<div style="display: none;" class="thumbnail-container" data-nth="'.$i.'" data-groesse="'.$e["groesse"].'" data-image="'.$i.'" data-farbe="'.$e["farbe"].'" data-url="'.$e["url"].'"><img src="'.$e["url"].'" /></div>';
+                }               
+                $i++;
+              }
+            ?>  
+        </div>
+
+
+
+        <div class="images">
+            <?php 
+              $i = 0;
+              $erstefarbe = false;
+              $erstegroesse = false;
+              $erstefarbearray = array();              
+              foreach($imgarray as $e){
+                if($i==0){
+                  $erstefarbe = $e["farbe"];
+                  $erstegroesse = $e["groesse"];
+                }
+                if($erstefarbe==$e["farbe"] && $erstegroesse==$e["groesse"]){
+                  echo '<div class="image-container" data-nth="'.$i.'" data-groesse="'.$e["groesse"].'" data-image="'.$i.'" data-farbe="'.$e["farbe"].'" data-url="'.$e["url"].'"><img src="'.$e["url"].'" /></div>';
+                }else{
+                  echo '<div style="display: none;" class="image-container" data-nth="'.$i.'" data-groesse="'.$e["groesse"].'" data-image="'.$i.'" data-farbe="'.$e["farbe"].'" data-url="'.$e["url"].'"><img src="'.$e["url"].'" /></div>';
+                }                                  
+                $i++;
+              }
+            ?>  
+        </div>
+
+
+
+
+        <div class="arrows">
+            <div class="left arrow" data-image=<?= count($images) - 1 ?>></div>
+            <div class="right arrow" data-image=1></div>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,32 @@
+{
+    "name": "faonni/module-indexer-url-rewrite",
+    "description": "Extension rebuild UrlRewrite index.",
+    "type": "magento2-module",
+    "version": "2.4.1",
+    "authors": [
+        {
+            "name": "Karliuka Vitalii",
+            "email": "karliuka.vitalii@gmail.com"
+        }
+    ],
+    "license": [
+        "OSL-3.0"
+    ],
+    "require": {
+        "magento/framework": "103.0.*",
+        "magento/module-url-rewrite": "102.0.*",
+        "magento/module-store": "101.1.*",
+        "magento/module-catalog": "104.0.*",
+        "magento/module-catalog-url-rewrite": "100.4.*",
+        "magento/module-cms": "104.0.*",
+        "magento/module-cms-url-rewrite": "100.4.*"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Faonni\\IndexerUrlRewrite\\": ""
+        }
+    }
+}

@@ -1,0 +1,307 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="carriers">
+            <group id="germany_standard" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="102" translate="label">
+                <label>DHL Paket</label>
+                <field id="active" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label" type="select">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="name" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="20" translate="label" type="text" canRestore="1">
+                    <label>Method Name</label>
+                </field>
+                <field id="price" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="30" translate="label" type="text">
+                    <label>Price</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="sort_order" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="40" translate="label" type="text">
+                    <label>Sort Order</label>
+                </field>
+                <field id="title" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="50" translate="label" type="text" canRestore="1">
+                    <label>Title</label>
+                </field>
+                <field id="days_min" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="52" translate="label" type="text" canRestore="1">
+                    <label>Lieferung dauert mind.</label>
+                    <comment>Mindestdauer für die Lieferung in Tagen</comment>
+                </field>
+                <field id="days_max" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="54" translate="label" type="text" canRestore="1">
+                    <label>Lieferung dauert höchstens</label>
+                    <comment>Höchstdauer für die Lieferung in Tagen</comment>
+                </field>
+                <field id="sallowspecific" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="60" translate="label" type="select" canRestore="1">
+                    <label>Ship to Applicable Countries</label>
+                    <frontend_class>shipping-applicable-country</frontend_class>
+                    <source_model>Magento\Shipping\Model\Config\Source\Allspecificcountries</source_model>
+                </field>
+                <field id="specificcountry" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="70" translate="label" type="multiselect">
+                    <label>Ship to Specific Countries</label>
+                    <can_be_empty>1</can_be_empty>
+                    <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+                </field>
+                <field id="postcode" translate="label comment" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Ship to Specific Zip/Postal Codes</label>
+                    <comment>Separated by semicolons (;)</comment>
+                </field>
+                <field id="showmethod" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>Show Method if Not Applicable</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <frontend_class>shipping-skip-hide</frontend_class>
+                </field>
+                <field id="specificerrmsg" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="100" translate="label" type="textarea" canRestore="1">
+                    <label>Displayed Error Message</label>
+                </field>
+            </group>
+            <group id="germany_express" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="103" translate="label">
+                <label>DHL Express</label>
+                <field id="active" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label" type="select">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="name" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="20" translate="label" type="text" canRestore="1">
+                    <label>Method Name</label>
+                </field>
+                <field id="price" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="30" translate="label" type="text">
+                    <label>Price</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="sort_order" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="40" translate="label" type="text">
+                    <label>Sort Order</label>
+                </field>
+                <field id="title" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="50" translate="label" type="text" canRestore="1">
+                    <label>Title</label>
+                </field>
+                <field id="days_min" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="52" translate="label" type="text" canRestore="1">
+                    <label>Lieferung dauert mind.</label>
+                    <comment>Mindestdauer für die Lieferung in Tagen</comment>
+                </field>
+                <field id="days_max" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="54" translate="label" type="text" canRestore="1">
+                    <label>Lieferung dauert höchstens</label>
+                    <comment>Höchstdauer für die Lieferung in Tagen</comment>
+                </field>
+                <field id="sallowspecific" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="60" translate="label" type="select" canRestore="1">
+                    <label>Ship to Applicable Countries</label>
+                    <frontend_class>shipping-applicable-country</frontend_class>
+                    <source_model>Magento\Shipping\Model\Config\Source\Allspecificcountries</source_model>
+                </field>
+                <field id="specificcountry" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="70" translate="label" type="multiselect">
+                    <label>Ship to Specific Countries</label>
+                    <can_be_empty>1</can_be_empty>
+                    <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+                </field>
+                <field id="postcode" translate="label comment" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Ship to Specific Zip/Postal Codes</label>
+                    <comment>Separated by semicolons (;)</comment>
+                </field>
+                <field id="showmethod" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>Show Method if Not Applicable</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <frontend_class>shipping-skip-hide</frontend_class>
+                </field>
+                <field id="specificerrmsg" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="100" translate="label" type="textarea" canRestore="1">
+                    <label>Displayed Error Message</label>
+                </field>
+            </group>
+            <group id="switzerland_standard" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="112" translate="label">
+                <label>Post CH</label>
+                <field id="active" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label" type="select">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="name" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="20" translate="label" type="text" canRestore="1">
+                    <label>Method Name</label>
+                </field>
+                <field id="price" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="30" translate="label" type="text">
+                    <label>Price</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="sort_order" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="40" translate="label" type="text">
+                    <label>Sort Order</label>
+                </field>
+                <field id="title" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="50" translate="label" type="text" canRestore="1">
+                    <label>Title</label>
+                </field>
+                <field id="days_min" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="52" translate="label" type="text" canRestore="1">
+                    <label>Lieferung dauert mind.</label>
+                    <comment>Mindestdauer für die Lieferung in Tagen</comment>
+                </field>
+                <field id="days_max" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="54" translate="label" type="text" canRestore="1">
+                    <label>Lieferung dauert höchstens</label>
+                    <comment>Höchstdauer für die Lieferung in Tagen</comment>
+                </field>
+                <field id="sallowspecific" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="60" translate="label" type="select" canRestore="1">
+                    <label>Ship to Applicable Countries</label>
+                    <frontend_class>shipping-applicable-country</frontend_class>
+                    <source_model>Magento\Shipping\Model\Config\Source\Allspecificcountries</source_model>
+                </field>
+                <field id="specificcountry" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="70" translate="label" type="multiselect">
+                    <label>Ship to Specific Countries</label>
+                    <can_be_empty>1</can_be_empty>
+                    <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+                </field>
+                <field id="postcode" translate="label comment" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Ship to Specific Zip/Postal Codes</label>
+                    <comment>Separated by semicolons (;)</comment>
+                </field>
+                <field id="showmethod" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>Show Method if Not Applicable</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <frontend_class>shipping-skip-hide</frontend_class>
+                </field>
+                <field id="specificerrmsg" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="100" translate="label" type="textarea" canRestore="1">
+                    <label>Displayed Error Message</label>
+                </field>
+            </group>
+            <group id="switzerland_express" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="113" translate="label">
+                <label>Post CH Prio</label>
+                <field id="active" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label" type="select">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="name" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="20" translate="label" type="text" canRestore="1">
+                    <label>Method Name</label>
+                </field>
+                <field id="price" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="30" translate="label" type="text">
+                    <label>Price</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="sort_order" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="40" translate="label" type="text">
+                    <label>Sort Order</label>
+                </field>
+                <field id="title" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="50" translate="label" type="text" canRestore="1">
+                    <label>Title</label>
+                </field>
+                <field id="days_min" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="52" translate="label" type="text" canRestore="1">
+                    <label>Lieferung dauert mind.</label>
+                    <comment>Mindestdauer für die Lieferung in Tagen</comment>
+                </field>
+                <field id="days_max" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="54" translate="label" type="text" canRestore="1">
+                    <label>Lieferung dauert höchstens</label>
+                    <comment>Höchstdauer für die Lieferung in Tagen</comment>
+                </field>
+                <field id="sallowspecific" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="60" translate="label" type="select" canRestore="1">
+                    <label>Ship to Applicable Countries</label>
+                    <frontend_class>shipping-applicable-country</frontend_class>
+                    <source_model>Magento\Shipping\Model\Config\Source\Allspecificcountries</source_model>
+                </field>
+                <field id="specificcountry" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="70" translate="label" type="multiselect">
+                    <label>Ship to Specific Countries</label>
+                    <can_be_empty>1</can_be_empty>
+                    <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+                </field>
+                <field id="postcode" translate="label comment" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Ship to Specific Zip/Postal Codes</label>
+                    <comment>Separated by semicolons (;)</comment>
+                </field>
+                <field id="showmethod" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>Show Method if Not Applicable</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <frontend_class>shipping-skip-hide</frontend_class>
+                </field>
+                <field id="specificerrmsg" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="100" translate="label" type="textarea" canRestore="1">
+                    <label>Displayed Error Message</label>
+                </field>
+            </group>
+            <group id="eu_standard" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="114" translate="label">
+                <label>UPS Standard</label>
+                <field id="active" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label" type="select">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="name" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="20" translate="label" type="text" canRestore="1">
+                    <label>Method Name</label>
+                </field>
+                <field id="price" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="30" translate="label" type="text">
+                    <label>Price</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="sort_order" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="40" translate="label" type="text">
+                    <label>Sort Order</label>
+                </field>
+                <field id="title" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="50" translate="label" type="text" canRestore="1">
+                    <label>Title</label>
+                </field>
+                <field id="days_min" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="52" translate="label" type="text" canRestore="1">
+                    <label>Lieferung dauert mind.</label>
+                    <comment>Mindestdauer für die Lieferung in Tagen</comment>
+                </field>
+                <field id="days_max" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="54" translate="label" type="text" canRestore="1">
+                    <label>Lieferung dauert höchstens</label>
+                    <comment>Höchstdauer für die Lieferung in Tagen</comment>
+                </field>
+                <field id="sallowspecific" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="60" translate="label" type="select" canRestore="1">
+                    <label>Ship to Applicable Countries</label>
+                    <frontend_class>shipping-applicable-country</frontend_class>
+                    <source_model>Magento\Shipping\Model\Config\Source\Allspecificcountries</source_model>
+                </field>
+                <field id="specificcountry" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="70" translate="label" type="multiselect">
+                    <label>Ship to Specific Countries</label>
+                    <can_be_empty>1</can_be_empty>
+                    <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+                </field>
+                <field id="postcode" translate="label comment" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Ship to Specific Zip/Postal Codes</label>
+                    <comment>Separated by semicolons (;)</comment>
+                </field>
+                <field id="showmethod" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>Show Method if Not Applicable</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <frontend_class>shipping-skip-hide</frontend_class>
+                </field>
+                <field id="specificerrmsg" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="100" translate="label" type="textarea" canRestore="1">
+                    <label>Displayed Error Message</label>
+                </field>
+            </group>
+            <group id="eu_express" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="115" translate="label">
+                <label>UPS Express</label>
+                <field id="active" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label" type="select">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="name" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="20" translate="label" type="text" canRestore="1">
+                    <label>Method Name</label>
+                </field>
+                <field id="price" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="30" translate="label" type="text">
+                    <label>Price</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="sort_order" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="40" translate="label" type="text">
+                    <label>Sort Order</label>
+                </field>
+                <field id="title" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="50" translate="label" type="text" canRestore="1">
+                    <label>Title</label>
+                </field>
+                <field id="days_min" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="52" translate="label" type="text" canRestore="1">
+                    <label>Lieferung dauert mind.</label>
+                    <comment>Mindestdauer für die Lieferung in Tagen</comment>
+                </field>
+                <field id="days_max" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="54" translate="label" type="text" canRestore="1">
+                    <label>Lieferung dauert höchstens</label>
+                    <comment>Höchstdauer für die Lieferung in Tagen</comment>
+                </field>
+                <field id="sallowspecific" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="60" translate="label" type="select" canRestore="1">
+                    <label>Ship to Applicable Countries</label>
+                    <frontend_class>shipping-applicable-country</frontend_class>
+                    <source_model>Magento\Shipping\Model\Config\Source\Allspecificcountries</source_model>
+                </field>
+                <field id="specificcountry" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="70" translate="label" type="multiselect">
+                    <label>Ship to Specific Countries</label>
+                    <can_be_empty>1</can_be_empty>
+                    <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+                </field>
+                <field id="postcode" translate="label comment" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Ship to Specific Zip/Postal Codes</label>
+                    <comment>Separated by semicolons (;)</comment>
+                </field>
+                <field id="showmethod" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>Show Method if Not Applicable</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <frontend_class>shipping-skip-hide</frontend_class>
+                </field>
+                <field id="specificerrmsg" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="100" translate="label" type="textarea" canRestore="1">
+                    <label>Displayed Error Message</label>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

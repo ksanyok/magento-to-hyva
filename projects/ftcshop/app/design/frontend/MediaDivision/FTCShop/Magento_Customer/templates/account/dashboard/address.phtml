@@ -1,0 +1,40 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var \Magento\Customer\Block\Account\Dashboard\Address $block */
+?>
+
+
+<div class="block block-dashboard-addresses">
+    <div class="block-content">
+        <div class="box box-billing-address">
+            <strong class="box-title">
+                <span><?= $block->escapeHtml(__('Address Book')) ?></span>
+            </strong>
+            <div class="box-content">
+                <address>
+                 <a href="<?= /* @escapeNotVerified */ $block->getUrl('customer/address') ?>"><?= $block->escapeHtml(__('Manage your billing and shipping address')) ?></a>
+<br><br>
+                 <a style="color:#A9BA9D; letter-spacing: 1px;" href="<?= /* @escapeNotVerified */ $block->getUrl('customer/address') ?>"><?= $block->escapeHtml(__('To my address book')) ?></a>
+                </address>
+            </div>
+      
+        </div>
+  
+    </div>
+</div>
+
+</div>
+
+
+
+<?php
+echo $this->getLayout()
+->createBlock('Magento\Cms\Block\Block')
+->setBlockId('customer_promo')
+->toHtml();
+?>
+

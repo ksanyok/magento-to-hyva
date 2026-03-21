@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+  <menu>
+    <add id="MediaDivision_TexData::sequence" title="Sequence" module="MediaDivision_TexData" sortOrder="10" action="texdata/sequence/grid" resource="MediaDivision_TexData::sequence" parent="MediaDivision_Basics::mediadivision"/>
+  </menu>
+</config>

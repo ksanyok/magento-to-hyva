@@ -1,0 +1,151 @@
+Filters,Filter
+Sale,Sale
+Stores,Stores
+Overview,Übersicht
+Details,Details
+Size and Fit, Grösse und Passform
+Material & Care, Material und Pflege
+Proceed to Checkout,Weiter zur Kasse
+Proceed to Cart,Weiter zum Warenkorb
+Cart Subtotal,Gesamtbetrag
+My Cart,Warenkorb
+item,Artikel
+items,Artikel
+Choose Your Region,Region wählen
+Denmark,Dänemark
+Germany,Deutschland
+Netherlands,Niederlande
+Austria,Österreich
+Poland,Polen
+Sweden,Schweden
+Switzerland,Schweiz
+English,Englisch
+German,Deutsch
+Swiss Franc,Schweizer Franken
+Swedish Crown,Schwedische Krone
+Danish Crown,Dänische Krone
+E-Mail Address,E-Mail-Adresse
+more information,Weitere Informationen
+Enable Cookies,Cookies aktivieren
+Allow all Cookies,Alle Cookies akzeptieren
+save,Speichern
+About,Über uns
+News,Neuigkeiten
+"Incl. VAT, plus shipment","Inkl. MwSt., zzgl. Versand"
+Close Window,Fenster schliessen
+Cashmere Care,Kaschmir-Pflege
+Lyocell Care,Lyocell-Pflege
+Sizes Chart,Grössentabelle
+Total,Summe
+Edit Product,Artikel bearbeiten
+Login,Login
+I'm new here,Ich bin neu hier
+Required Fields,Pflichtfelder
+My Wishlist,Wunschliste
+Default Billing Address,Rechnungsadresse
+Additional Address Entries,Weitere Adressen
+Additional Address,Weitere Adresse
+Edit Address,Adresse anpassen
+Delete Address,Adresse löschen
+You aren't subscribed to our newsletter.,Sie sind nicht zu unserem Newsletter angemeldet.
+Change Email and Password,E-Mail-Adresse und Passwort ändern
+Newsletter Subscription,Newsletter-Abonnement
+You are subscribed to our newsletter.,Sie sind zu unserem Newsletter angemeldet.
+Change Subscription,Abonnement ändern
+This is your default billing address.,Dies ist Ihre Standardrechnungsadresse.
+This is your default shipping address.,Dies ist Ihre Standardversandadresse.
+You are signed out,Sie sind abgemeldet
+Shop without account,Ohne Account bestellen
+Create New Account,Neuen Account erstellen
+Proceed As Guest,Als Gast fortfahren
+Forgotten Password?,Passwort vergessen?
+Email address,E-Mail-Adresse
+Number,Nummer
+Addition to address,Adresszusatz
+Date of birth,Geburtsdatum
+Form of address,Anrede
+Street and house number,Strasse und Hausnummer
+Email address,E-Mail-Adresse
+Create an account for later use,Einen Account erstellen
+Ship to the same address,An die gleiche Adresse versenden
+Ship to pick-up station,An eine Packstation versenden
+Payment,Zahlung
+Done!,Fertig!
+Billing address,Rechnungsadresse
+Order Items,Bestellte Artikel
+Order Details,Bestelldetails
+Place Order,Bestellung absenden
+Ship Here,Diese Adresse verwenden
+Mr.,Herr
+Mrs.,Frau
+Place Order,Bestellung aufgeben
+Request New Return,Neue Rücksendung
+There are no returns,Sie haben keine Rücksendungen
+Return Order,Bestellung zurücksenden
+Select Order,Bestellung auswählen
+Submit Request,Anfrage absenden
+Request Information,Daten zur Anfrage
+Items in this order,Artikel in dieser Bestellung
+Attach files,Dateien hinzufügen
+Quantity to return,Menge
+Out of Service,Funktioniert nicht
+Don't like,Gefällt nicht
+Wrong color,Falsche Farbe
+Wrong size,Falsche Grösse
+Other,Anderer Grund
+Condition,Zustand
+Unopened,Ungeöffnet
+Open,Geöffnet
+Damaged,Beschädigt
+Resolution,Lösungswunsch
+Exchange,Austausch
+Refund,Erstattung
+Store Credit,Gutschrift
+Pending Approval,Bestätigung ausstehend
+RMA items,Stornierte Artikel
+Add Message,Nachricht hinzufügen
+Return request has been received.,Rücksendungsanfrage erhalten.
+"You will be notified when your request is reviewed.","Sie werden benachrichtigt, wenn Ihre Anfrage überprüft wurde."
+Your Return request has been approved.,Ihre Rücksendungsanfrage wurde bestätigt
+Print RMA Packing Slip,Rücksendeetikett drucken
+Confirm Shipping,Rücksendung bestätigen
+Confirm Shipping,Versand bestätigen
+No description available.,Keine Beschreibung verfügbar.
+No details available.,Keine Details verfügbar.
+Products in categories,Produkte in Kategorien
+Hot Searches,Beliebte Suchbegriffe
+Ship here,Adresse verwenden
+The shipping method is missing. Select the shipping method and try again.,Die Versandart fehlt. Wählen Sie die Versandmethode aus und versuchen Sie es erneut.
+Notify me,Benachrichtigen
+Insert your email,Ihre E-Mail-Adresse
+"Apply Gift Card Code","Geschenkgutschein"
+"Enter your Code","Code eingeben"
+"Check Status","Code prüfen"
+"Add Code","Hinzufügen"
+"Wrong Gift Card code.","Der eingegebene Code ist leider nicht gültig."
+"This Gift Code already exists.","Dieser Code ist leider nicht gültig."
+"Gift Card has been successfully removed","Eingegebener Code erfolgreich entfernt."
+"Specified Gift Card for current user is not found.","Der eingegebene Code stimmt nicht mit dem aktuellen Benutzer überein."
+"Cannot remove gift card.","Code kann nicht entfernt werden."
+"Adding","Wird hinzugefügt"
+"Adding...","Wird hinzugefügt"
+"sold out","ausverkauft"
+"Sold out","Ausverkauft"
+"Sorry, this item is currently not available. <br>We will inform you by e-mail as soon as your desired item is available again.","Dieser Artikel ist momentan leider nicht erhältlich. <br>Wir informieren Sie per E-Mail, sobald Ihr Wunschartikel wieder verfügbar ist."
+"Insert your email","Ihre E-Mail-Adresse"
+"Notify","Benachrichtigen"
+"Alert subscription has been saved.","Benachrichtigung wurde gespeichert."
+"Thank you! You are already subscribed to this product.","Vielen Dank! Sie werden bereits für dieses Produkt benachrichtigt."
+"You must confirm your account. Please check your email for the confirmation link or <a href=""%1"">click here</a> for a new link.","Sie müssen Ihr Konto bestätigen. Bitte prüfen Sie Ihre E-Mail auf den Bestätigungslink oder <a href=""%1"">klicken Sie hier</a> für einen neuen Link."
+Search, Suchbegriff
+My Customer Account,Mein Kundenkonto
+"How do I return an item?","Wie sende ich einen Artikel zurück?"
+Return Item,Artikel zurücksenden
+Summary,Zusammenfassung
+Subtotal,Zwischensumme
+Tax,Steuer
+"Order Total Incl. Tax","Gesamtbetrag inkl. Steuern"
+"Order Total Excl. Tax","Gesamtbetrag exkl. Steuern"
+You have no items in your shopping cart.,Sie haben keine Artikel im Warenkorb
+Shopping Cart,Warenkorb
+"Click <a href=""%1"">here</a> to continue shopping.","Klicken Sie <a href=""%1"">hier</a>, um den Einkauf fortzusetzen."

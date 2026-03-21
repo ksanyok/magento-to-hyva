@@ -1,0 +1,59 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php
+/**
+ * Category view template
+ *
+ * @var $block \Magento\Catalog\Block\Category\View
+ */
+?>
+<?php if ($block->isMixedMode()) :?>
+    <div class="category-cms">
+        <?= $block->getCmsBlockHtml() ?>
+    </div>
+    <?php elseif ($block->isContentMode()) :?>
+        <div class="category-cms only-cat-cms">
+        <?= $block->getCmsBlockHtml() ?>
+    </div>
+<?php endif; ?>
+<?php
+$activeArray = array_slice($block->getCurrentCategory()->getPathIds(),2);
+$active = '';
+foreach ($activeArray as $id) {
+$active .= '.c'.$id;
+if(next($activeArray) ==true) $active .= ', '; 
+}
+?>
+
+<script>
+require(["jquery"], function ($) {
+
+  $(document).ready(function() {
+    $("<?php echo $active;?>").addClass('active');
+})
+});
+
+</script>
+
+<style>
+.catalog-category-view .category-cms.only-cat-cms {
+    margin-top: -20px !important;
+    margin-left: 0px !important;
+    margin-right: 0px !important;
+    padding: 0 !important;
+}
+
+@media (max-width: 900px) {
+.catalog-category-view .category-cms {
+    padding: 0 !important;
+}
+}
+
+.page-products .columns {
+    padding-top: 0px !important;
+}
+    </style>

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<csp_whitelist xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Csp:etc/csp_whitelist.xsd">
+    <policies>
+        <policy id="img-src">
+            <values>
+                <value id="mailchiimp_logo" type="host">ebizmarts-website.s3.amazonaws.com</value>
+                <value id="mailchimp_images" type="host">downloads.mailchimp.com</value>
+                <value id="mailchimp_images_gallery" type="host">gallery.mailchimp.com</value>
+            </values>
+        </policy>
+        <policy id="script-src">
+            <values>
+                <value id="chimpstatic" type="host">chimpstatic.com</value>
+                <value id="mailchimp-js" type="host">downloads.mailchimp.com</value>
+                <value id="list-management" type="host">*.list-manage.com</value>
+            </values>
+        </policy>
+        <policy id='style-src'>
+            <values>
+                <value id="mailchimp-styles" type="host">downloads.mailchimp.com</value>
+            </values>
+        </policy>
+    </policies>
+</csp_whitelist>

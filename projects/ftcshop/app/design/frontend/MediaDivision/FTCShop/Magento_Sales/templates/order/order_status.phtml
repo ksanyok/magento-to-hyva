@@ -1,0 +1,11 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php /** @var $block \Magento\Sales\Block\Order\Info */ ?>
+
+<span class="order-status">
+<span class="order-status-label"><?= /* @noEscape */ __('Order Status') ?>:</span><br>
+  <?= $block->escapeHtml($block->getOrder()->getStatusLabel()) ?></span>

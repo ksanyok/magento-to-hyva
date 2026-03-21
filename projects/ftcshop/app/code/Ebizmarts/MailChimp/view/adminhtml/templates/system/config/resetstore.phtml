@@ -1,0 +1,34 @@
+<?php
+/**
+ * @var $escaper \Magento\Framework\Escaper
+ */
+?>
+
+<script>
+    //<![CDATA[
+    function resetStore() {
+        jQuery.ajax({
+            url: '<?= $escaper->escapeUrl($block->getAjaxCheckUrl()) ?>',
+            data: {form_key: window.FORM_KEY},
+            type: 'POST',
+            success: function(data){
+                if(data.valid==0) {
+                    alert('Error: '+data.message);
+                }
+                else if(data.valid==1) {
+                    alert('A new store was created');
+                }
+            }
+        }).done(function(a) {
+            console.log(a);
+        });
+    }
+    //]]>
+</script>
+
+<div class="actions actions-reset-store">
+    <div id="validation_result" class="message-validation hidden"></div>
+    <button onclick="javascript:resetStore(); return false;" class="action-reset-store" type="button" id="<?= $block->getHtmlId() ?>">
+        <span><?= $escaper->escapeHtml($block->getButtonLabel()) ?></span>
+    </button>
+</div>
