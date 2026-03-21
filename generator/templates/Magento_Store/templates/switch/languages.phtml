@@ -44,7 +44,7 @@ use Magento\Store\Block\Switcher;
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
         class="absolute z-popup mt-2 min-w-[120px] bg-white border border-gray-light shadow-sm py-1">
-        <?php foreach ($block->getStores() as $_lang) : ?>
+        <?php foreach ($block->getStores() ?: [] as $_lang) : ?>
             <?php if ($_lang->getId() != $block->getCurrentStoreId()) : ?>
                 <li>
                     <a href="<?= $escaper->escapeUrl($block->getViewModel()->getTargetStoreRedirectUrl($_lang)) ?>"

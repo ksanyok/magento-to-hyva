@@ -47,8 +47,19 @@ def generate_composer_json(vendor: str, theme_name: str) -> str:
     }, indent=4) + "\n"
 
 
-def generate_tailwind_config(tokens: DesignTokens, vendor: str = "MediaDivision", theme: str = "FTCShopHyva") -> str:
-    """Generate tailwind.config.js from design tokens."""
+def generate_tailwind_config(tokens: DesignTokens, vendor: str = "MediaDivision", theme: str = "FTCShopHyva", tailwind_version: int = 4) -> str:
+    """Generate Tailwind CSS config from design tokens.
+
+    For Tailwind v4 (Hyvä 1.4.5+): generates CSS-first config (tailwind-source.css handles it all).
+    For Tailwind v3 (Hyvä < 1.4): generates traditional tailwind.config.js.
+    """
+    if tailwind_version >= 4:
+        return generate_tailwind_config_v4(tokens, vendor, theme)
+    return generate_tailwind_config_v3(tokens, vendor, theme)
+
+
+def generate_tailwind_config_v3(tokens: DesignTokens, vendor: str = "MediaDivision", theme: str = "FTCShopHyva") -> str:
+    """Generate tailwind.config.js for Tailwind v3."""
     colors_js = "{\n"
     # Map FTC color names to Tailwind-friendly names
     color_mapping = {
@@ -174,12 +185,149 @@ module.exports = hyvaModules.mergeTailwindConfig({{
 """
 
 
+def generate_tailwind_config_v4(tokens: DesignTokens, vendor: str = "MediaDivision", theme: str = "FTCShopHyva") -> str:
+    """Generate hyva.config.json for Tailwind v4 (Hyvä 1.4.5+).
+
+    Tailwind v4 uses CSS-first configuration. The JS config is replaced with:
+    - hyva.config.json: design tokens as JSON (colors, fonts, etc.)
+    - tailwind-source.css: CSS with @import "tailwindcss" and @theme
+    """
+    config = {
+        "parent": "../../../../../../vendor/hyva-themes/magento2-default-theme/web/tailwind",
+        "colors": {},
+        "fonts": {},
+        "screens": {},
+    }
+
+    # Map color tokens
+    color_mapping = {
+        "brand-primary": "primary",
+        "brand-secondary": "secondary",
+        "green": "accent",
+        "black": "dark",
+        "light-black": "dark-light",
+        "lighter-black": "dark-lighter",
+        "lightest-black": "dark-lightest",
+        "gray": "gray",
+        "light-gray": "gray-light",
+        "lighter-gray": "gray-lighter",
+        "lightest-gray": "gray-lightest",
+    }
+
+    for less_name, value in tokens.colors.items():
+        tw_name = color_mapping.get(less_name, less_name)
+        config["colors"][tw_name] = value
+
+    # Fonts
+    config["fonts"]["serif"] = tokens.fonts.get("serif", "serif")
+    config["fonts"]["sans"] = tokens.fonts.get("sans", "sans-serif")
+
+    # Breakpoints
+    for name, val in tokens.breakpoints.items():
+        config["screens"][name] = val
+
+    return json.dumps(config, indent=4) + "\n"
+
+
+def generate_tailwind_source_css_v4(tokens: DesignTokens, vendor: str = "MediaDivision", theme: str = "FTCShopHyva") -> str:
+    """Generate tailwind-source.css for Tailwind v4 (Hyvä 1.4.5+).
+
+    Uses CSS-first configuration with @import "tailwindcss" and @theme.
+    """
+    # Build CSS custom properties from tokens
+    colors_css = ""
+    color_mapping = {
+        "brand-primary": "primary",
+        "brand-secondary": "secondary",
+        "green": "accent",
+        "black": "dark",
+    }
+    for less_name, value in tokens.colors.items():
+        tw_name = color_mapping.get(less_name, less_name)
+        colors_css += f"    --color-{tw_name}: {value};\n"
+
+    font_serif = tokens.fonts.get("serif", "serif")
+    font_sans = tokens.fonts.get("sans", "sans-serif")
+
+    return f"""@import "tailwindcss";
+
+/* Scan source paths for Tailwind classes */
+@source "../../../../../../app/design/frontend/{vendor}/{theme}/**/*.phtml";
+@source "../../../../../../app/design/frontend/{vendor}/{theme}/**/*.xml";
+@source "../../../../../../vendor/hyva-themes/magento2-default-theme/**/*.phtml";
+@source "../../../../../../vendor/hyva-themes/magento2-default-theme/**/*.xml";
+@source "../../../../../../app/code/**/*Hyva*/**/*.phtml";
+
+/* Design tokens */
+@theme {{
+{colors_css}    --font-serif: {font_serif};
+    --font-sans: {font_sans};
+}}
+
+/* Brand layer */
+@layer base {{
+    body {{
+        font-family: var(--font-sans);
+        color: var(--color-dark, #111);
+    }}
+
+    h1, h2, h3, h4, h5, h6 {{
+        font-family: var(--font-serif);
+        text-transform: uppercase;
+    }}
+
+    a {{
+        color: inherit;
+        transition: color 0.3s;
+    }}
+
+    a:hover {{
+        color: var(--color-primary);
+    }}
+}}
+
+@layer components {{
+    .btn-primary {{
+        display: inline-block;
+        padding: 0.75rem 2rem;
+        background: var(--color-dark, #111);
+        color: white;
+        text-transform: uppercase;
+        font-size: 0.875rem;
+        letter-spacing: 0.05em;
+        transition: opacity 0.3s;
+    }}
+
+    .btn-primary:hover {{
+        opacity: 0.9;
+    }}
+
+    .btn-secondary {{
+        display: inline-block;
+        padding: 0.75rem 2rem;
+        border: 1px solid var(--color-dark, #111);
+        color: var(--color-dark, #111);
+        text-transform: uppercase;
+        font-size: 0.875rem;
+        letter-spacing: 0.05em;
+        transition: all 0.3s;
+    }}
+
+    .btn-secondary:hover {{
+        background: var(--color-dark, #111);
+        color: white;
+    }}
+}}
+"""
+
+
 def generate_tailwind_source_css() -> str:
+    """Generate tailwind-source.css for Tailwind v3."""
     return """@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* FTC Cashmere — brand layer on top of Hyvä */
+/* Brand layer on top of Hyvä */
 @layer base {
   body {
     @apply font-sans text-base text-dark bg-[#f9f7f8];
@@ -242,7 +390,23 @@ def generate_tailwind_source_css() -> str:
 """
 
 
-def generate_package_json(theme_name: str) -> str:
+def generate_package_json(theme_name: str, tailwind_version: int = 4) -> str:
+    if tailwind_version >= 4:
+        return json.dumps({
+            "name": theme_name.lower(),
+            "version": "1.0.0",
+            "private": True,
+            "scripts": {
+                "build": "npx @tailwindcss/cli -i web/tailwind/tailwind-source.css -o web/css/styles.css --minify",
+                "watch": "npx @tailwindcss/cli -i web/tailwind/tailwind-source.css -o web/css/styles.css --watch"
+            },
+            "devDependencies": {
+                "tailwindcss": "^4.1",
+                "@tailwindcss/cli": "^4.1",
+                "@hyva-themes/hyva-modules": "^1.3"
+            }
+        }, indent=4) + "\n"
+
     return json.dumps({
         "name": theme_name.lower(),
         "version": "1.0.0",
@@ -278,7 +442,7 @@ def generate_default_head_xml() -> str:
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <head>
-        <!-- FTC Cashmere custom fonts -->
+        <!-- Custom fonts from source theme -->
         <css src="css/fonts.css"/>
     </head>
 </page>
@@ -326,7 +490,7 @@ def generate_fonts_css(source_fonts_dir: str = "") -> str:
     # Preferred order for modern browsers
     format_order = [".woff2", ".woff", ".ttf", ".otf", ".eot", ".svg"]
 
-    css = "/* FTC Cashmere Brand Fonts */\n"
+    css = "/* Brand Fonts (auto-detected) */\n"
 
     for fdef in font_defs:
         basename = fdef["basename"]
@@ -372,6 +536,7 @@ def scaffold_hyva_theme(
     title: str,
     tokens: DesignTokens,
     source_theme_path: str = "",
+    tailwind_version: int = 4,
 ):
     """Create the complete Hyvä child theme directory structure."""
     base = os.path.join(output_path, vendor, theme_name)
@@ -389,13 +554,25 @@ def scaffold_hyva_theme(
         "registration.php": generate_registration_php(vendor, theme_name),
         "theme.xml": generate_theme_xml(title),
         "composer.json": generate_composer_json(vendor, theme_name),
-        "package.json": generate_package_json(theme_name),
-        "web/tailwind/tailwind.config.js": generate_tailwind_config(tokens, vendor, theme_name),
-        "web/tailwind/tailwind-source.css": generate_tailwind_source_css(),
+        "package.json": generate_package_json(theme_name, tailwind_version),
         "web/css/fonts.css": generate_fonts_css(source_fonts_dir),
         "Magento_Theme/layout/default.xml": generate_default_xml(),
         "Magento_Theme/layout/default_head_blocks.xml": generate_default_head_xml(),
     }
+
+    # Tailwind config files depend on version
+    if tailwind_version >= 4:
+        files["web/tailwind/hyva.config.json"] = generate_tailwind_config(
+            tokens, vendor, theme_name, tailwind_version
+        )
+        files["web/tailwind/tailwind-source.css"] = generate_tailwind_source_css_v4(
+            tokens, vendor, theme_name
+        )
+    else:
+        files["web/tailwind/tailwind.config.js"] = generate_tailwind_config(
+            tokens, vendor, theme_name, tailwind_version
+        )
+        files["web/tailwind/tailwind-source.css"] = generate_tailwind_source_css()
 
     # Create directories for fonts (placeholder)
     os.makedirs(os.path.join(base, "web", "fonts"), exist_ok=True)

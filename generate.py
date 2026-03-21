@@ -439,6 +439,8 @@ def main():
     parser.add_argument("--output", required=True, help="Output directory (e.g. output/ftcshop)")
     parser.add_argument("--with-stubs", action="store_true",
                         help="Generate Hyvä parent theme + module stubs for testing without a license")
+    parser.add_argument("--tailwind-version", type=int, default=4, choices=[3, 4],
+                        help="Tailwind CSS version: 3 for Hyvä <1.4, 4 for Hyvä >=1.4.5 (default: 4)")
     args = parser.parse_args()
 
     project_path = os.path.abspath(args.project)
@@ -451,6 +453,7 @@ def main():
     print(f"  Vendor:   {args.vendor}")
     print(f"  Theme:    {args.theme}")
     print(f"  Output:   {output_path}")
+    print(f"  Tailwind: v{args.tailwind_version}")
     print(f"{'='*60}\n")
 
     # 1. Find Luma theme
@@ -478,6 +481,7 @@ def main():
         title=args.title,
         tokens=tokens,
         source_theme_path=luma_theme,
+        tailwind_version=args.tailwind_version,
     )
     print(f"  Created: {theme_base}")
 
@@ -577,7 +581,7 @@ def main():
     if stubs_generated:
         print(f"  0. Copy stubs/{os.path.basename(stub_theme)} → app/design/frontend/Hyva/default/")
         print(f"     Copy stubs/{os.path.basename(stub_module)} → app/code/Hyva/Theme/")
-    print(f"  1. cd {theme_base}/web/tailwind && npm install && npm run build")
+    print(f"  1. cd {theme_base} && npm install && npm run build")
     print(f"  2. Install Hyvä compat packages (see compatibility/COMPATIBILITY_REPORT.md)")
     print(f"  3. Copy stub modules from compatibility/stubs/ to app/code/")
     print(f"  4. Deploy theme to Magento and activate")

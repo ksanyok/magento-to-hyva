@@ -131,14 +131,6 @@ def generate_hyva_default_xml(brand_config: dict) -> str:
     <body>
         <!-- Remove blocks not compatible with Hyvä -->
         <referenceBlock name="catalog.compare.link" remove="true"/>
-
-        <!-- Custom header blocks -->
-        <referenceContainer name="header-wrapper">
-            <block class="Magento\\Framework\\View\\Element\\Template"
-                   name="ftc.guest.wishlist.link"
-                   template="Magestall_GuestWishlist::link.phtml"
-                   after="minicart"/>
-        </referenceContainer>
     </body>
 </page>
 """
@@ -147,70 +139,15 @@ def generate_hyva_default_xml(brand_config: dict) -> str:
 def generate_hyva_catalog_product_view_xml() -> str:
     """
     Generate catalog_product_view.xml for the Hyvä child theme.
-    Adapts the FTC product page layout to Hyvä's structure.
+    Minimal: Hyvä provides a complete product page layout by default.
+    Only override if the source store has specific layout requirements.
     """
     return """<?xml version="1.0"?>
 <page layout="1column"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
-        <!-- Product overview (details, materials, care) -->
-        <referenceContainer name="content">
-            <block class="Magento\\Catalog\\Block\\Product\\View"
-                   name="product.info.overview"
-                   template="Magento_Catalog::product/view/overview.phtml"
-                   after="product.info.main"/>
-        </referenceContainer>
-
-        <!-- Product underview (material CMS blocks, related products) -->
-        <referenceContainer name="content">
-            <block class="Magento\\Catalog\\Block\\Product\\View"
-                   name="product.info.underview"
-                   template="Magento_Catalog::product/view/underview.phtml"
-                   after="product.info.overview">
-                <!-- CMS blocks for material-specific content -->
-                <block class="Magento\\Cms\\Block\\Block" name="cashmere_details">
-                    <arguments>
-                        <argument name="block_id" xsi:type="string">cashmere_details</argument>
-                    </arguments>
-                </block>
-                <block class="Magento\\Cms\\Block\\Block" name="lyocell_details">
-                    <arguments>
-                        <argument name="block_id" xsi:type="string">lyocell_details</argument>
-                    </arguments>
-                </block>
-                <block class="Magento\\Cms\\Block\\Block" name="cotton_details">
-                    <arguments>
-                        <argument name="block_id" xsi:type="string">cotton_details</argument>
-                    </arguments>
-                </block>
-                <block class="Magento\\Cms\\Block\\Block" name="linen_details">
-                    <arguments>
-                        <argument name="block_id" xsi:type="string">linen_details</argument>
-                    </arguments>
-                </block>
-            </block>
-        </referenceContainer>
-
-        <!-- Care popup CMS blocks for overview template -->
-        <referenceBlock name="product.info.overview">
-            <block class="Magento\\Cms\\Block\\Block" name="cashmere_care_popup">
-                <arguments>
-                    <argument name="block_id" xsi:type="string">cashmere_care_popup</argument>
-                </arguments>
-            </block>
-            <block class="Magento\\Cms\\Block\\Block" name="lyocell_care_popup">
-                <arguments>
-                    <argument name="block_id" xsi:type="string">lyocell_care_popup</argument>
-                </arguments>
-            </block>
-        </referenceBlock>
-
-        <!-- Move elements to match FTC design layout -->
-        <move element="product.info.overview" destination="content" after="product.info.main"/>
-        <move element="product.info.underview" destination="content" after="product.info.overview"/>
-
-        <!-- Remove compare (not used by FTC) -->
+        <!-- Remove compare if not needed -->
         <referenceBlock name="view.addto.compare" remove="true"/>
     </body>
 </page>
@@ -220,29 +157,14 @@ def generate_hyva_catalog_product_view_xml() -> str:
 def generate_hyva_catalog_category_view_xml() -> str:
     """
     Generate catalog_category_view.xml for the Hyvä child theme.
-    Includes CMS banner blocks injected into the product list at positions 12 and 24.
+    Minimal: Hyvä provides a complete category page by default.
     """
     return """<?xml version="1.0"?>
 <page layout="1column"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
-        <!-- Move CMS content below product grid (FTC design) -->
-        <move element="category.cms" destination="content" after="category.products"/>
-
-        <!-- CMS banner blocks injected into product list at positions 12 and 24 -->
-        <referenceBlock name="category.products.list">
-            <block class="Magento\\Cms\\Block\\Block" name="category_banner_2">
-                <arguments>
-                    <argument name="block_id" xsi:type="string">category_banner_2</argument>
-                </arguments>
-            </block>
-            <block class="Magento\\Cms\\Block\\Block" name="category_banner_3">
-                <arguments>
-                    <argument name="block_id" xsi:type="string">category_banner_3</argument>
-                </arguments>
-            </block>
-        </referenceBlock>
+        <!-- Category page uses Hyvä defaults -->
     </body>
 </page>
 """
