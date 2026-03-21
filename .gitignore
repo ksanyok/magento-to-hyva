@@ -1,0 +1,27 @@
+# Output
+output/
+
+# Project copies (large Magento installations)
+projects/*/vendor/
+projects/*/pub/media/
+projects/*/var/
+projects/*/generated/
+projects/*/.php-ini
+projects/*/.php-version
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+*.egg-info/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
