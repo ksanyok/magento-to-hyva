@@ -145,14 +145,33 @@ $buildCategoryTree = static function (int $categoryId) use (&$categoryTreeCache,
 };
 
 $normalizeMenuPath = static function (string $url): string {
-    $path = trim((string) parse_url($url, PHP_URL_PATH), '/');
-    return $path;
+    $path = strtolower(trim((string) parse_url($url, PHP_URL_PATH), '/'));
+    if ($path === '') {
+        return '';
+    }
+
+    $segments = explode('/', $path);
+    if (count($segments) > 1 && preg_match('/^[a-z]{2}(?:-[a-z]{2})?$/', $segments[0]) === 1) {
+        array_shift($segments);
+    }
+
+    return implode('/', $segments);
 };
 
 $mergeMenuTree = static function (array $baseItems, array $fallbackItems) use (&$mergeMenuTree, $normalizeMenuPath): array {
     $indexByKey = [];
 
     $makeKey = static function (array $item) use ($normalizeMenuPath): string {
+        $urlPath = $normalizeMenuPath((string) ($item['url'] ?? ''));
+        if ($urlPath !== '') {
+            return 'url:' . $urlPath;
+        }
+
+        $nameKey = trim(strtolower((string) ($item['name'] ?? '')));
+        if ($nameKey !== '') {
+            return 'name:' . $nameKey;
+        }
+
         $itemId = (int) (
             $item['id']
             ?? $item['entity_id']
@@ -163,12 +182,7 @@ $mergeMenuTree = static function (array $baseItems, array $fallbackItems) use (&
             return 'id:' . $itemId;
         }
 
-        $urlPath = $normalizeMenuPath((string) ($item['url'] ?? ''));
-        if ($urlPath !== '') {
-            return 'url:' . $urlPath;
-        }
-
-        return 'name:' . strtolower((string) ($item['name'] ?? ''));
+        return 'unknown:' . md5((string) json_encode($item));
     };
 
     foreach ($baseItems as $item) {
