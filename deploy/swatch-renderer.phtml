@@ -4,7 +4,7 @@
  * Copyright © Hyvä Themes. All rights reserved.
  * See COPYING.txt for license details.
  *
- * OVERRIDE: Auto-select first visual swatch option + getSwatchProductImage method
+ * OVERRIDE: getSwatchProductImage method for visual swatches
  */
 
 use Hyva\Theme\Model\ViewModelRegistry;
@@ -36,7 +36,7 @@ $swatchItemBlock->setData('product_id', $productId);
 
 $tooltipBlockHtml = $block->getBlockHtml('product.swatch.tooltip');
 ?>
-<?php if ($product->isSaleable() && count($attributes)): ?>
+<?php if (count($attributes)): ?>
     <script>
         function initConfigurableSwatchOptions_<?= (int) $productId ?>() {
             const configurableOptionsComponent = initConfigurableOptions(
@@ -68,26 +68,35 @@ $tooltipBlockHtml = $block->getBlockHtml('product.swatch.tooltip');
                 return lastImg.thumb || lastImg.img || '';
             };
 
-            // Override init to auto-select first visual swatch option
+            // Auto-select first visual swatch attribute (color/image) when nothing is selected.
+            // This keeps initial gallery/variation state aligned with the original storefront.
             const originalInit = merged.init;
             merged.init = function() {
                 originalInit.call(this);
+
                 this.$nextTick(() => {
-                    // Auto-select first option for each visual swatch attribute
-                    const attrs = this.optionConfig && this.optionConfig.attributes;
-                    if (attrs) {
-                        const sortedAttrs = Object.values(attrs).sort((a, b) => a.position - b.position);
-                        for (const attr of sortedAttrs) {
-                            // Only auto-select visual swatches (color type), not dropdowns
-                            const swatchType = this.getSwatchType
-                                ? this.getSwatchType(attr.id, attr.options[0] && attr.options[0].id)
-                                : null;
-                            if (swatchType === 'color' || swatchType === 'image') {
-                                const allowed = this.getAllowedAttributeOptions(attr.id);
-                                if (allowed && allowed.length > 0 && !this.selectedValues[attr.id]) {
-                                    this.changeOption(attr.id, allowed[0].id);
-                                }
-                            }
+                    const attrs = this.optionConfig && this.optionConfig.attributes
+                        ? Object.values(this.optionConfig.attributes).sort((a, b) => a.position - b.position)
+                        : [];
+
+                    for (const attr of attrs) {
+                        const allowed = this.getAllowedAttributeOptions
+                            ? this.getAllowedAttributeOptions(attr.id)
+                            : (attr.options || []);
+
+                        if (!allowed || !allowed.length || this.selectedValues[attr.id]) {
+                            continue;
+                        }
+
+                        const firstOptionId = allowed[0].id;
+                        const swatchType = this.getSwatchType
+                            ? this.getSwatchType(attr.id, firstOptionId)
+                            : null;
+
+                        const isSwatch = swatchType !== null && typeof swatchType !== 'undefined';
+                        if (isSwatch) {
+                            this.changeOption(attr.id, firstOptionId);
+                            break;
                         }
                     }
                 });

@@ -89,6 +89,8 @@ $countries = [
             isCartOpen: false,
             mobileMenuOpen: false,
             announcementDismissed: false,
+            slideIndex: 0,
+            slideTimer: null,
             regionChooserOpen: false,
             selectedCountry: '<?= $escaper->escapeJs(substr($storeCode, 3, 2)) ?>',
             selectedLanguage: '<?= $escaper->escapeJs(substr($storeCode, 0, 2)) ?>',
@@ -119,6 +121,28 @@ $countries = [
             },
             dismissAnnouncement() {
                 this.announcementDismissed = true;
+                if (this.slideTimer) clearInterval(this.slideTimer);
+            },
+            initSlides() {
+                const slides = this.$el.querySelectorAll('.home-message p.slide');
+                if (slides.length < 2) return;
+                slides.forEach((s, i) => {
+                    s.style.position = 'absolute';
+                    s.style.left = '0';
+                    s.style.right = '0';
+                    s.style.transition = 'opacity 2s';
+                    s.style.opacity = i === 0 ? '1' : '0';
+                });
+                this.$el.querySelector('.home-message').style.position = 'relative';
+                this.slideTimer = setInterval(() => {
+                    const sl = this.$el.querySelectorAll('.home-message p.slide');
+                    if (!sl.length) return;
+                    const cur = this.slideIndex;
+                    const next = (cur + 1) % sl.length;
+                    sl[cur].style.opacity = '0';
+                    sl[next].style.opacity = '1';
+                    this.slideIndex = next;
+                }, 7000);
             },
             openRegionChooser() {
                 this.regionChooserOpen = true;
@@ -157,7 +181,7 @@ $countries = [
 <?php $hyvaCsp->registerInlineScript() ?>
 
 <div id="header"
-     class="ftc-header"
+     class="ftc-header fixed"
      x-data="initHeader()"
      @private-content-loaded.window="getData(event.detail.data)"
 >
@@ -166,6 +190,7 @@ $countries = [
         <!-- Announcement Bar -->
         <header class="msg"
                 x-show="!announcementDismissed"
+                x-init="initSlides()"
                 x-transition:leave="transition ease-in duration-300"
                 x-transition:leave-start="opacity-100 max-h-10"
                 x-transition:leave-end="opacity-0 max-h-0">

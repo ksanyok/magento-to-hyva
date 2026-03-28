@@ -1,0 +1,149 @@
+<?php
+/**
+ * FTC Cashmere - Product Details Sections
+ * Renders: Details, Grösse und Passform, Material und Pflege
+ * Replaces default Hyvä product-sections.phtml
+ */
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\ProductPage;
+use Magento\Catalog\Block\Product\View\Details;
+use Magento\Framework\Escaper;
+
+/** @var Details $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+$productViewModel = $viewModels->require(ProductPage::class);
+$product = $productViewModel->getProduct();
+
+// --- Gather data ---
+
+// 1. DETAILS: Get description from product or first child
+$description = $product->getDescription();
+if (empty($description) && $product->getTypeId() === 'configurable') {
+    try {
+        $connection = $product->getResource()->getConnection();
+        $select = $connection->select()
+            ->from(['link' => $connection->getTableName('catalog_product_super_link')], ['product_id'])
+            ->where('link.parent_id = ?', (int)$product->getId())
+            ->limit(1);
+        $childId = $connection->fetchOne($select);
+        if ($childId) {
+            $description = $product->getResource()->getAttributeRawValue(
+                (int)$childId, 'description', $product->getStoreId()
+            );
+        }
+    } catch (\Exception $e) {
+        $description = '';
+    }
+}
+
+// 2. SIZE & FIT: short_description
+$shortDescription = $product->getShortDescription();
+
+// 3. MATERIAL & CARE
+$pflegesymbol = $product->getData('pflegesymbol');
+$material = $product->getData('material');
+
+// Gather care labels (pflegebezeichnung1-5)
+$careLabels = [];
+for ($i = 1; $i <= 5; $i++) {
+    $label = $product->getData('pflegebezeichnung' . $i);
+    if (!empty($label)) {
+        $careLabels[] = $label;
+    }
+}
+
+// Gather material components (material_zusatz_bezeichnung_1-4 + material_zusatz_prozent_1-4)
+$materialComponents = [];
+for ($i = 1; $i <= 4; $i++) {
+    $name = $product->getData('material_zusatz_bezeichnung_' . $i);
+    $pct = $product->getData('material_zusatz_prozent_' . $i);
+    if (!empty($name) && !empty($pct)) {
+        $materialComponents[] = ['name' => $name, 'percent' => $pct];
+    }
+}
+
+$hasMaterialCare = !empty($pflegesymbol) || !empty($material) || !empty($careLabels) || !empty($materialComponents);
+
+// Check if we have any content at all
+if (empty($description) && empty($shortDescription) && !$hasMaterialCare) {
+    return;
+}
+
+// Build material display text from components or fallback to material attribute
+$materialDisplayText = '';
+if (!empty($materialComponents)) {
+    $parts = [];
+    foreach ($materialComponents as $comp) {
+        $parts[] = $escaper->escapeHtml($comp['percent']) . '% ' . $escaper->escapeHtml($comp['name']);
+    }
+    $materialDisplayText = implode(', ', $parts);
+} elseif (!empty($material)) {
+    $materialDisplayText = $escaper->escapeHtml($material);
+}
+?>
+<section class="ftc-overview" x-data="{ openSection: '' }">
+
+    <?php if (!empty($description)): ?>
+    <div class="ftc-section">
+        <h3 class="ftc-section-title"
+            @click="openSection = openSection === 'details' ? '' : 'details'"
+            :class="{ 'open': openSection === 'details' }"
+            :aria-expanded="openSection === 'details'">
+            Details
+        </h3>
+        <div class="ftc-section-content" x-show="openSection === 'details'" x-collapse>
+            <div class="ftc-section-body">
+                <?= $productViewModel->productAttributeHtml($product, $description, 'description') ?>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <?php if (!empty($shortDescription)): ?>
+    <div class="ftc-section">
+        <h3 class="ftc-section-title"
+            @click="openSection = openSection === 'sizefit' ? '' : 'sizefit'"
+            :class="{ 'open': openSection === 'sizefit' }"
+            :aria-expanded="openSection === 'sizefit'">
+            <?= $escaper->escapeHtml(__('Grösse und Passform')) ?>
+        </h3>
+        <div class="ftc-section-content" x-show="openSection === 'sizefit'" x-collapse>
+            <div class="ftc-section-body">
+                <?= $productViewModel->productAttributeHtml($product, $shortDescription, 'short_description') ?>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <?php if ($hasMaterialCare): ?>
+    <div class="ftc-section">
+        <h3 class="ftc-section-title"
+            @click="openSection = openSection === 'material' ? '' : 'material'"
+            :class="{ 'open': openSection === 'material' }"
+            :aria-expanded="openSection === 'material'">
+            <?= $escaper->escapeHtml(__('Material und Pflege')) ?>
+        </h3>
+        <div class="ftc-section-content" x-show="openSection === 'material'" x-collapse>
+
+            <?php if (!empty($pflegesymbol)): ?>
+            <div class="ftc-care">
+                <span class="care-symbol"><?= $escaper->escapeHtml(implode('', explode(';', $pflegesymbol))) ?></span>
+            </div>
+            <?php endif; ?>
+
+            <?php if (!empty($materialDisplayText)): ?>
+            <div class="ftc-material">
+                <p class="ftc-material-text"><?= /* already escaped */ $materialDisplayText ?></p>
+            </div>
+            <?php endif; ?>
+
+        </div>
+    </div>
+    <?php endif; ?>
+
+</section>

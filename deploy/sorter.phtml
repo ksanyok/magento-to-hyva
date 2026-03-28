@@ -1,0 +1,35 @@
+<?php
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Magento\Catalog\Block\Product\ProductList\Toolbar;
+use Magento\Framework\Escaper;
+
+/** @var Toolbar $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+?>
+<div class="toolbar-sorter sorter flex items-center order-1 col-span-3 sm:col-span-6
+        md:col-span-3 lg:col-span-6 justify-end gap-2">
+    <label class="sorter-label" for="sorter"><?= $escaper->escapeHtml(__('Sort By')) ?></label>
+    <select id="sorter"
+            data-role="sorter"
+            name="sorter"
+            class="sorter-options ftc-sorter"
+            aria-label="<?= $escaper->escapeHtmlAttr(__('Sort By')) ?>"
+            @change="changeUrl(
+                'product_list_order',
+                $event.currentTarget.options[$event.currentTarget.selectedIndex].value,
+                options.orderDefault
+            )">
+        <?php foreach ($block->getAvailableOrders() as $orderCode => $orderLabel):?>
+            <option value="<?= $escaper->escapeHtmlAttr($orderCode) ?>"
+                <?php if ($block->isOrderCurrent($orderCode)): ?>
+                    selected="selected"
+                <?php endif; ?>
+                >
+                <?= $escaper->escapeHtml(__($orderLabel)) ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+</div>
