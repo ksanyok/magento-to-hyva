@@ -8,6 +8,7 @@
 use Hyva\Theme\Model\ViewModelRegistry;
 use Hyva\Theme\ViewModel\HyvaCsp;
 use Hyva\Theme\ViewModel\Navigation;
+use Magento\Cms\Block\Block as CmsBlock;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\Escaper;
 
@@ -22,6 +23,179 @@ $viewModelNavigation = $viewModels->require(Navigation::class, $block);
 // Get 4 levels deep
 $menuItems = $viewModelNavigation->getNavigation(4);
 $block->setData('cache_tags', $viewModelNavigation->getIdentities());
+
+// Resolve category IDs for menu entries when Hyva navigation payload does not contain entity IDs.
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$resourceConnection = $objectManager->get(\Magento\Framework\App\ResourceConnection::class);
+$storeManager = $objectManager->get(\Magento\Store\Model\StoreManagerInterface::class);
+$dbConnection = $resourceConnection->getConnection();
+$urlRewriteTable = $resourceConnection->getTableName('url_rewrite');
+$currentStoreId = (int) $storeManager->getStore()->getId();
+$resolvedCategoryIds = [];
+
+$resolveCategoryIdFromUrl = static function (string $url) use (
+    &$resolvedCategoryIds,
+    $dbConnection,
+    $urlRewriteTable,
+    $currentStoreId
+): int {
+    $path = trim((string) parse_url($url, PHP_URL_PATH), '/');
+    if ($path === '') {
+        return 0;
+    }
+
+    if (isset($resolvedCategoryIds[$path])) {
+        return $resolvedCategoryIds[$path];
+    }
+
+    $lookupPaths = [$path];
+    // Fallback without first segment (store code), e.g. "de-de/damen/foo.html" => "damen/foo.html".
+    if (strpos($path, '/') !== false) {
+        $lookupPaths[] = substr($path, strpos($path, '/') + 1);
+    }
+
+    foreach ($lookupPaths as $requestPath) {
+        $select = $dbConnection->select()
+            ->from($urlRewriteTable, ['entity_id'])
+            ->where('entity_type = ?', 'category')
+            ->where('store_id = ?', $currentStoreId)
+            ->where('request_path = ?', $requestPath)
+            ->where('redirect_type = ?', 0)
+            ->limit(1);
+
+        $categoryId = (int) ($dbConnection->fetchOne($select) ?: 0);
+        if ($categoryId > 0) {
+            $resolvedCategoryIds[$path] = $categoryId;
+            return $categoryId;
+        }
+    }
+
+    $resolvedCategoryIds[$path] = 0;
+    return 0;
+};
+
+$categoryFactory = $objectManager->get(\Magento\Catalog\Model\CategoryFactory::class);
+$categoryTreeCache = [];
+
+$buildCategoryTree = static function (int $categoryId) use (&$categoryTreeCache, $categoryFactory): array {
+    if ($categoryId <= 0) {
+        return [];
+    }
+
+    if (isset($categoryTreeCache[$categoryId])) {
+        return $categoryTreeCache[$categoryId];
+    }
+
+    $result = [];
+    $parentCategory = $categoryFactory->create()->load($categoryId);
+    if (!$parentCategory->getId()) {
+        $categoryTreeCache[$categoryId] = [];
+        return [];
+    }
+
+    foreach ($parentCategory->getChildrenCategories() as $level1Category) {
+        if (!(bool) $level1Category->getIsActive()) {
+            continue;
+        }
+
+        $level1Id = (int) $level1Category->getId();
+        $level2Items = [];
+        $level1Full = $categoryFactory->create()->load($level1Id);
+
+        foreach ($level1Full->getChildrenCategories() as $level2Category) {
+            if (!(bool) $level2Category->getIsActive()) {
+                continue;
+            }
+
+            $level2Id = (int) $level2Category->getId();
+            $level3Items = [];
+            $level2Full = $categoryFactory->create()->load($level2Id);
+
+            foreach ($level2Full->getChildrenCategories() as $level3Category) {
+                if (!(bool) $level3Category->getIsActive()) {
+                    continue;
+                }
+
+                $level3Items[] = [
+                    'id' => (int) $level3Category->getId(),
+                    'name' => (string) $level3Category->getName(),
+                    'url' => (string) $level3Category->getUrl(),
+                    'childData' => [],
+                ];
+            }
+
+            $level2Items[] = [
+                'id' => $level2Id,
+                'name' => (string) $level2Category->getName(),
+                'url' => (string) $level2Category->getUrl(),
+                'childData' => $level3Items,
+            ];
+        }
+
+        $result[] = [
+            'id' => $level1Id,
+            'name' => (string) $level1Category->getName(),
+            'url' => (string) $level1Category->getUrl(),
+            'childData' => $level2Items,
+        ];
+    }
+
+    $categoryTreeCache[$categoryId] = $result;
+    return $result;
+};
+
+$normalizeMenuPath = static function (string $url): string {
+    $path = trim((string) parse_url($url, PHP_URL_PATH), '/');
+    return $path;
+};
+
+$mergeMenuTree = static function (array $baseItems, array $fallbackItems) use (&$mergeMenuTree, $normalizeMenuPath): array {
+    $indexByKey = [];
+
+    $makeKey = static function (array $item) use ($normalizeMenuPath): string {
+        $itemId = (int) (
+            $item['id']
+            ?? $item['entity_id']
+            ?? $item['category_id']
+            ?? 0
+        );
+        if ($itemId > 0) {
+            return 'id:' . $itemId;
+        }
+
+        $urlPath = $normalizeMenuPath((string) ($item['url'] ?? ''));
+        if ($urlPath !== '') {
+            return 'url:' . $urlPath;
+        }
+
+        return 'name:' . strtolower((string) ($item['name'] ?? ''));
+    };
+
+    foreach ($baseItems as $item) {
+        $itemChildren = $item['childData'] ?? [];
+        $item['childData'] = is_array($itemChildren) ? $itemChildren : [];
+        $indexByKey[$makeKey($item)] = $item;
+    }
+
+    foreach ($fallbackItems as $fallbackItem) {
+        $fallbackChildren = $fallbackItem['childData'] ?? [];
+        $fallbackItem['childData'] = is_array($fallbackChildren) ? $fallbackChildren : [];
+        $fallbackKey = $makeKey($fallbackItem);
+
+        if (isset($indexByKey[$fallbackKey])) {
+            $baseChildren = $indexByKey[$fallbackKey]['childData'] ?? [];
+            $indexByKey[$fallbackKey]['childData'] = $mergeMenuTree(
+                is_array($baseChildren) ? $baseChildren : [],
+                $fallbackItem['childData']
+            );
+            continue;
+        }
+
+        $indexByKey[$fallbackKey] = $fallbackItem;
+    }
+
+    return array_values($indexByKey);
+};
 ?>
 
 <div x-data="initMegaMenu" class="z-20 navigation hidden lg:flex">
@@ -32,6 +206,25 @@ $block->setData('cache_tags', $viewModelNavigation->getIdentities());
         >
             <ul class="mega-nav-level0 flex justify-start flex-wrap">
                 <?php foreach ($menuItems as $index => $menuItem): ?>
+                    <?php
+                    $topMenuCategoryId = (int) (
+                        $menuItem['id']
+                        ?? $menuItem['entity_id']
+                        ?? $menuItem['category_id']
+                        ?? 0
+                    );
+                    if ($topMenuCategoryId <= 0 && !empty($menuItem['url'])) {
+                        $topMenuCategoryId = $resolveCategoryIdFromUrl((string) $menuItem['url']);
+                    }
+                    $menuItemChildData = $menuItem['childData'] ?? [];
+                    $menuItemChildData = is_array($menuItemChildData) ? $menuItemChildData : [];
+                    if ($topMenuCategoryId > 0) {
+                        $resolvedTree = $buildCategoryTree($topMenuCategoryId);
+                        if (!empty($resolvedTree)) {
+                            $menuItemChildData = $mergeMenuTree($menuItemChildData, $resolvedTree);
+                        }
+                    }
+                    ?>
                     <li
                         class="mega-nav-item level-0"
                         x-data="{ open: false }"
@@ -46,7 +239,7 @@ $block->setData('cache_tags', $viewModelNavigation->getIdentities());
                             <span><?= $escaper->escapeHtml($menuItem['name']) ?></span>
                         </a>
 
-                        <?php if (!empty($menuItem['childData'])): ?>
+                        <?php if (!empty($menuItemChildData)): ?>
                             <!-- Level 1 dropdown panel -->
                             <div
                                 class="mega-dropdown"
@@ -62,9 +255,29 @@ $block->setData('cache_tags', $viewModelNavigation->getIdentities());
                                 <div class="mega-dropdown-inner">
                                     <!-- Level 1 tabs (e.g., Featured, Ready to wear) -->
                                     <ul class="mega-level1-list">
-                                        <?php foreach ($menuItem['childData'] as $subIndex => $subMenuItem): ?>
+                                        <?php foreach ($menuItemChildData as $subIndex => $subMenuItem): ?>
+                                            <?php
+                                            $subMenuId = (int) (
+                                                $subMenuItem['id']
+                                                ?? $subMenuItem['entity_id']
+                                                ?? $subMenuItem['category_id']
+                                                ?? 0
+                                            );
+                                            if ($subMenuId <= 0 && !empty($subMenuItem['url'])) {
+                                                $subMenuId = $resolveCategoryIdFromUrl((string) $subMenuItem['url']);
+                                            }
+                                            $subMenuCmsHtml = '';
+                                            if ($subMenuId > 0) {
+                                                $subMenuCmsHtml = trim((string) $block->getLayout()
+                                                    ->createBlock(CmsBlock::class)
+                                                    ->setBlockId('navigationsblock-' . $subMenuId)
+                                                    ->toHtml());
+                                            }
+                                            ?>
+                                            <?php $subMenuChildren = $subMenuItem['childData'] ?? []; ?>
+                                            <?php $subMenuChildren = is_array($subMenuChildren) ? $subMenuChildren : []; ?>
                                             <li
-                                                class="mega-level1-item<?= !empty($subMenuItem['childData']) ? ' has-children' : ' no-children' ?>"
+                                                class="mega-level1-item<?= !empty($subMenuChildren) ? ' has-children' : ' no-children' ?>"
                                                 x-data="{ subOpen: false }"
                                                 @mouseenter="subOpen = true"
                                                 @mouseleave="subOpen = false"
@@ -76,7 +289,7 @@ $block->setData('cache_tags', $viewModelNavigation->getIdentities());
                                                     <span><?= $escaper->escapeHtml($subMenuItem['name']) ?></span>
                                                 </a>
 
-                                                <?php if (!empty($subMenuItem['childData'])): ?>
+                                                <?php if (!empty($subMenuChildren)): ?>
                                                     <!-- Level 2 sub-panel -->
                                                     <div
                                                         class="mega-level2-panel"
@@ -89,33 +302,43 @@ $block->setData('cache_tags', $viewModelNavigation->getIdentities());
                                                         x-transition:leave-end="opacity-0"
                                                         x-cloak
                                                     >
-                                                        <div class="mega-level2-columns">
-                                                            <?php foreach ($subMenuItem['childData'] as $level2Item): ?>
-                                                                <div class="mega-level2-column">
-                                                                    <a
-                                                                        href="<?= $escaper->escapeUrl($level2Item['url']) ?>"
-                                                                        class="mega-level2-link"
-                                                                    >
-                                                                        <span><?= $escaper->escapeHtml($level2Item['name']) ?></span>
-                                                                    </a>
+                                                        <div class="mega-level2-columns<?= $subMenuCmsHtml !== '' ? ' has-side-content' : '' ?>">
+                                                            <div class="mega-level2-main">
+                                                                <?php foreach ($subMenuChildren as $level2Item): ?>
+                                                                    <?php $level3Children = $level2Item['childData'] ?? []; ?>
+                                                                    <?php $level3Children = is_array($level3Children) ? $level3Children : []; ?>
+                                                                    <div class="mega-level2-column">
+                                                                        <a
+                                                                            href="<?= $escaper->escapeUrl($level2Item['url']) ?>"
+                                                                            class="mega-level2-link"
+                                                                        >
+                                                                            <span><?= $escaper->escapeHtml($level2Item['name']) ?></span>
+                                                                        </a>
 
-                                                                    <?php if (!empty($level2Item['childData'])): ?>
-                                                                        <!-- Level 3 items -->
-                                                                        <ul class="mega-level3-list">
-                                                                            <?php foreach ($level2Item['childData'] as $level3Item): ?>
-                                                                                <li>
-                                                                                    <a
-                                                                                        href="<?= $escaper->escapeUrl($level3Item['url']) ?>"
-                                                                                        class="mega-level3-link"
-                                                                                    >
-                                                                                        <span><?= $escaper->escapeHtml($level3Item['name']) ?></span>
-                                                                                    </a>
-                                                                                </li>
-                                                                            <?php endforeach; ?>
-                                                                        </ul>
-                                                                    <?php endif; ?>
-                                                                </div>
-                                                            <?php endforeach; ?>
+                                                                        <?php if (!empty($level3Children)): ?>
+                                                                            <!-- Level 3 items -->
+                                                                            <ul class="mega-level3-list">
+                                                                                <?php foreach ($level3Children as $level3Item): ?>
+                                                                                    <li>
+                                                                                        <a
+                                                                                            href="<?= $escaper->escapeUrl($level3Item['url']) ?>"
+                                                                                            class="mega-level3-link"
+                                                                                        >
+                                                                                            <span><?= $escaper->escapeHtml($level3Item['name']) ?></span>
+                                                                                        </a>
+                                                                                    </li>
+                                                                                <?php endforeach; ?>
+                                                                            </ul>
+                                                                        <?php endif; ?>
+                                                                    </div>
+                                                                <?php endforeach; ?>
+                                                            </div>
+                                                            <?php if ($subMenuCmsHtml !== ''): ?>
+                                                                <section class="mega-level2-cms">
+                                                                    <?= /* @noEscape */ $subMenuCmsHtml ?>
+                                                                </section>
+                                                            <?php endif; ?>
+                                                            <span class="close-nav-arrow" aria-hidden="true"></span>
                                                         </div>
                                                     </div>
                                                 <?php endif; ?>

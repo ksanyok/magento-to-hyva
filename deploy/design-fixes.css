@@ -206,6 +206,15 @@
     height: 50px;
     border: 1px solid #000;
     font-size: 18px;
+    padding-right: 46px;
+    background-color: #fff;
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 16px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M6 9L12 15L18 9' stroke='%23111' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
     transition: all 0.2s ease-in-out;
 }
 .catalog-product-view .swatch-attribute.size select:focus,
@@ -213,6 +222,10 @@
     border-color: #A9BA9D;
     outline: none;
     box-shadow: none;
+}
+.catalog-product-view .swatch-attribute.size select::-ms-expand,
+.catalog-product-view select.super-attribute-select::-ms-expand {
+    display: none;
 }
 
 
@@ -434,6 +447,11 @@
     max-width: 100% !important;
 }
 
+/* Hide in-flow placeholder in fullscreen to prevent top-left artifacts */
+.gallery-fullscreen-overlay #gallery-main > img.invisible:first-child {
+    display: none !important;
+}
+
 .gallery-fullscreen-overlay .gallery-close-btn {
     background: rgba(255, 255, 255, 0.24);
 }
@@ -502,6 +520,9 @@
 
     #gallery > div.gallery-fullscreen-overlay > div:nth-child(2) {
         display: none !important;
+        width: 0 !important;
+        min-width: 0 !important;
+        overflow: hidden !important;
     }
 }
 
@@ -965,6 +986,26 @@ header.msg .dismiss {
 #gallery-main > button[x-ref="galleryFullscreenBtn"]::before,
 #gallery-main > button[x-ref="galleryFullscreenBtn"]::after {
     display: none !important;
+}
+
+/* Neutralize aggressive luma-compat display:flex!important rule for gallery overlay button */
+#gallery > div > div:first-child #gallery-main > button[x-ref="galleryFullscreenBtn"] {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    inset: 0 !important;
+    background: transparent !important;
+}
+
+#gallery > div > div:first-child #gallery-main > button[x-ref="galleryFullscreenBtn"][style*="display: none"] {
+    display: none !important;
+    background: transparent !important;
+}
+
+.gallery-fullscreen-overlay #gallery-main > button[x-ref="galleryFullscreenBtn"],
+.gallery-fullscreen-overlay #gallery-main > button[x-ref="galleryFullscreenBtn"][style*="display: none"] {
+    display: none !important;
+    background: transparent !important;
 }
 
 /* =====================================================
@@ -2200,12 +2241,25 @@ a.ftc-download {
 
 
 /* =====================================================
-   33. HEADER ICONS — dark/black to match original
-   Original uses filter: invert(1) brightness(0.2) on
-   wishlist, cart icons and invert(1) sepia(100%) on account
+   33. HEADER ICONS — parity with original size/tone
    ===================================================== */
 .ftc-shopcontrol .ftc-icon {
+    opacity: 0.8;
     filter: invert(1) brightness(0.2);
+    max-width: none !important;
+}
+
+#accounticon {
+    width: 20px !important;
+    min-width: 20px !important;
+    height: 20px !important;
+}
+
+#wishlisticon,
+#carticon {
+    width: 22px !important;
+    min-width: 22px !important;
+    height: 22px !important;
 }
 
 /* =====================================================
