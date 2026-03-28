@@ -2633,6 +2633,8 @@ header.msg .dismiss::after {
     --ftc-backtotop-right: 16px;
     --ftc-backtotop-bottom: 16px;
     --ftc-backtotop-radius: 16px;
+    --ftc-backtotop-width: 38px;
+    --ftc-backtotop-min-height: 108px;
     --ftc-seo-title-size-desktop: 52px;
 }
 
@@ -2683,8 +2685,10 @@ header.msg .dismiss::after {
 .amscroll-backtotop-block.-desktop-edge {
     right: var(--ftc-backtotop-right) !important;
     bottom: var(--ftc-backtotop-bottom) !important;
-    padding: 8px 10px !important;
-    min-width: 48px !important;
+    width: var(--ftc-backtotop-width) !important;
+    min-width: var(--ftc-backtotop-width) !important;
+    min-height: var(--ftc-backtotop-min-height) !important;
+    padding: 8px 6px 10px !important;
     border-radius: var(--ftc-backtotop-radius) !important;
     transform: none !important;
     box-sizing: border-box !important;
@@ -2699,14 +2703,16 @@ header.msg .dismiss::after {
     right: var(--ftc-backtotop-right) !important;
     bottom: var(--ftc-backtotop-bottom) !important;
     z-index: 9999 !important;
-    display: flex !important;
+    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    min-width: 48px;
-    min-height: 112px;
-    padding: 8px 10px 10px !important;
+    gap: 4px;
+    width: var(--ftc-backtotop-width);
+    min-width: var(--ftc-backtotop-width);
+    max-width: var(--ftc-backtotop-width);
+    min-height: var(--ftc-backtotop-min-height);
+    padding: 8px 6px 10px;
     border-radius: var(--ftc-backtotop-radius) !important;
     background-color: #a6bb9a !important;
     color: #fff !important;
@@ -2718,9 +2724,9 @@ header.msg .dismiss::after {
 }
 
 .back-to-top-btn svg {
-    width: 20px;
-    height: 20px;
-    padding: 4px;
+    width: 18px;
+    height: 18px;
+    padding: 3px;
     border: 1px solid currentColor;
     border-radius: 50%;
     transform: none !important;
@@ -2732,12 +2738,14 @@ header.msg .dismiss::after {
 }
 
 .back-to-top-text {
-    font-size: 9px;
-    letter-spacing: 0.08em;
+    font-size: 8px;
+    font-family: "KorpusGrotesk-A", "KorpusGrotesk-B", sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     writing-mode: vertical-rl;
     text-orientation: mixed;
-    line-height: 1.1;
+    line-height: 1;
 }
 
 /* Category CMS SEO text block parity */
