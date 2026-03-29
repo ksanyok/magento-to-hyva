@@ -68,6 +68,57 @@ $tooltipBlockHtml = $block->getBlockHtml('product.swatch.tooltip');
                 return lastImg.thumb || lastImg.img || '';
             };
 
+            // Match original behavior: keep color swatches in a single row and
+            // render a trailing +N tile that expands all remaining options.
+            // Match Luma behavior: 5 visible color tiles, the 6th tile is "+N".
+            merged.swatchCollapsedCount = 5;
+            merged.expandedSwatches = {};
+
+            merged.getAttributeOptions = function(attributeId) {
+                const attrs = this.optionConfig && this.optionConfig.attributes
+                    ? this.optionConfig.attributes
+                    : null;
+                const attr = attrs && attrs[attributeId] ? attrs[attributeId] : null;
+                return attr && Array.isArray(attr.options) ? attr.options : [];
+            };
+
+            merged.isExpandableColorAttribute = function(attributeId) {
+                const attrs = this.optionConfig && this.optionConfig.attributes
+                    ? this.optionConfig.attributes
+                    : null;
+                const attr = attrs && attrs[attributeId] ? attrs[attributeId] : null;
+                if (!attr || !attr.code) return false;
+                const code = String(attr.code).toLowerCase();
+                return code === 'color' || code === 'color_name';
+            };
+
+            merged.isSwatchExpanded = function(attributeId) {
+                return !!this.expandedSwatches[String(attributeId)];
+            };
+
+            merged.hasCollapsedSwatches = function(attributeId) {
+                if (!this.isExpandableColorAttribute(attributeId)) {
+                    return false;
+                }
+                return this.getAttributeOptions(attributeId).length > this.swatchCollapsedCount;
+            };
+
+            merged.hiddenSwatchCount = function(attributeId) {
+                const hidden = this.getAttributeOptions(attributeId).length - this.swatchCollapsedCount;
+                return hidden > 0 ? hidden : 0;
+            };
+
+            merged.isSwatchOptionVisible = function(attributeId, index) {
+                if (!this.hasCollapsedSwatches(attributeId) || this.isSwatchExpanded(attributeId)) {
+                    return true;
+                }
+                return index < this.swatchCollapsedCount;
+            };
+
+            merged.expandSwatches = function(attributeId) {
+                this.expandedSwatches[String(attributeId)] = true;
+            };
+
             // Auto-select first visual swatch attribute (color/image) when nothing is selected.
             // This keeps initial gallery/variation state aligned with the original storefront.
             const originalInit = merged.init;
@@ -135,16 +186,31 @@ $tooltipBlockHtml = $block->getBlockHtml('product.swatch.tooltip');
                             </label>
                             <div class="w-full sm:ml-2 sm:w-1/2 text-left text-gray-900 product-option-values">
                                 <div
-                                     class="flex items-center -mx-1 space-x-4 swatch-attribute-options"
+                                     class="swatch-attribute-options ftc-swatch-options"
+                                     :class="{
+                                        'ftc-swatch-options--collapsed': hasCollapsedSwatches(<?= (int) $attributeId ?>) && !isSwatchExpanded(<?= (int) $attributeId ?>),
+                                        'ftc-swatch-options--expanded': hasCollapsedSwatches(<?= (int) $attributeId ?>) && isSwatchExpanded(<?= (int) $attributeId ?>)
+                                     }"
                                      role="radiogroup"
                                      aria-label="<?= $escaper->escapeHtmlAttr($productAttribute->getStoreLabel()) ?>"
                                 >
                                     <template
-                                        x-for="(item, index) in optionConfig.attributes[<?= (int) $attributeId ?>].options"
+                                        x-for="(item, index) in getAttributeOptions(<?= (int) $attributeId ?>)"
                                         :key="item.id"
                                     >
-                                        <?= /* @noEscape */ $swatchItemBlock->setData('attribute_id', $attributeId)->toHtml(); ?>
+                                        <div class="ftc-swatch-option-wrap"
+                                             x-show="isSwatchOptionVisible(<?= (int) $attributeId ?>, index)">
+                                            <?= /* @noEscape */ $swatchItemBlock->setData('attribute_id', $attributeId)->toHtml(); ?>
+                                        </div>
                                     </template>
+
+                                    <button type="button"
+                                            class="ftc-swatch-more"
+                                            x-show="hasCollapsedSwatches(<?= (int) $attributeId ?>) && !isSwatchExpanded(<?= (int) $attributeId ?>)"
+                                            x-text="'+' + hiddenSwatchCount(<?= (int) $attributeId ?>)"
+                                            @click.prevent="expandSwatches(<?= (int) $attributeId ?>)"
+                                            aria-label="Show more options">
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -188,5 +254,47 @@ $tooltipBlockHtml = $block->getBlockHtml('product.swatch.tooltip');
         </div>
         <?= /* @noEscape */ $tooltipBlockHtml ?>
     </div>
+
+    <style>
+        .catalog-product-view .ftc-swatch-options {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            max-width: 100%;
+            margin-left: 0;
+            margin-right: 0;
+        }
+        .catalog-product-view .ftc-swatch-option-wrap {
+            flex: 0 0 auto;
+        }
+        .catalog-product-view .ftc-swatch-options--collapsed {
+            flex-wrap: nowrap;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .catalog-product-view .ftc-swatch-options--expanded {
+            flex-wrap: wrap;
+            row-gap: 8px;
+        }
+        .catalog-product-view .ftc-swatch-more {
+            flex: 0 0 auto;
+            min-width: 80px;
+            width: 80px;
+            height: 80px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #e5e7eb;
+            background: #f5f5f5;
+            color: #222;
+            font-size: 22px;
+            line-height: 1;
+            cursor: pointer;
+        }
+        .catalog-product-view .ftc-swatch-more:hover {
+            border-color: #a9ba9d;
+        }
+    </style>
 
 <?php endif;?>
