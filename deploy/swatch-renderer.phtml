@@ -108,11 +108,41 @@ $tooltipBlockHtml = $block->getBlockHtml('product.swatch.tooltip');
                 return hidden > 0 ? hidden : 0;
             };
 
-            merged.isSwatchOptionVisible = function(attributeId, index) {
+            merged.getCollapsedVisibleOptionIds = function(attributeId) {
+                const options = this.getAttributeOptions(attributeId);
+                const visibleIds = [];
+                const visibleSet = {};
+
+                // Prefer first enabled options so the first row is never empty.
+                for (let i = 0; i < options.length; i++) {
+                    const id = options[i].id;
+                    if (this.optionIsEnabled(attributeId, id)) {
+                        visibleIds.push(id);
+                        visibleSet[String(id)] = true;
+                        if (visibleIds.length >= this.swatchCollapsedCount) {
+                            return visibleIds;
+                        }
+                    }
+                }
+
+                // Fallback: if enabled options are fewer, fill with remaining options.
+                for (let i = 0; i < options.length && visibleIds.length < this.swatchCollapsedCount; i++) {
+                    const id = options[i].id;
+                    if (!visibleSet[String(id)]) {
+                        visibleIds.push(id);
+                        visibleSet[String(id)] = true;
+                    }
+                }
+
+                return visibleIds;
+            };
+
+            merged.isSwatchOptionVisible = function(attributeId, optionId) {
                 if (!this.hasCollapsedSwatches(attributeId) || this.isSwatchExpanded(attributeId)) {
                     return true;
                 }
-                return index < this.swatchCollapsedCount;
+
+                return this.getCollapsedVisibleOptionIds(attributeId).includes(optionId);
             };
 
             merged.expandSwatches = function(attributeId) {
@@ -199,7 +229,7 @@ $tooltipBlockHtml = $block->getBlockHtml('product.swatch.tooltip');
                                         :key="item.id"
                                     >
                                         <div class="ftc-swatch-option-wrap"
-                                             x-show="isSwatchOptionVisible(<?= (int) $attributeId ?>, index)">
+                                             x-show="isSwatchOptionVisible(<?= (int) $attributeId ?>, item.id)">
                                             <?= /* @noEscape */ $swatchItemBlock->setData('attribute_id', $attributeId)->toHtml(); ?>
                                         </div>
                                     </template>
@@ -294,6 +324,62 @@ $tooltipBlockHtml = $block->getBlockHtml('product.swatch.tooltip');
         }
         .catalog-product-view .ftc-swatch-more:hover {
             border-color: #a9ba9d;
+        }
+
+        /* Match original Luma PDP color swatches sizing/appearance. */
+        .catalog-product-view .swatch-attribute.color_name .ftc-swatch-options,
+        .catalog-product-view .swatch-attribute.color .ftc-swatch-options {
+            align-items: flex-start;
+            gap: 6px;
+        }
+        .catalog-product-view .swatch-attribute.color_name,
+        .catalog-product-view .swatch-attribute.color {
+            --ftc-pdp-color-swatch-width: 93.5px;
+            --ftc-pdp-color-swatch-height: 120px;
+        }
+        .catalog-product-view .swatch-attribute.color_name .swatch-option.product-option-value-label,
+        .catalog-product-view .swatch-attribute.color .swatch-option.product-option-value-label {
+            width: var(--ftc-pdp-color-swatch-width) !important;
+            min-width: var(--ftc-pdp-color-swatch-width) !important;
+            height: var(--ftc-pdp-color-swatch-height) !important;
+            min-height: var(--ftc-pdp-color-swatch-height) !important;
+            border: 2px solid #ffffff !important;
+            opacity: 0.9;
+            transition: all 0.2s ease;
+            box-shadow: none !important;
+        }
+        .catalog-product-view .swatch-attribute.color_name .swatch-option.product-option-value-label:hover,
+        .catalog-product-view .swatch-attribute.color .swatch-option.product-option-value-label:hover {
+            opacity: 1;
+        }
+        .catalog-product-view .swatch-attribute.color_name .swatch-option.product-option-value-label.border-primary,
+        .catalog-product-view .swatch-attribute.color_name .swatch-option.product-option-value-label.ring-primary\/75,
+        .catalog-product-view .swatch-attribute.color_name .swatch-option[aria-checked="true"],
+        .catalog-product-view .swatch-attribute.color .swatch-option.product-option-value-label.border-primary,
+        .catalog-product-view .swatch-attribute.color .swatch-option.product-option-value-label.ring-primary\/75,
+        .catalog-product-view .swatch-attribute.color .swatch-option[aria-checked="true"] {
+            border: 2px solid #a9ba9d !important;
+        }
+        .catalog-product-view .swatch-attribute.color_name .ftc-swatch-more,
+        .catalog-product-view .swatch-attribute.color .ftc-swatch-more {
+            width: 85.5px;
+            min-width: 85.5px;
+            height: calc(var(--ftc-pdp-color-swatch-height) - 4px);
+            min-height: calc(var(--ftc-pdp-color-swatch-height) - 4px);
+            margin-top: 2px;
+            padding: 0;
+            border: 2px solid #ffffff;
+            background: #f8f8f8;
+            color: #222222;
+            font-family: "KorpusGrotesk-B", sans-serif;
+            font-size: 32px;
+            font-weight: 400;
+            line-height: 1;
+            box-sizing: border-box;
+        }
+        .catalog-product-view .swatch-attribute.color_name .ftc-swatch-more:hover,
+        .catalog-product-view .swatch-attribute.color .ftc-swatch-more:hover {
+            border: 2px solid #a9ba9d;
         }
     </style>
 
